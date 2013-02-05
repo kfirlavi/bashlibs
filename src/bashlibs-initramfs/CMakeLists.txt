@@ -11,10 +11,7 @@ include(SetAppVersion)
 SET_APP_VERSION(0 0 8)
 set(CPACK_PACKAGING_INSTALL_PREFIX "/")
 set(CPACK_DEBIAN_PACKAGE_DEPENDS
-    "shunit2, 
-    bashlibs-shunit2-enhancements (>= 0.0.2),
-    bash, 
-    bashlibs-utils (>= 0.0.6), 
+    "bashlibs-utils (>= 0.0.6), 
     bashlibs-verbose (>= 0.0.5),
     bashlibs-file-manipulations")
 include(PackageCreator)

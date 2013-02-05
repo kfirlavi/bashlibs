@@ -69,7 +69,8 @@ main() {
     cd $(package_source_dir)
     rsync -r --exclude=*swp * $(workdir)/
     cd $(tmp_dir)
-	tar cjf /usr/portage/distfiles/$(get_tbz_filename) *
+	tar cjf /usr/portage/distfiles/$(get_tbz_filename) * \
+	    && echo "File /usr/portage/distfiles/$(get_tbz_filename) created."
 	mkdir -p /tmp/distfiles
 	cp /usr/portage/distfiles/$(get_tbz_filename) /tmp/distfiles
 	clean_tmp_dirs
