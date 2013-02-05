@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 2.6)
-project (shunit2-enhancements)
+project (bashlibs-shunit2-enhancements)
 
 list(APPEND CMAKE_MODULE_PATH 
     "/usr/share/cmake-macros/Modules")

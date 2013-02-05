@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 2.6)
-project (usage)
+project (bashlibs-usage)
 
 list(APPEND CMAKE_MODULE_PATH 
     "/usr/share/cmake-macros/Modules")

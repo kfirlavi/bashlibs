@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 2.6)
-project (code-clarity)
+project (bashlibs-code-clarity)
 
 list(APPEND CMAKE_MODULE_PATH 
     "/usr/share/cmake-macros/Modules")
