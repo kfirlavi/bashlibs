@@ -1,0 +1,11 @@
+macro(SET_APP_VERSION _major _minor _patch)
+	set(APP_VER_MAJOR ${_major})
+	set(APP_VER_MINOR ${_minor})
+	set(APP_VER_PATCH ${_patch})
+
+	set(APPLICATION_VERSION
+		"${APP_VER_MAJOR}.${APP_VER_MINOR}.${APP_VER_PATCH}")
+
+	set(LIBRARY_VERSION ${APPLICATION_VERSION})
+	set(LIBRARY_SOVERSION ${APP_VER_MAJOR})
+endmacro(SET_APP_VERSION)

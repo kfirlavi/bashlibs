@@ -1,0 +1,74 @@
+#!/bin/bash                                                                
+source $(dirname $0)/../src/bashlibs-base/lib/header.sh
+
+package_source_dir() {
+    echo $(working_directory)/$(args)
+}
+
+cmdline() {
+    [[ -z $(package_source_dir) ]] \
+        && echo "You need to provide source dir" \
+        && exit 1
+
+    [[ ! -d $(package_source_dir) ]] \
+        && echo "\"$(args)\": is not a directory!" \
+        && exit 1
+}
+
+tmp_dir() {
+    echo /tmp/$(progname)
+}
+
+workdir() {
+    echo $(tmp_dir)/$(get_tbz_filename_prefix)
+}
+
+get_cmake_project_name() {
+	grep -i "project" $(package_source_dir)/CMakeLists.txt \
+		| head -1 \
+		| cut -d '(' -f 2 | cut -d ')' -f 1 \
+		| tr ' ' '.'
+}
+
+get_dir_project_name() {
+	basename $(package_source_dir)
+}
+
+get_app_version() {
+	cat $(package_source_dir)/version
+}
+
+get_tbz_filename_prefix() {
+	echo $(get_cmake_project_name)-$(get_app_version)-Source
+}
+
+get_tbz_filename() {
+	echo $(get_tbz_filename_prefix).tar.bz2
+}
+
+gen_changelog() {
+	cd $(package_source_dir)
+	git --no-pager log . > ChangeLog
+	cd -
+}
+
+clean_tmp_dirs() {
+    [[ $(tmp_dir) =~ /tmp/ ]] \
+        && [[ -d $(tmp_dir) ]] \
+        && rm -Rf $(tmp_dir)
+}
+
+main() {
+    cmdline
+	clean_tmp_dirs
+	gen_changelog
+    mkdir -p $(workdir)
+    cd $(package_source_dir)
+    rsync -r --exclude=*swp * $(workdir)/
+    cd $(tmp_dir)
+	tar cjf /usr/portage/distfiles/$(get_tbz_filename) *
+	mkdir -p /tmp/distfiles
+	cp /usr/portage/distfiles/$(get_tbz_filename) /tmp/distfiles
+	clean_tmp_dirs
+}
+main

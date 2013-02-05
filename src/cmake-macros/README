@@ -1,0 +1,19 @@
+This is a generic package that adds some modules support to make
+CMakeLists.txt file more readable. 
+
+You can set the app version and the so version of the library like this:
+include(SetAppVersion)
+SET_APP_VERSION(0 0 1)
+
+To allow package creation like DEB file for debian or ubuntu system:
+set(CPACK_PACKAGING_INSTALL_PREFIX "/")
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "cmake (>= 2.6)")
+include(PackageCreator)
+
+To install docs to doc dir just include this line:
+include(InstallDocs)
+It will install directory example if exist and files AUTHORS ChangeLog README
+to /usr/share/doc/my_package-0.0.1/...
+
+include(OSDetection)
+for linux system, will add -DOS_LINUX -DLINUX -DLinux as compilation flags.

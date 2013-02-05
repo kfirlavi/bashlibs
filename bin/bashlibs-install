@@ -1,0 +1,47 @@
+#!/bin/bash
+BIN_DIR=$(dirname $0)
+readonly SERVER_IP=$1
+readonly PACKAGES=" cmake-macros \
+                    base \
+                    shunit2-enhancements \
+                    utils \
+                    colors \
+                    verbose
+                    code-clarity \
+                    file-manipulations \
+                    initramfs \
+                    os-detection \
+                    grub \
+                    usage"
+
+create_package() {
+    local package_name=$1
+    local server_ip=$SERVER_IP
+
+    $BIN_DIR/create.deb \
+        bashlibs/$package_name \
+        $server_ip
+}
+
+remove_package() {
+    local package_name=$1
+
+    ssh root@$SERVER_IP -- dpkg --purge --force-depends $package_name
+}
+
+main() {
+    local name
+
+    for name in $PACKAGES
+    do
+        #echo "*** removing $name"
+        #remove_package $name
+        echo
+        echo
+        echo "********************************************************************************"
+        echo "                          bashlibs-$name"
+        echo "********************************************************************************"
+        create_package $name
+    done
+}
+main

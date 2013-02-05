@@ -1,0 +1,4 @@
+* integrate skel with bashlibs-tools
+* add ebuilds for all libraries
+* add cmake-macros
+* remove the global cmake-macros loading to the bashlibs-cmake-macros module

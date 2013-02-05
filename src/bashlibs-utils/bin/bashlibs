@@ -1,0 +1,123 @@
+#!/bin/bash
+source /usr/lib/bashlibs/base.sh
+include code_clarity.sh
+include verbose.sh
+include usage.sh
+
+usage() {
+    set_column_indentation_gap 13
+	cat <<- EOF
+	$(section_usage) $(progname) options
+	
+	    $(progname) can provide the path to bash libraries installed.
+	    $(progname) can issue tests on all libraries.
+	    It allows specifing certain file to test, or to run tests 
+	    of all libraries.
+
+	$(section_options)
+	$(item p library-path 'Show bash libs library path')
+	$(item b load-base 'Include the base library in the code')
+	$(item i include 'Include a library')
+	$(items_test_help_verbose_debug)
+
+	
+	$(section_examples)
+	$(example_description 'get library path')
+	$(example $(progname) --library-path)
+
+	$(example_description 'Include the base library in the code.')
+	$(example_description "Put this line in the start of your file. It will include basic $(progname) functionality.")
+	$(example \$\($(progname) --load-base\))
+
+	$(example_description 'To include a library, use this line in your code:')
+	$(example \$\($(progname) --include verbose.sh\))
+
+	$(example_test $(progname))
+	EOF
+}
+
+cmdline() {
+	# got this idea from here:
+	# http://kirk.webfinish.com/2009/10/bash-shell-script-to-use-getopts-with-gnu-style-long-positional-parameters/
+	local arg=
+	for arg
+	do
+		local delim=""
+		case "$arg" in
+			#translate --gnu-long-options to -g (short options)
+		 --library-path) args="${args}-p ";;
+		    --load-base) args="${args}-b ";;
+		      --include) args="${args}-i ";;
+		         --test) args="${args}-t ";;
+			     --help) args="${args}-h ";;
+		      --verbose) args="${args}-v ";;
+			    --debug) args="${args}-x ";;
+                      #pass through anything else
+                      *) [[ "${arg:0:1}" == "-" ]] || delim="\""
+                          args="${args}${delim}${arg}${delim} ";;
+		esac
+	done
+	 
+	#Reset the positional parameters to the short options
+	eval set -- $args
+
+	while getopts "vhxpbt:i:" OPTION
+	do
+	     case $OPTION in
+		 v)
+		     VERBOSE=$(($VERBOSE+1))
+             export readonly VERBOSE
+		     ;;
+		 h)
+		     usage
+		     exit
+		     ;;
+		 x)
+		     set -x
+		     ;;
+         t)
+             RUN_TESTS=$OPTARG
+             vinfo "Running tests"
+             ;;
+         i)
+             source_library $OPTARG
+             exit
+             ;;
+         b)
+             source_base_library
+             exit
+             ;;
+         p)
+             libraries_path
+             exit
+             ;;
+	     esac
+	done
+
+	[[ -z $RUN_TESTS ]] \
+		&& usage \
+        && exit 1
+}
+
+source_library() {
+    local library=$1
+
+    save_library_as_included $library
+    echo "source $(libraries_path)/$library"
+}
+
+source_base_library() {
+    save_library_as_included base.sh
+    echo "source $(libraries_path)/base.sh"
+}
+
+main() {
+    cmdline $(args)
+
+    include shunit2_enhancements.sh
+
+    run_tests \
+        $(libraries_tests_dir) \
+        $DEBUG
+}
+main
