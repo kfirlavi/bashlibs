@@ -1,5 +1,3 @@
-project(bashlibs-${CMAKE_PROJECT_NAME})
-
 set(BASH_LIBS_DIR 
     "usr/lib/bashlibs")
 

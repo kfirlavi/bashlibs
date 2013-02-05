@@ -5,7 +5,7 @@ list(APPEND CMAKE_MODULE_PATH
     "/usr/share/cmake-macros/Modules")
 
 include(SetAppVersion)
-SET_APP_VERSION(0 0 2)
+SET_APP_VERSION(0 0 3)
 
 set(CPACK_PACKAGING_INSTALL_PREFIX "/")
 include(PackageCreator)
