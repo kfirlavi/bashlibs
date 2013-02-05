@@ -1,63 +1,26 @@
 #!/bin/bash
 source $(dirname $0)/../src/bashlibs-base/lib/header.sh
-
-package_source_dir() {
-    echo $(args) \
-        | grep -q '^/' \
-        && echo $(args) \
-        || echo $(working_directory)/$(args)
-}
+source $(progdir)/pkg-common
 
 cmdline() {
-    [[ ! -f $(package_source_dir)/CMakeLists.txt ]] \
-        && echo "You need to provide source dir" \
-        && exit 1
-
-    [[ ! -d $(package_source_dir) ]] \
-        && echo "\"$(args)\": is not a directory!" \
-        && exit 1
-}
-
-tmp_dir() {
-    echo /tmp/$(progname)
+    check_source_dir
 }
 
 workdir() {
-    local workdir=$(tmp_dir)/$(get_tbz_filename_prefix)
-
-    [[ -d $workdir ]] \
-        || mkdir -p $workdir
-
-    echo $workdir
-}
-
-get_cmake_project_name() {
-	grep -i "project" $(package_source_dir)/CMakeLists.txt \
-		| head -1 \
-		| cut -d '(' -f 2 | cut -d ')' -f 1 \
-		| tr ' ' '.'
+    create_dir_if_needed \
+        $(tmp_dir)/$(get_tbz_filename_prefix)
 }
 
 get_dir_project_name() {
 	basename $(package_source_dir)
 }
 
-get_app_version() {
-	cat $(package_source_dir)/version
-}
-
 get_tbz_filename_prefix() {
-	echo $(get_cmake_project_name)-$(get_app_version)-Source
+	echo $(cmake_project_name)-$(app_version)-Source
 }
 
 get_tbz_filename() {
 	echo $(get_tbz_filename_prefix).tar.bz2
-}
-
-gen_changelog() {
-	cd $(package_source_dir)
-	git --no-pager log . > ChangeLog
-	cd - > /dev/null 2>&1
 }
 
 clean_tmp_dirs() {

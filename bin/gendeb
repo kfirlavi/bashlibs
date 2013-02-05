@@ -1,55 +1,35 @@
-#!/bin/bash                                                                
-BIN_DIR=$(dirname $0)
-PROGDIR=$(pwd)/$1
+#!/bin/bash
+source $(dirname $0)/../src/bashlibs-base/lib/header.sh
+source $(progdir)/pkg-common
+
 REMOTE_HOST=$2
 shift; shift;
 CMAKE_OPTIONS="$@"
-[[ -z $PROGDIR ]] \
-	&& echo "You need to provide source dir" \
-	&& exit 1
-[[ ! -d $PROGDIR ]] \
-	&& echo "\"$PROGDIR\": is not a directory!" \
-	&& exit 1
-[[ -z $REMOTE_HOST ]] \
-	&& echo "You need to provide remote computer" \
-	&& exit 1
 
-REMOTE_WORKDIR=/tmp/create.deb
-DEB_BINARY_REPOSITORY=$BIN_DIR/../archives/deb.repository/binary
-
-get_cmake_project_name() {
-    [[ $PROGDIR =~ bashlibs ]] \
-        && [[ ! $PROGDIR =~ cmake-macros ]] \
-            && echo -n 'bashlibs-'
-
-	grep -i "project" $PROGDIR/CMakeLists.txt \
-		| head -1 \
-		| cut -d '(' -f 2 | cut -d ')' -f 1 \
-		| tr ' ' '.'
+host() {
+    echo $(args) \
+        | awk '{print $2}'
 }
 
-get_dir_project_name() {
-	basename $PROGDIR
+cmdline() {
+    check_source_dir
+
+    [[ -z $(host) ]] \
+        && echo "You need to provide remote computer" \
+        && exit 1
 }
 
-get_app_version() {
-	grep SET_APP_VERSION $PROGDIR/CMakeLists.txt \
-		| cut -d '(' -f 2 | cut -d ')' -f 1 \
-		| tr ' ' '.'
+repository_dir() {
+    create_dir_if_needed \
+        $(progdir)/../debian/repository/binary
 }
 
 get_deb_filename() {
-	echo $(get_cmake_project_name)-$(get_app_version)-Linux.deb
-}
-
-gen_changelog() {
-	cd $PROGDIR
-	git --no-pager log . > ChangeLog
-	cd -
+	echo $(cmake_project_name)-$(app_version)-Linux.deb
 }
 
 run_remote() {
-	ssh root@$REMOTE_HOST $@
+	ssh root@$(host) $@
 }
 
 remote_mkdir() {
@@ -60,46 +40,67 @@ remote_mkdir() {
 }
 
 get_target_cmp_dir() {
-	remote_mkdir $REMOTE_WORKDIR/$(get_cmake_project_name)/cmp
+	remote_mkdir $(tmp_dir)/$(cmake_project_name)/cmp
 }
 
 get_target_src_dir() {
-	remote_mkdir $REMOTE_WORKDIR/$(get_cmake_project_name)/src
+	remote_mkdir $(tmp_dir)/$(cmake_project_name)/src
 }
 
 copy_sources_to_target() {
-	cd $PROGDIR
+	cd $(package_source_dir)
+
 	rsync \
 		-a \
 		--exclude='*swp' \
 		--delete-excluded \
 		--delete \
-		* root@$REMOTE_HOST:$(get_target_src_dir)
-	cd -
+		* root@$(host):$(get_target_src_dir)
+
+	cd - > /dev/null 2>&1
 }
 
 clean_remote_dirs() {
-	run_remote "rm -Rf $REMOTE_WORKDIR"
+	run_remote "rm -Rf $(tmp_dir)"
 }
 
 archive_deb() {
 	local remote_deb_file=$1
 
-	scp root@$REMOTE_HOST:$remote_deb_file $DEB_BINARY_REPOSITORY
+    scp root@$(host):$remote_deb_file $(repository_dir)
+}
+
+run_cmake() {
+    run_remote \
+        "cd $(get_target_cmp_dir) \
+        && cmake $(get_target_src_dir) $CMAKE_OPTIONS \
+        && make package"
+}
+
+copy_deb_to_apt_archives() {
+    run_remote \
+        cp \
+        $(get_target_cmp_dir)/*deb \
+        /var/cache/apt/archives/
+}
+
+install_deb() {
+	run_remote \
+        dpkg -i --force-depends \
+        /var/cache/apt/archives/$(get_deb_filename)
 }
 
 main() {
+    cmdline
 	clean_remote_dirs
-	local target_cmp_dir=$(get_target_cmp_dir)
 	gen_changelog
 	copy_sources_to_target
-
-	run_remote "cd $target_cmp_dir && cmake $(get_target_src_dir) $CMAKE_OPTIONS && make package"
-	run_remote "cp $target_cmp_dir/*deb /var/cache/apt/archives/"
-	run_remote dpkg -i --force-depends /var/cache/apt/archives/$(get_deb_filename)
+    run_cmake
+    copy_deb_to_apt_archives
+    install_deb
 	archive_deb /var/cache/apt/archives/$(get_deb_filename)
-#	run_remote dpkg -L $(get_cmake_project_name)
-#	run_remote aptitude install $(get_cmake_project_name)
+#	run_remote dpkg -L $(cmake_project_name)
+#	run_remote aptitude install $(cmake_project_name)
 #	run_remote $PROGNAME --test
 }
 main

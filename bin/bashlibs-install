@@ -1,47 +1,51 @@
 #!/bin/bash
-BIN_DIR=$(dirname $0)
-readonly SERVER_IP=$1
-readonly PACKAGES=" cmake-macros \
-                    base \
-                    shunit2-enhancements \
-                    utils \
-                    colors \
-                    verbose
-                    code-clarity \
-                    file-manipulations \
-                    initramfs \
-                    os-detection \
-                    grub \
-                    usage"
+source $(dirname $0)/../src/bashlibs-base/lib/header.sh
+readonly HOST=$1
+
+host() {
+    echo $HOST
+}
+
+print_header() {
+    local package_name=$1
+
+    echo
+    echo
+    echo "********************************************************************************"
+    echo "                          $package_name"
+    echo "********************************************************************************"
+
+}
 
 create_package() {
     local package_name=$1
-    local server_ip=$SERVER_IP
 
-    $BIN_DIR/create.deb \
-        bashlibs/$package_name \
-        $server_ip
+    print_header $package_name
+
+    $(progdir)/gendeb \
+        src/$package_name \
+        $(host)
 }
 
 remove_package() {
     local package_name=$1
 
-    ssh root@$SERVER_IP -- dpkg --purge --force-depends $package_name
+    ssh root@$(host) -- dpkg --purge --force-depends $package_name
 }
 
 main() {
-    local name
-
-    for name in $PACKAGES
-    do
-        #echo "*** removing $name"
-        #remove_package $name
-        echo
-        echo
-        echo "********************************************************************************"
-        echo "                          bashlibs-$name"
-        echo "********************************************************************************"
-        create_package $name
-    done
+    create_package cmake-macros
+    create_package bashlibs-cmake-macros
+    create_package bashlibs-base
+    create_package bashlibs-shunit2-enhancements
+    create_package bashlibs-code-clarity
+    create_package bashlibs-colors
+    create_package bashlibs-verbose
+    create_package bashlibs-utils
+    create_package bashlibs-file-manipulations
+    create_package bashlibs-grub
+    create_package bashlibs-initramfs
+    create_package bashlibs-os-detection
+    create_package bashlibs-usage
 }
 main
