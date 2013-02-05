@@ -9,16 +9,23 @@ gen_manifests() {
     cd -
 }
 
+all_project_dirs() {
+    local projects_dir=$1
+
+    find $projects_dir \
+        -maxdepth 2 \
+        -name CMakeLists.txt \
+        -exec dirname {} \; 
+}
+
 gen_all_tar_files() {
     local projects_dir=$1
     local i
 
-    cd $projects_dir
-    for i in *
+    for i in $(all_project_dirs $projects_dir)
     do
         $(progdir)/gentbz $i
     done
-    cd -
 }
 
 main() {

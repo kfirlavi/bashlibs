@@ -2,7 +2,10 @@
 source $(dirname $0)/../src/bashlibs-base/lib/header.sh
 
 package_source_dir() {
-    echo $(working_directory)/$(args)
+    echo $(args) \
+        | grep -q '^/' \
+        && echo $(args) \
+        || echo $(working_directory)/$(args)
 }
 
 cmdline() {
@@ -49,7 +52,7 @@ get_tbz_filename() {
 gen_changelog() {
 	cd $(package_source_dir)
 	git --no-pager log . > ChangeLog
-	cd -
+	cd - > /dev/null 2>&1
 }
 
 clean_tmp_dirs() {
