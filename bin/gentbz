@@ -1,4 +1,4 @@
-#!/bin/bash                                                                
+#!/bin/bash
 source $(dirname $0)/../src/bashlibs-base/lib/header.sh
 
 package_source_dir() {
@@ -9,7 +9,7 @@ package_source_dir() {
 }
 
 cmdline() {
-    [[ -z $(package_source_dir) ]] \
+    [[ ! -f $(package_source_dir)/CMakeLists.txt ]] \
         && echo "You need to provide source dir" \
         && exit 1
 
@@ -23,7 +23,12 @@ tmp_dir() {
 }
 
 workdir() {
-    echo $(tmp_dir)/$(get_tbz_filename_prefix)
+    local workdir=$(tmp_dir)/$(get_tbz_filename_prefix)
+
+    [[ -d $workdir ]] \
+        || mkdir -p $workdir
+
+    echo $workdir
 }
 
 get_cmake_project_name() {
@@ -61,18 +66,35 @@ clean_tmp_dirs() {
         && rm -Rf $(tmp_dir)
 }
 
+copy_sources_to_workdir() {
+    cd $(package_source_dir)
+    rsync -r --exclude=*swp * $(workdir)/
+    cd - > /dev/null 2>&1
+}
+
+tar_sources() {
+    local f=/usr/portage/distfiles/$(get_tbz_filename)
+
+    cd $(tmp_dir)
+	tar cjf $f * \
+	    && echo "File $f created."
+    cd - > /dev/null 2>&1
+}
+
+keep_package() {
+    local archive=$(progdir)/../gentoo/distfiles
+
+    mkdir -p $archive
+	cp /usr/portage/distfiles/$(get_tbz_filename) $archive
+}
+
 main() {
     cmdline
 	clean_tmp_dirs
 	gen_changelog
-    mkdir -p $(workdir)
-    cd $(package_source_dir)
-    rsync -r --exclude=*swp * $(workdir)/
-    cd $(tmp_dir)
-	tar cjf /usr/portage/distfiles/$(get_tbz_filename) * \
-	    && echo "File /usr/portage/distfiles/$(get_tbz_filename) created."
-	mkdir -p /tmp/distfiles
-	cp /usr/portage/distfiles/$(get_tbz_filename) /tmp/distfiles
+    copy_sources_to_workdir
+    tar_sources
+    keep_package
 	clean_tmp_dirs
 }
 main
