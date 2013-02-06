@@ -1,9 +1,13 @@
-#!/bin/bash                                                                
+#!/bin/bash
+include() { true; }
 source $(dirname $0)/../src/bashlibs-base/lib/header.sh
+source $(dirname $0)/../src/bashlibs-colors/lib/colors.sh
+source $(dirname $0)/../src/bashlibs-verbose/lib/verbose.sh
 
 gen_manifests() {
     local portage_dir=$1
 
+    vinfo "Generating Manifest files for portage directory: $portage_dir"
     cd $portage_dir
     repoman -q -f manifest
     cd - > /dev/null 2>&1
@@ -22,6 +26,7 @@ gen_all_tar_files() {
     local projects_dir=$1
     local i
 
+    vinfo "Generating source packages"
     for i in $(all_project_dirs $projects_dir)
     do
         $(progdir)/gentbz $i

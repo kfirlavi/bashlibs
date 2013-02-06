@@ -1,6 +1,8 @@
 #!/bin/bash
+include() { true; }
 source $(dirname $0)/../src/bashlibs-base/lib/header.sh
 source $(dirname $0)/../src/bashlibs-colors/lib/colors.sh
+source $(dirname $0)/../src/bashlibs-verbose/lib/verbose.sh
 source $(progdir)/pkg-common
 
 REMOTE_HOST=$2
@@ -16,8 +18,7 @@ cmdline() {
     check_source_dir
 
     [[ -z $(host) ]] \
-        && echo "You need to provide remote computer" \
-        && exit 1
+        && eexit "You need to provide remote computer"
 }
 
 repository_dir() {
@@ -68,12 +69,12 @@ clean_remote_dirs() {
 archive_deb() {
 	local remote_deb_file=$1
 
-    color purple
+    vinfo "Saving $(get_deb_filename) to $(repository_dir)"
     scp root@$(host):$remote_deb_file $(repository_dir)
-    no_color
 }
 
 run_cmake() {
+    vinfo "Making package"
     run_remote \
         "cd $(get_target_cmp_dir) \
         && cmake $(get_target_src_dir) $CMAKE_OPTIONS \
@@ -88,11 +89,10 @@ copy_deb_to_apt_archives() {
 }
 
 install_deb() {
-    color green
+    vinfo "Installing $(get_deb_filename) on $(host)"
 	run_remote \
         dpkg -i --force-depends \
         /var/cache/apt/archives/$(get_deb_filename)
-    no_color
 }
 
 main() {

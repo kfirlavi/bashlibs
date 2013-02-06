@@ -1,6 +1,8 @@
 #!/bin/bash
+include() { true; }
 source $(dirname $0)/../src/bashlibs-base/lib/header.sh
 source $(dirname $0)/../src/bashlibs-colors/lib/colors.sh
+source $(dirname $0)/../src/bashlibs-verbose/lib/verbose.sh
 readonly HOST=$1
 
 host() {
@@ -75,5 +77,6 @@ main() {
     create_package bashlibs-initramfs
     create_package bashlibs-os-detection
     create_package bashlibs-usage
+    $(progdir)/debrepos $(progdir)/../debian/repository
 }
 main
