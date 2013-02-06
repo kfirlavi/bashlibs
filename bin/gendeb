@@ -4,6 +4,7 @@ source $(dirname $0)/../src/bashlibs-base/lib/header.sh
 source $(dirname $0)/../src/bashlibs-colors/lib/colors.sh
 source $(dirname $0)/../src/bashlibs-verbose/lib/verbose.sh
 source $(progdir)/pkg-common
+source $(progdir)/debrepos-common
 
 REMOTE_HOST=$2
 shift; shift;
@@ -19,11 +20,6 @@ cmdline() {
 
     [[ -z $(host) ]] \
         && eexit "You need to provide remote computer"
-}
-
-repository_dir() {
-    create_dir_if_needed \
-        $(progdir)/../debian/repository/binary
 }
 
 get_deb_filename() {
@@ -69,8 +65,8 @@ clean_remote_dirs() {
 archive_deb() {
 	local remote_deb_file=$1
 
-    vinfo "Saving $(get_deb_filename) to $(repository_dir)"
-    scp root@$(host):$remote_deb_file $(repository_dir)
+    vinfo "Saving $(get_deb_filename) to $(deb_archive_dir)"
+    scp root@$(host):$remote_deb_file $(deb_archive_dir)
 }
 
 run_cmake() {

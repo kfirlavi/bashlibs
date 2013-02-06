@@ -6,7 +6,7 @@ gen_manifests() {
 
     cd $portage_dir
     repoman -q -f manifest
-    cd -
+    cd - > /dev/null 2>&1
 }
 
 main() {

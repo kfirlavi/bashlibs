@@ -1,0 +1,79 @@
+#!/bin/bash
+include() { true; }
+source $(dirname $0)/../src/bashlibs-base/lib/header.sh
+source $(dirname $0)/../src/bashlibs-colors/lib/colors.sh
+source $(dirname $0)/../src/bashlibs-verbose/lib/verbose.sh
+source /home/kfir/bin/lib/date
+source $(progdir)/debrepos-common
+source $(progdir)/pkg-common
+
+release_dir() {
+    create_dir_if_needed \
+        $(repository_dir)/../release/tbz
+}
+
+iso_dir() {
+    create_dir_if_needed \
+        $(repository_dir)/../release/iso
+}
+
+filename_prefix() {
+    echo $(date_date_hour)-$(repository_name)
+}
+
+tar_filename() {
+    echo $(release_dir)/$(filename_prefix).tar.gz
+}
+
+iso_filename() {
+    echo $(iso_dir)/$(filename_prefix).iso
+}
+
+create_md5() {
+    local filename=$1
+    local name=$(basename $filename)
+    local dir=$(dirname $filename)
+
+    cd $dir
+    md5sum $name > $name.md5
+    cd - > /dev/null 2>&1
+}
+
+
+create_release_tar() {
+    cd $(repository_dir)/..
+
+    tar czf \
+        $(tar_filename) \
+        $(repository_name)
+
+    cd - > /dev/null 2>&1
+
+    vinfo "Release file created: $(tar_filename)"
+}
+
+create_iso() {
+    genisoimage \
+        -o $(iso_filename) \
+        -R -J -joliet-long \
+        $(release_dir)
+
+    vinfo "ISO image created: $(iso_filename)"
+}
+
+burn() {
+    wodim -multi -tao $(iso_filename)
+}
+
+main() {
+    create_repository
+    create_release_tar
+    create_md5 $(tar_filename)
+
+    create_iso
+    create_md5 $(iso_filename)
+
+    [[ $(args) =~ burn ]] \
+        && burn
+}
+main
