@@ -33,7 +33,9 @@ print_header() {
     print_ruler "$sign" 80
     echo -n "$sign"
     gap $side
+    color yellow
     echo -n $package_name
+    color blue
     gap $side
     echo -n "$sign"
     echo
