@@ -55,7 +55,7 @@ create_package() {
     print_header $package_name
 
     $(progdir)/gendeb \
-        src/$package_name \
+        $(progdir)/../src/$package_name \
         $(host)
 }
 
