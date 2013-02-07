@@ -4,6 +4,6 @@ Generate portage bashlibs repository
 
 Generate debian repository
 --------------------------
-# bin/bashlibs-install <host>
+# bin/debian <host>
 
 host is a debian/ubuntu remote host, or localhost if your os is debian/ubuntu.
