@@ -65,7 +65,14 @@ remove_package() {
     ssh root@$(host) -- dpkg --purge --force-depends $package_name
 }
 
+install_dependency_packages() {
+    local packages=$@
+
+    ssh root@$(host) -- apt-get install $packages
+}
+
 main() {
+    install_dependency_packages cmake shunit2
     create_package cmake-macros
     create_package bashlibs-cmake-macros
     create_package bashlibs-base
