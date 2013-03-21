@@ -4,4 +4,3 @@
 * remove the global cmake-macros loading to the bashlibs-cmake-macros module
 * write README for each lib with example of usage
 * write blog post with examples
-* add check for arch (i386, armhf...) and build the repository for this arch

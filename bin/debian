@@ -62,13 +62,15 @@ create_package() {
 remove_package() {
     local package_name=$1
 
-    ssh root@$(host) -- dpkg --purge --force-depends $package_name
+    run_remote \
+        dpkg --purge --force-depends $package_name
 }
 
 install_dependency_packages() {
     local packages=$@
 
-    ssh root@$(host) -- apt-get install $packages
+    run_remote \
+        apt-get install $packages
 }
 
 main() {

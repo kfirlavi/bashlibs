@@ -6,7 +6,7 @@ repository_name() {
 
 repository_dir() {
     create_dir_if_needed \
-        $(progdir)/../debian/$(repository_name)
+        $(progdir)/../debian/$(repository_name)/$(repository_architecture)
 }
 
 repository_binary_dir() {
@@ -14,9 +14,26 @@ repository_binary_dir() {
         $(repository_dir)/binary
 }
 
+run_remote() {
+    ssh root@$(host) -- $@
+}
+
+target_architecture() {
+    run_remote "uname -i"
+}
+
+repository_architecture() {
+    local arch=$(target_architecture)
+
+    case $arch in
+        armv7l) echo armhf ;;
+          i686) echo i386  ;;
+    esac
+}
+
 deb_archive_dir() {
     create_dir_if_needed \
-        $(progdir)/../debian/deb-archive
+        $(progdir)/../debian/deb-archive/$(repository_architecture)
 }
 
 copy_deb_to_repository() {
