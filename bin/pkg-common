@@ -21,13 +21,27 @@ tmp_dir() {
 }
 
 check_source_dir() {
-    [[ ! -f $(package_source_dir)/CMakeLists.txt ]] \
-        && echo "You need to provide source dir" \
-        && exit 1
-
     [[ ! -d $(package_source_dir) ]] \
-        && echo "\"$(args)\": is not a directory!" \
-        && exit 1
+        && eexit "\"$(args)\": is not a directory!"
+
+    [[ ! -f $(package_source_dir)/CMakeLists.txt ]] \
+        && eexit "You need to provide a cmake source dir. $(package_source_dir)/CMakeLists.txt not found!"
+}
+
+check_remote_host() {
+    local remote_host=$1
+
+    [[ -z $remote_host ]] \
+        && eexit "You need to provide remote computer"
+
+    run_remote ls / > /dev/null \
+        || eexit "host $remote_host should respond to 'ssh root@$remote_host' without password prompt. Use ssh-keygen and ssh-copy-id to solve the problem."
+}
+
+cmake_options() {
+    local args=($(args))
+
+    echo ${args[@]:2:${#args[@]}}
 }
 
 create_dir_if_needed() {
@@ -85,4 +99,84 @@ print_header() {
     echo
     no_color
 
+}
+
+run_cmake() {
+    vinfo "Making package"
+    run_remote \
+        "cd $(get_target_cmp_dir) \
+        && cmake $(get_target_src_dir) $(cmake_options) \
+        && make package"
+}
+
+copy_deb_to_apt_archives() {
+    run_remote \
+        cp \
+        $(get_target_cmp_dir)/*deb \
+        /var/cache/apt/archives/
+}
+
+install_deb() {
+    vinfo "Installing $(cmake_deb_filename) on $(host)"
+	run_remote \
+        dpkg -i --force-depends \
+        /var/cache/apt/archives/$(cmake_deb_filename)
+}
+
+get_target_cmp_dir() {
+	remote_mkdir $(tmp_dir)/$(cmake_project_name)/cmp
+}
+
+get_target_src_dir() {
+	remote_mkdir $(tmp_dir)/$(cmake_project_name)/src
+}
+
+copy_sources_to_target() {
+	cd $(package_source_dir)
+
+	rsync \
+		-a \
+		--exclude='*swp' \
+		--delete-excluded \
+		--delete \
+		* root@$(host):$(get_target_src_dir)
+
+	cd - > /dev/null 2>&1
+}
+
+clean_remote_dirs() {
+	run_remote "rm -Rf $(tmp_dir)"
+}
+
+archive_deb() {
+	local remote_deb_file=$1
+    local repository_path=$2
+
+    vinfo "Saving $(cmake_deb_filename) to $repository_path"
+    scp root@$(host):$remote_deb_file $repository_path
+}
+
+cmake_deb_filename() {
+	echo $(cmake_project_name)-$(app_version)-Linux.deb
+}
+
+run_remote() {
+	ssh root@$(host) $@
+}
+
+remote_mkdir() {
+	local dir=$1
+
+	run_remote "mkdir -p $dir"
+	echo $dir
+}
+
+host() {
+    echo $(args) \
+        | awk '{print $2}'
+}
+
+cmdline() {
+    check_source_dir
+    check_remote_host $(host)
 }

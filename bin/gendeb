@@ -6,90 +6,6 @@ source $(dirname $0)/../src/bashlibs-verbose/lib/verbose.sh
 source $(progdir)/pkg-common
 source $(progdir)/debrepos-common
 
-REMOTE_HOST=$2
-shift; shift;
-CMAKE_OPTIONS="$@"
-
-host() {
-    echo $(args) \
-        | awk '{print $2}'
-}
-
-cmdline() {
-    check_source_dir
-
-    [[ -z $(host) ]] \
-        && eexit "You need to provide remote computer"
-}
-
-cmake_deb_filename() {
-	echo $(cmake_project_name)-$(app_version)-Linux.deb
-}
-
-run_remote() {
-	ssh root@$(host) $@
-}
-
-remote_mkdir() {
-	local dir=$1
-
-	run_remote "mkdir -p $dir"
-	echo $dir
-}
-
-get_target_cmp_dir() {
-	remote_mkdir $(tmp_dir)/$(cmake_project_name)/cmp
-}
-
-get_target_src_dir() {
-	remote_mkdir $(tmp_dir)/$(cmake_project_name)/src
-}
-
-copy_sources_to_target() {
-	cd $(package_source_dir)
-
-	rsync \
-		-a \
-		--exclude='*swp' \
-		--delete-excluded \
-		--delete \
-		* root@$(host):$(get_target_src_dir)
-
-	cd - > /dev/null 2>&1
-}
-
-clean_remote_dirs() {
-	run_remote "rm -Rf $(tmp_dir)"
-}
-
-archive_deb() {
-	local remote_deb_file=$1
-
-    vinfo "Saving $(cmake_deb_filename) to $(deb_archive_dir)"
-    scp root@$(host):$remote_deb_file $(deb_archive_dir)
-}
-
-run_cmake() {
-    vinfo "Making package"
-    run_remote \
-        "cd $(get_target_cmp_dir) \
-        && cmake $(get_target_src_dir) $CMAKE_OPTIONS \
-        && make package"
-}
-
-copy_deb_to_apt_archives() {
-    run_remote \
-        cp \
-        $(get_target_cmp_dir)/*deb \
-        /var/cache/apt/archives/
-}
-
-install_deb() {
-    vinfo "Installing $(cmake_deb_filename) on $(host)"
-	run_remote \
-        dpkg -i --force-depends \
-        /var/cache/apt/archives/$(cmake_deb_filename)
-}
 
 main() {
     cmdline
@@ -99,7 +15,9 @@ main() {
     run_cmake
     copy_deb_to_apt_archives
     install_deb
-	archive_deb /var/cache/apt/archives/$(cmake_deb_filename)
+	archive_deb \
+        /var/cache/apt/archives/$(cmake_deb_filename) \
+        $(deb_archive_dir)
 #	run_remote dpkg -L $(cmake_project_name)
 #	run_remote aptitude install $(cmake_project_name)
 #	run_remote $PROGNAME --test
