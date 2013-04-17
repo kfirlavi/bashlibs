@@ -48,3 +48,41 @@ gen_changelog() {
 	git --no-pager log . > ChangeLog
 	cd - > /dev/null 2>&1
 }
+
+print_ruler() {
+    local sign=${1:-'*'}
+    local length=${2:-80}
+
+    printf "${sign}%.0s" $(eval echo {1..$length})
+    echo
+}
+
+gap() {
+    local length=$1
+
+    printf " %.0s" $(eval echo {1..$length})
+}
+
+print_header() {
+    local package_name=$1
+    local length=${#package_name}
+    local side=$(((80 - length)/2 - 1))
+    local sign='*'
+
+
+    color blue
+    echo
+    print_ruler "$sign" 80
+    echo -n "$sign"
+    gap $side
+    color yellow
+    echo -n $package_name
+    color blue
+    gap $side
+    echo -n "$sign"
+    echo
+    print_ruler "$sign" 80
+    echo
+    no_color
+
+}
