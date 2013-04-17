@@ -22,7 +22,7 @@ cmdline() {
         && eexit "You need to provide remote computer"
 }
 
-get_deb_filename() {
+cmake_deb_filename() {
 	echo $(cmake_project_name)-$(app_version)-Linux.deb
 }
 
@@ -65,7 +65,7 @@ clean_remote_dirs() {
 archive_deb() {
 	local remote_deb_file=$1
 
-    vinfo "Saving $(get_deb_filename) to $(deb_archive_dir)"
+    vinfo "Saving $(cmake_deb_filename) to $(deb_archive_dir)"
     scp root@$(host):$remote_deb_file $(deb_archive_dir)
 }
 
@@ -85,10 +85,10 @@ copy_deb_to_apt_archives() {
 }
 
 install_deb() {
-    vinfo "Installing $(get_deb_filename) on $(host)"
+    vinfo "Installing $(cmake_deb_filename) on $(host)"
 	run_remote \
         dpkg -i --force-depends \
-        /var/cache/apt/archives/$(get_deb_filename)
+        /var/cache/apt/archives/$(cmake_deb_filename)
 }
 
 main() {
@@ -99,7 +99,7 @@ main() {
     run_cmake
     copy_deb_to_apt_archives
     install_deb
-	archive_deb /var/cache/apt/archives/$(get_deb_filename)
+	archive_deb /var/cache/apt/archives/$(cmake_deb_filename)
 #	run_remote dpkg -L $(cmake_project_name)
 #	run_remote aptitude install $(cmake_project_name)
 #	run_remote $PROGNAME --test

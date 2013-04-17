@@ -28,6 +28,7 @@ repository_architecture() {
     case $arch in
         armv7l) echo armhf ;;
           i686) echo i386  ;;
+          i386) echo i386  ;;
     esac
 }
 
