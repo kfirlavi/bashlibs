@@ -1,8 +1,7 @@
 #!/bin/bash
-include() { true; }
-source $(dirname $0)/../src/bashlibs-base/lib/header.sh
-source $(dirname $0)/../src/bashlibs-colors/lib/colors.sh
-source $(dirname $0)/../src/bashlibs-verbose/lib/verbose.sh
+source $(progdir)/bashlibs-intree-init
+source $(progdir)/pkg-common
+include verbose.sh
 
 gen_manifests() {
     local portage_dir=$1

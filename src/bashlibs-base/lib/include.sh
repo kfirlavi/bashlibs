@@ -1,7 +1,3 @@
-libraries_path() {
-    echo /usr/lib/bashlibs
-}
-
 libraries_tests_dir() {
     echo /usr/share/bashlibs/test
 }
@@ -29,7 +25,7 @@ include() {
     local library_name=$1
 
     is_library_included $library_name \
-        || source $(libraries_path)/$library_name
+        || source $(find_library $library_name)
 
     save_library_as_included $library_name
 }

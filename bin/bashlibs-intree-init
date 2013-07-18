@@ -1,0 +1,3 @@
+#!/bin/bash
+export BASHLIBS_SOURCE_TREE="$(pwd)/$(dirname $0)/.."
+source $BASHLIBS_SOURCE_TREE/src/bashlibs-base/lib/base.sh

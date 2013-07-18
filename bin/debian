@@ -1,10 +1,9 @@
 #!/bin/bash
-include() { true; }
-source $(dirname $0)/../src/bashlibs-base/lib/header.sh
-source $(dirname $0)/../src/bashlibs-colors/lib/colors.sh
-source $(dirname $0)/../src/bashlibs-verbose/lib/verbose.sh
-source $(progdir)/debrepos-common
+source $(progdir)/bashlibs-intree-init
 source $(progdir)/pkg-common
+source $(progdir)/debrepos-common
+include verbose.sh
+
 readonly HOST=$1
 
 host() {
