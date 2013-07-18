@@ -4,9 +4,14 @@ repository_name() {
     echo bashlibs-repository
 }
 
+repository_base_dir() {
+    create_dir_if_needed \
+        $(progdir)/../debian
+}
+
 repository_dir() {
     create_dir_if_needed \
-        $(progdir)/../debian/$(repository_name)/$(repository_architecture)
+        $(repository_base_dir)/$(repository_name)/$(repository_architecture)
 }
 
 repository_binary_dir() {
@@ -34,7 +39,7 @@ repository_architecture() {
 
 deb_archive_dir() {
     create_dir_if_needed \
-        $(progdir)/../debian/deb-archive/$(repository_architecture)
+        $(repository_base_dir)/deb-archive/$(repository_architecture)
 }
 
 copy_deb_to_repository() {
