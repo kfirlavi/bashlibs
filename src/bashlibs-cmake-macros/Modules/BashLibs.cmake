@@ -1,3 +1,6 @@
+include(SetAppVersion)
+include(InstallDocs)
+
 set(BASH_LIBS_DIR 
     "usr/lib/bashlibs")
 
