@@ -80,3 +80,9 @@ delete_edge_spaces() {
         | sed 's/^[ ][ ]*//' \
         | sed 's/[ ][ ]*$//'
 }
+
+string_inside_quotes() {
+    IFS= read -r
+    echo "$REPLY" \
+        | sed 's/.*"\(.*\)".*/\1/'
+}

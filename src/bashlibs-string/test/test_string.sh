@@ -79,5 +79,12 @@ test_delete_edge_spaces() {
     returns_empty "echo '' | delete_edge_spaces"
 }
 
+test_string_inside_quotes() {
+    return_equals "abc" "echo '\"abc\"' | string_inside_quotes"
+    return_equals " abc " "echo '\" abc \"' | string_inside_quotes"
+    return_equals "a" "echo 'b \"a\" c' | string_inside_quotes"
+    return_equals "a line of" "echo 'this is \"a line of\" example' | string_inside_quotes"
+}
+
 # load shunit2
 source /usr/share/shunit2/shunit2
