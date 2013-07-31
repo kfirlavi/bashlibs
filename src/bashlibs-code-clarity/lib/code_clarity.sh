@@ -4,7 +4,7 @@ is_empty() {
     [[ -z $var ]]
 }
 
-is_none_empty() {
+is_not_empty() {
     local var=$1
 
     [[ -n $var ]]
@@ -13,7 +13,7 @@ is_none_empty() {
 is_defined() {
     local var=$1
 
-    is_none_empty $var
+    is_not_empty $var
 }
 
 is_not_defined() {
