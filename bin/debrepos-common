@@ -4,14 +4,9 @@ repository_name() {
     echo bashlibs-repository
 }
 
-repository_base_dir() {
-    create_dir_if_needed \
-        $(progdir)/../debian
-}
-
 repository_dir() {
     create_dir_if_needed \
-        $(repository_base_dir)/$(repository_name)/$(repository_architecture)
+        $(progdir)/../debian/$(repository_name)/$(repository_architecture)
 }
 
 repository_binary_dir() {
@@ -34,12 +29,13 @@ repository_architecture() {
         armv7l) echo armhf ;;
           i686) echo i386  ;;
           i386) echo i386  ;;
+        x86_64) echo amd64 ;;
     esac
 }
 
 deb_archive_dir() {
     create_dir_if_needed \
-        $(repository_base_dir)/deb-archive/$(repository_architecture)
+        $(progdir)/../debian/deb-archive/$(repository_architecture)
 }
 
 copy_deb_to_repository() {
