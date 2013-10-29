@@ -4,3 +4,4 @@
 * remove the global cmake-macros loading to the bashlibs-cmake-macros module
 * write README for each lib with example of usage
 * write blog post with examples
+* need to warn when no document found. Now it is just INFO.
