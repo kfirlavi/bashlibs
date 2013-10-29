@@ -29,6 +29,7 @@ repository_architecture() {
         armv7l) echo armhf ;;
           i686) echo i386  ;;
           i386) echo i386  ;;
+        x86_64) echo amd64 ;;
     esac
 }
 

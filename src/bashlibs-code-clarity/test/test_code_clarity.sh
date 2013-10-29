@@ -16,17 +16,17 @@ test_is_empty() {
 	return_true "is_empty $var2"
 }
 
-test_is_none_empty() {
-	return_false "is_none_empty $none_variable"
+test_is_not_empty() {
+	return_false "is_not_empty $none_variable"
 
     local var1
-	return_false "is_none_empty $var1"
+	return_false "is_not_empty $var1"
 
     local var2="str"
-	return_true "is_none_empty $var2"
+	return_true "is_not_empty $var2"
 
     local var2=""
-	return_false "is_none_empty $var2"
+	return_false "is_not_empty $var2"
 }
 
 test_is_defined() {

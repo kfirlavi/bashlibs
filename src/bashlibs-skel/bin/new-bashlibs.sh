@@ -20,7 +20,9 @@ lib_file_name() {
 }
 
 project_dir() {
-    echo $BASH_LIBS_DIR/$(project_name $library_name)
+    local library_name=$1
+
+    echo $BASH_LIBS_DIR/bashlibs-$(project_name $library_name)
 }
 
 cp_skelaton() {
@@ -28,12 +30,12 @@ cp_skelaton() {
 
     rsync -av \
         $SKELATON_DIR/ \
-        $(project_dir)
+        $(project_dir $library_name)
 }
 
 create_libfile() {
     local library_name=$1
-    local lib_dir=$(project_dir)/lib
+    local lib_dir=$(project_dir $library_name)/lib
 
     mv \
         $lib_dir/project_name.sh \
@@ -42,7 +44,7 @@ create_libfile() {
 
 create_testfile() {
     local library_name=$1
-    local test_dir=$(project_dir)/test
+    local test_dir=$(project_dir $library_name)/test
     local src=$test_dir/test_project_name.sh
     local dst=$test_dir/test_$(lib_file_name $library_name).sh
 
@@ -57,8 +59,8 @@ modify_cmake() {
     local library_name=$1
 
     sed -i \
-        "s/project-name/$(project_name $library_name)/g" \
-        $(project_dir)/CMakeLists.txt
+        "s/project-name/bashlibs-$(project_name $library_name)/g" \
+        $(project_dir $library_name)/CMakeLists.txt
 }
 
 create_new_bash_library_project() {
