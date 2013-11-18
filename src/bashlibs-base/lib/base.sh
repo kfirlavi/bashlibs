@@ -7,7 +7,7 @@ find_library() {
 
     find $(libraries_path) \
         -type f \
-        -path "*lib/$library_name"
+        -name "$library_name"
 }
 
 libraries_path() {

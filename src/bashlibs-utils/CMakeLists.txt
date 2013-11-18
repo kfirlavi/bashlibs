@@ -14,7 +14,7 @@ set(CPACK_DEBIAN_PACKAGE_DEPENDS
     bashlibs-code-clarity (>= 0.0.2),
     bashlibs-verbose (>= 0.0.5),
     bashlibs-usage (>= 0.0.2),
-    bashlibs-base (>= 0.0.4),
+    bashlibs-base (>= 0.0.7),
     bash")
 include(PackageCreator)
 

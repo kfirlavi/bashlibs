@@ -8,6 +8,7 @@ list(APPEND CMAKE_MODULE_PATH
 
 include(BashLibs)
 set(CPACK_PACKAGING_INSTALL_PREFIX "/")
-set(CPACK_DEBIAN_PACKAGE_DEPENDS "shunit2, bash, bashlibs-utils")
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "shunit2, bash, bashlibs-utils (>= 0.0.11)")
 include(PackageCreator)
 
+add_subdirectory(bin)

@@ -1,0 +1,25 @@
+#!/bin/bash
+[[ -d $(pwd)/$(dirname $0)/../src ]] \
+    && export BASHLIBS_SOURCE_TREE=$(pwd)/$(dirname $0)/.. \
+    && $($(dirname $0)/bashlibs --load-base) \
+    || $(bashlibs --load-base)
+include package_build.sh
+include deb_repository.sh
+include verbose.sh
+
+main() {
+    cmdline
+	clean_remote_dirs
+	gen_changelog
+	copy_sources_to_target
+    run_cmake
+    copy_deb_to_apt_archives
+    install_deb
+	archive_deb \
+        /var/cache/apt/archives/$(cmake_deb_filename) \
+        $(deb_archive_dir)
+#	run_remote dpkg -L $(cmake_project_name)
+#	run_remote aptitude install $(cmake_project_name)
+#	run_remote $PROGNAME --test
+}
+main
