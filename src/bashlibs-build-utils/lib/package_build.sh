@@ -1,4 +1,6 @@
 #!/bin/bash
+include verbose.sh
+include colors.sh
 
 package_source_dir() {
     local dir=$(echo $(args) | awk '{print $1}')

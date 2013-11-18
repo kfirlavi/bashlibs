@@ -1,7 +1,7 @@
 #!/bin/bash
-source $(progdir)/bashlibs-intree-init
-source $(dirname $0)/../src/bashlibs-build-utils/lib/package_build.sh
-source $(dirname $0)/../src/bashlibs-build-utils/lib/deb_repository.sh
+source $(dirname $0)/bashlibs-intree-init
+include deb_repository.sh
+include verbose.sh
 source /home/kfir/bin/lib/date
 include verbose.sh
 

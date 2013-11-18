@@ -1,3 +1,13 @@
 #!/bin/bash
-export BASHLIBS_SOURCE_TREE="$(pwd)/$(dirname $0)/.."
+
+# This variable is exported to sub shell, so we need to clear it for 
+# sub shell to work properly
+export _LIBRARIES_INCLUDED=
+
+[[ -z $BASHLIBS_SOURCE_TREE ]] \
+    && export BASHLIBS_SOURCE_TREE="$(pwd)/$(dirname $0)/.."
 source $BASHLIBS_SOURCE_TREE/src/bashlibs-base/lib/base.sh
+
+srcdir() {
+    echo $(progdir)/../src
+}
