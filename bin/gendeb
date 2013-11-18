@@ -1,9 +1,8 @@
 #!/bin/bash
 source $(progdir)/bashlibs-intree-init
-source $(progdir)/pkg-common
-source $(progdir)/debrepos-common
+source $(dirname $0)/../src/bashlibs-build-utils/lib/package_build.sh
+source $(dirname $0)/../src/bashlibs-build-utils/lib/deb_repository.sh
 include verbose.sh
-
 
 main() {
     cmdline

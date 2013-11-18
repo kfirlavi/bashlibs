@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 2.6)
-project (bashlibs-verbose)
+project (bashlibs-string)
 
 list(APPEND CMAKE_MODULE_PATH 
     "/usr/share/cmake-macros/Modules")
@@ -8,10 +8,6 @@ list(APPEND CMAKE_MODULE_PATH
 
 include(BashLibs)
 set(CPACK_PACKAGING_INSTALL_PREFIX "/")
-set(CPACK_DEBIAN_PACKAGE_DEPENDS
-    "shunit2, 
-    bashlibs-utils (>= 0.0.6),
-    bashlibs-shunit2-enhancements (>= 0.0.2),
-    bash")
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "shunit2, bash, bashlibs-utils")
 include(PackageCreator)
 
