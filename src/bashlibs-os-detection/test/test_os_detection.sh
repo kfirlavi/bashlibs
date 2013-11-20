@@ -1,5 +1,5 @@
 #!/bin/bash
-$(bashlibs --include include.sh)
+$(bashlibs --load-base)
 include shunit2_enhancements.sh
 include os_detection.sh
 

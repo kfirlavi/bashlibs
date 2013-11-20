@@ -75,6 +75,7 @@ cmdline() {
 		     ;;
 		 x)
 		     set -x
+             readonly DEBUG='-x'
 		     ;;
          t)
              RUN_TESTS=$OPTARG

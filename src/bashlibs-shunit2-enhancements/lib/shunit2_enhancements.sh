@@ -127,19 +127,22 @@ find_shunit2() {
 }
 
 run_test() {
-        local test_file=$1
-        vinfo "Running tests for: $(color purple)$(basename $test_file)$(no_color)"
-        clean_library_included
-        bash $debug $test_file
+    local test_file=$1
+    local debug=$2 # gets -x for debugging
+
+    vinfo "Running tests for: $(color purple)$(basename $test_file)$(no_color)"
+    clean_library_included
+    bash $debug $test_file
 }
 
 run_all_tests() {
     local tests_dir=$1
+    local debug=$2 # gets -x for debugging
     local test_file
 
     for test_file in $tests_dir/test_*
     do
-        run_test $test_file
+        run_test $debug $test_file
     done
 }
 
@@ -152,6 +155,6 @@ run_tests() {
     find_shunit2
 
     [[ $RUN_TESTS == all ]] \
-        && run_all_tests $tests_dir \
-        || run_test $tests_dir/$RUN_TESTS
+        && run_all_tests $tests_dir $debug \
+        || run_test $tests_dir/$RUN_TESTS $debug
 }
