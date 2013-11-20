@@ -1,5 +1,5 @@
 intree_include() {
-    [[ -n $BASHLIBS_SOURCE_TREE ]]
+    [[ -d $BASHLIBS_SOURCE_TREE/src ]]
 }
 
 find_library() {
