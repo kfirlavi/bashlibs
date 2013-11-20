@@ -1,7 +1,12 @@
 #!/bin/bash
-readonly BASHLIBS_SOURCE_TREE=$(cd $(dirname $0)/.. ; pwd)
-source $BASHLIBS_SOURCE_TREE/src/bashlibs-base/lib/base.sh > /dev/null 2>&1 \
-    || source /usr/lib/bashlibs/base.sh
+BASHLIBS_SOURCE_TREE=$(cd $(dirname $0)/.. ; pwd)
+if [[ -f $BASHLIBS_SOURCE_TREE/src/bashlibs-base/lib/base.sh ]]; then
+    source $BASHLIBS_SOURCE_TREE/src/bashlibs-base/lib/base.sh
+else
+    BASHLIBS_SOURCE_TREE=
+    source /usr/lib/bashlibs/base.sh
+fi
+
 include code_clarity.sh
 include verbose.sh
 include usage.sh

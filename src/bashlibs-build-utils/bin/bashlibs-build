@@ -85,7 +85,7 @@ cmdline() {
              readonly TARGET_BUILD_HOST=$OPTARG
              ;;
          p)
-             readonly PROJECT_PATH=$OPTARG
+             readonly PROJECT_PATH=$(cd $OPTARG; pwd)
              ;;
          k)
              readonly PACKAGE_TYPE=$OPTARG
