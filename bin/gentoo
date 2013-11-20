@@ -1,6 +1,7 @@
 #!/bin/bash
-source $(progdir)/bashlibs-intree-init
-source $(progdir)/pkg-common
+source $(cd $(dirname $0)/.. ; pwd)/bin/bashlibs-intree-init > /dev/null 2>&1 \
+    || $(bashlibs --load-base)
+include package_build.sh
 include verbose.sh
 
 gen_manifests() {
@@ -28,7 +29,9 @@ gen_all_tar_files() {
     vinfo "Generating source packages"
     for i in $(all_project_dirs $projects_dir)
     do
-        $(progdir)/gentbz $i
+        $(progdir)/bashlibs-build \
+            --package-type tbz \
+            --project-path $i
     done
 }
 

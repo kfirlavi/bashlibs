@@ -5,8 +5,14 @@
 export _LIBRARIES_INCLUDED=
 
 [[ -z $BASHLIBS_SOURCE_TREE ]] \
-    && export BASHLIBS_SOURCE_TREE="$(pwd)/$(dirname $0)/.."
-source $BASHLIBS_SOURCE_TREE/src/bashlibs-base/lib/base.sh
+    && readonly BASHLIBS_SOURCE_TREE=$(cd $(dirname $0)/.. ; pwd)
+
+if [[ -d $BASHLIBS_SOURCE_TREE/src ]]; then
+    export BASHLIBS_SOURCE_TREE
+    $($BASHLIBS_SOURCE_TREE/bin/bashlibs --load-base)
+else
+    $(bashlibs --load-base)
+fi
 
 srcdir() {
     echo $(progdir)/../src

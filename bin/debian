@@ -1,5 +1,6 @@
 #!/bin/bash
-source $(dirname $0)/bashlibs-intree-init
+source $(cd $(dirname $0)/.. ; pwd)/bin/bashlibs-intree-init > /dev/null 2>&1 \
+    || $(bashlibs --load-base)
 include package_build.sh
 include deb_repository.sh
 
@@ -14,9 +15,10 @@ create_package() {
 
     print_header $package_name
 
-    $(progdir)/gendeb \
-        $(progdir)/../src/$package_name \
-        $(host)
+    $(progdir)/bashlibs-build \
+        --package-type deb \
+        --server $(host) \
+        --project-path $(progdir)/../src/$package_name
 }
 
 remove_package() {

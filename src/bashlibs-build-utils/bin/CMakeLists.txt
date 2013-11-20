@@ -1,2 +1,2 @@
-install(PROGRAMS gendeb gentbz
+install(PROGRAMS bashlibs-build
     DESTINATION usr/bin)

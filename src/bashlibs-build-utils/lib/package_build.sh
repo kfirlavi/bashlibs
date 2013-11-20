@@ -2,17 +2,8 @@
 include verbose.sh
 include colors.sh
 
-package_source_dir() {
-    local dir=$(echo $(args) | awk '{print $1}')
-
-    echo $dir \
-        | grep -q '^/' \
-        && echo $dir \
-        || echo $(working_directory)/$dir
-}
-
 cmake_project_name() {
-	grep -i "project" $(package_source_dir)/CMakeLists.txt \
+	grep -i "project" $(project_path)/CMakeLists.txt \
 		| head -1 \
 		| cut -d '(' -f 2 | cut -d ')' -f 1 \
 		| tr ' ' '.'
@@ -22,28 +13,22 @@ tmp_dir() {
     echo /tmp/$(progname)
 }
 
-check_source_dir() {
-    [[ ! -d $(package_source_dir) ]] \
-        && eexit "\"$(args)\": is not a directory!"
+check_project_path() {
+    [[ -z $(project_path) ]] \
+        && eexit "You need to provide a project path"
 
-    [[ ! -f $(package_source_dir)/CMakeLists.txt ]] \
-        && eexit "You need to provide a cmake source dir. $(package_source_dir)/CMakeLists.txt not found!"
+    [[ ! -d $(project_path) ]] \
+        && eexit "project path '$(project_path)': is not a directory!"
+
+    [[ ! -f $(project_path)/CMakeLists.txt ]] \
+        && eexit "You need to provide a cmake source dir. $(project_path)/CMakeLists.txt not found!"
 }
 
-check_remote_host() {
+verify_target_build_host() {
     local remote_host=$1
-
-    [[ -z $remote_host ]] \
-        && eexit "You need to provide remote computer"
 
     run_remote ls / > /dev/null \
         || eexit "host $remote_host should respond to 'ssh root@$remote_host' without password prompt. Use ssh-keygen and ssh-copy-id to solve the problem."
-}
-
-cmake_options() {
-    local args=($(args))
-
-    echo ${args[@]:2:${#args[@]}}
 }
 
 create_dir_if_needed() {
@@ -56,11 +41,11 @@ create_dir_if_needed() {
 }
 
 app_version() {
-	cat $(package_source_dir)/version
+	cat $(project_path)/version
 }
 
 gen_changelog() {
-	cd $(package_source_dir)
+	cd $(project_path)
 	git --no-pager log . > ChangeLog
 	cd - > /dev/null 2>&1
 }
@@ -134,7 +119,7 @@ get_target_src_dir() {
 }
 
 copy_sources_to_target() {
-	cd $(package_source_dir)
+	cd $(project_path)
 
 	rsync \
 		-a \
@@ -174,11 +159,5 @@ remote_mkdir() {
 }
 
 host() {
-    echo $(args) \
-        | awk '{print $2}'
-}
-
-cmdline() {
-    check_source_dir
-    check_remote_host $(host)
+    echo $(target_build_host)
 }

@@ -1,7 +1,5 @@
 #!/bin/bash
-[[ -d $(pwd)/$(dirname $0)/../src ]] \
-    && export BASHLIBS_SOURCE_TREE=$(pwd)/$(dirname $0)/.. \
-    && source $BASHLIBS_SOURCE_TREE/src/bashlibs-base/lib/base.sh \
+source $BASHLIBS_SOURCE_TREE/src/bashlibs-base/lib/base.sh > /dev/null 2>&1 \
     || source /usr/lib/bashlibs/base.sh
 include code_clarity.sh
 include verbose.sh

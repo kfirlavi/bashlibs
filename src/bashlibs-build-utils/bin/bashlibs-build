@@ -1,0 +1,202 @@
+#!/bin/bash
+source $(cd $(dirname $0)/.. ; pwd)/bin/bashlibs-intree-init > /dev/null 2>&1 \
+    || $(bashlibs --load-base)
+include package_build.sh
+include deb_repository.sh
+include verbose.sh
+include usage.sh
+
+usage() {
+    set_column_indentation_gap 14
+	cat <<- EOF
+	$(section_usage) $(progname) options
+	
+	    $(progname) - a package builder utility for bashlibs
+	    It can create a deb package for debian or ubuntu systems, and 
+	    can create a gentoo source tbz package
+
+	$(section_options)
+	$(item s server 'IP or hostname of the target system')
+	$(item p project-path 'path to the project you want to build')
+	$(item k package-type "Specify the package type you want to build: $(package_types)")
+	$(item c cmake-options 'cmake extra options')
+	$(items_test_help_verbose_debug)
+	
+	$(section_examples)
+	$(example_description 'When working on bashlibs source tree, you can issue compile command to build a package like this:')
+	$(example_description 'Build a debian package')
+	$(example $(progname) --package-type deb --server 192.168.1.2 --project-path src/bashlibs-colors)
+	$(example_description 'Build a gentoo tbz package')
+	$(example $(progname) --package-type tbz --project-path src/bashlibs-colors)
+	$(example_description 'Add cmake definition, for example COLORS_ON, when building debian package')
+	$(example $(progname) --package-type deb --server 192.168.1.2 --project-path src/bashlibs-colors --cmake-options '-DCOLORS_ON=TRUE')
+
+	$(example_test $(progname))
+	EOF
+}
+
+cmdline() {
+    print_usage_and_exit_if_args_are_empty $@
+
+	# got this idea from here:
+	# http://kirk.webfinish.com/2009/10/bash-shell-script-to-use-getopts-with-gnu-style-long-positional-parameters/
+	local arg=
+	for arg
+	do
+		local delim=""
+		case "$arg" in
+			#translate --gnu-long-options to -g (short options)
+		 --project-path) args="${args}-p ";;
+		       --server) args="${args}-s ";;
+		 --package-type) args="${args}-k ";;
+		--cmake-options) args="${args}-c ";;
+		         --test) args="${args}-t ";;
+			     --help) args="${args}-h ";;
+		      --verbose) args="${args}-v ";;
+			    --debug) args="${args}-x ";;
+                      #pass through anything else
+                      *) [[ "${arg:0:1}" == "-" ]] || delim="\""
+                          args="${args}${delim}${arg}${delim} ";;
+		esac
+	done
+	 
+	#Reset the positional parameters to the short options
+	eval set -- $args
+
+	while getopts "vhxt:p:s:k:c:" OPTION
+	do
+	     case $OPTION in
+		 v)
+		     VERBOSE=$(($VERBOSE+1))
+             export readonly VERBOSE
+		     ;;
+		 h)
+		     usage
+		     exit
+		     ;;
+		 x)
+		     set -x
+		     ;;
+         t)
+             RUN_TESTS=$OPTARG
+             vinfo "Running tests"
+             ;;
+         s)
+             readonly TARGET_BUILD_HOST=$OPTARG
+             ;;
+         p)
+             readonly PROJECT_PATH=$OPTARG
+             ;;
+         k)
+             readonly PACKAGE_TYPE=$OPTARG
+             ;;
+         c)
+             readonly CMAKE_OPTIONS=$OPTARG
+             ;;
+	     esac
+	done
+
+    check_project_path
+    check_package_type
+}
+
+target_build_host() {
+    echo $TARGET_BUILD_HOST
+}
+
+project_path() {
+    echo $PROJECT_PATH
+}
+
+package_type() {
+    echo $PACKAGE_TYPE
+}
+
+cmake_options() {
+    echo $CMAKE_OPTIONS
+}
+
+package_types() {
+    echo deb tbz
+}
+
+check_package_type() {
+    [[ $(package_type) != deb ]] \
+        && [[ $(package_type) != tbz ]] \
+        && eexit "You need to specify package type: $(package_types)"
+}
+
+workdir() {
+    create_dir_if_needed \
+        $(tmp_dir)/$(get_tbz_filename_prefix)
+}
+
+get_dir_project_name() {
+	basename $(project_path)
+}
+
+get_tbz_filename_prefix() {
+	echo $(cmake_project_name)-$(app_version)-Source
+}
+
+get_tbz_filename() {
+	echo $(get_tbz_filename_prefix).tar.bz2
+}
+
+clean_tmp_dirs() {
+    [[ $(tmp_dir) =~ /tmp/ ]] \
+        && [[ -d $(tmp_dir) ]] \
+        && rm -Rf $(tmp_dir)
+}
+
+copy_sources_to_workdir() {
+    cd $(project_path)
+    rsync -r --exclude=*swp * $(workdir)/
+    cd - > /dev/null 2>&1
+}
+
+tar_sources() {
+    local f=/usr/portage/distfiles/$(get_tbz_filename)
+
+    cd $(tmp_dir)
+	tar cjf $f * \
+	    && echo "File $f created."
+    cd - > /dev/null 2>&1
+}
+
+save_package() {
+    local archive=$(progdir)/../gentoo/distfiles
+
+    mkdir -p $archive
+	cp /usr/portage/distfiles/$(get_tbz_filename) $archive
+}
+
+create_deb_package() {
+    verify_target_build_host
+	clean_remote_dirs
+	gen_changelog
+	copy_sources_to_target
+    run_cmake
+    copy_deb_to_apt_archives
+    install_deb
+	archive_deb \
+        /var/cache/apt/archives/$(cmake_deb_filename) \
+        $(deb_archive_dir)
+#	run_remote dpkg -L $(cmake_project_name)
+#	run_remote aptitude install $(cmake_project_name)
+#	run_remote $PROGNAME --test
+}
+
+create_tbz_package() {
+	gen_changelog
+    copy_sources_to_workdir
+    tar_sources
+    save_package
+	clean_tmp_dirs
+}
+
+main() {
+    cmdline $(args)
+    create_$(package_type)_package
+}
+main

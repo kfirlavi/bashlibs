@@ -114,3 +114,11 @@ items_test_help_verbose_debug() {
 	$(item_debug)
 	EOF
 }
+
+print_usage_and_exit_if_args_are_empty() {
+    local args=$@
+
+    [[ -z $args ]] \
+        && usage \
+        && exit
+}
