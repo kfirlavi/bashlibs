@@ -64,31 +64,63 @@ gap() {
     printf " %.0s" $(eval echo {1..$length})
 }
 
+print_header_midline() {
+    local package_name=$1
+    local name_color=$2
+    local sign=$3
+    local box_color=$4
+    local line_length=$5
+    local length=${#package_name}
+    local side=$(((line_length - length)/2 - 1))
+
+    color $box_color
+    echo -n "$sign"
+    gap $side
+
+    color $name_color
+    echo -n $package_name
+
+    color $box_color
+    gap $((side+length%2))
+    echo -n "$sign"
+
+    no_color
+}
+
 print_header() {
     local package_name=$1
-    local length=${#package_name}
-    local side=$(((80 - length)/2 - 1))
-    local sign='*'
+    local name_color=$2
+    local sign=$3
+    local box_color=$4
+    local header_size=$5
 
+    echo
+    color blue
+    print_ruler "$sign" $header_size
 
-    color blue
+    print_header_midline \
+        $package_name \
+        yellow \
+        "$sign" \
+        blue \
+        $header_size
+
     echo
-    print_ruler "$sign" 80
-    echo -n "$sign"
-    gap $side
-    color yellow
-    echo -n $package_name
     color blue
-    gap $side
-    echo -n "$sign"
-    echo
-    print_ruler "$sign" 80
+    print_ruler "$sign" $header_size
+
     echo
     no_color
-
 }
 
 run_cmake() {
+    print_header \
+        $(cmake_project_name) \
+        yellow \
+        "*" \
+        blue \
+        80
+
     vinfo "Making package"
     run_remote \
         "cd $(get_target_cmp_dir) \

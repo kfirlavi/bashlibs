@@ -63,7 +63,8 @@ return_equals() {
     local cmd=$2
     local ret=$(eval "$cmd")
 
-    assertTrue "return value should equal to expected. cmd='$cmd', got='$ret', expected='$expected'" \
+    assertTrue "return value should equal to expected. cmd='$cmd', got='$ret', expected='$expected'. Escaped strings: got: '$(printf \"%q\" \"$expected\")' expected: '$(printf \"%q\" \"$expected\")'
+" \
         "[[ '$expected' == '$ret' ]]"
 }
 
