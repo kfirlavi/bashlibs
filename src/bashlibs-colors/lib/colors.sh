@@ -39,3 +39,11 @@ no_color()
 {
 	echo -en "\033[0m"
 }
+
+strip_colors() {
+    local string=$@
+    local color_code='[0-9]{1,2}'
+
+    echo $string \
+        | sed -r "s/\x1B\[($color_code(;$color_code)?)[m|K]//g"
+}
