@@ -193,3 +193,91 @@ remote_mkdir() {
 host() {
     echo $(target_build_host)
 }
+
+package_types() {
+    echo deb tbz
+}
+
+valid_package_type() {
+    local ptype=$1
+
+    [[ $(package_types) =~ $ptype ]]
+}
+
+dir_project_name() {
+	basename $(project_path)
+}
+
+tbz_filename_prefix() {
+	echo $(cmake_project_name)-$(app_version)-Source
+}
+
+tbz_filename() {
+	echo $(tbz_filename_prefix).tar.bz2
+}
+
+top_dir() {
+    local dir=$1
+
+    echo $dir \
+        | cut -d '/' -f 2
+}
+
+dir_in_tmp() {
+    local dir=$1
+
+    [[ $(top_dir $dir) == tmp ]]
+}
+
+is_directory() {
+    local dir=$1
+
+    [[ -d $dir ]]
+}
+
+clean_dir_in_tmp() {
+    local dir=$1
+
+    dir_in_tmp $dir \
+        && is_directory $dir \
+        && rm -Rf $dir
+}
+
+clean_tmp_dir() {
+    clean_dir_in_tmp $(tmp_dir)
+}
+
+workdir() {
+    create_dir_if_needed \
+        $(tmp_dir)/$(tbz_filename_prefix)
+}
+
+copy_sources_to_workdir() {
+    cd $(project_path)
+    rsync -r --exclude=*swp * $(workdir)/
+    cd - > /dev/null 2>&1
+}
+
+distfiles_directory() {
+    create_dir_if_needed \
+        /usr/portage/distfiles
+}
+
+local_distfiles_directory() {
+    create_dir_if_needed \
+        $(progdir)/../gentoo/distfiles
+}
+
+tar_sources() {
+    local f=$(local_distfiles_directory)/$(tbz_filename)
+
+    cd $(tmp_dir)
+	tar cjf $f * \
+	    && vinfo "File $f created."
+    cd - > /dev/null 2>&1
+}
+
+copy_package_to_portage_distfiles_directory() {
+    cp $(local_distfiles_directory)/$(tbz_filename) \
+        $(distfiles_directory)
+}

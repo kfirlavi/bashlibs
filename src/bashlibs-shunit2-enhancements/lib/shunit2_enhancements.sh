@@ -116,6 +116,38 @@ files_should_equal() {
 	assertTrue "Files do not match! $file_a $file_b" $?
 }
 
+file_should_exist() {
+    local f=$1
+
+    assertTrue \
+        "file should exist $f" \
+        "[[ -f $f ]]"
+}
+
+file_shouldnt_exist() {
+    local f=$1
+
+    assertFalse \
+        "file shouldn't exist $f" \
+        "[[ -f $f ]]"
+}
+
+directory_should_exist() {
+    local d=$1
+
+    assertTrue \
+        "directory should exist $d" \
+        "[[ -d $d ]]"
+}
+
+directory_shouldnt_exist() {
+    local d=$1
+
+    assertFalse \
+        "directory should exist $d" \
+        "[[ -d $d ]]"
+}
+
 find_shunit2() {
     local i=
 

@@ -97,7 +97,8 @@ cmdline() {
 	done
 
     check_project_path
-    check_package_type
+    valid_package_type $PACKAGE_TYPE \
+        || eexit "You need to specify package type from this list: $(package_types)"
 }
 
 target_build_host() {
@@ -114,61 +115,6 @@ package_type() {
 
 cmake_options() {
     echo $CMAKE_OPTIONS
-}
-
-package_types() {
-    echo deb tbz
-}
-
-check_package_type() {
-    [[ $(package_type) != deb ]] \
-        && [[ $(package_type) != tbz ]] \
-        && eexit "You need to specify package type: $(package_types)"
-}
-
-workdir() {
-    create_dir_if_needed \
-        $(tmp_dir)/$(get_tbz_filename_prefix)
-}
-
-get_dir_project_name() {
-	basename $(project_path)
-}
-
-get_tbz_filename_prefix() {
-	echo $(cmake_project_name)-$(app_version)-Source
-}
-
-get_tbz_filename() {
-	echo $(get_tbz_filename_prefix).tar.bz2
-}
-
-clean_tmp_dirs() {
-    [[ $(tmp_dir) =~ /tmp/ ]] \
-        && [[ -d $(tmp_dir) ]] \
-        && rm -Rf $(tmp_dir)
-}
-
-copy_sources_to_workdir() {
-    cd $(project_path)
-    rsync -r --exclude=*swp * $(workdir)/
-    cd - > /dev/null 2>&1
-}
-
-tar_sources() {
-    local f=/usr/portage/distfiles/$(get_tbz_filename)
-
-    cd $(tmp_dir)
-	tar cjf $f * \
-	    && echo "File $f created."
-    cd - > /dev/null 2>&1
-}
-
-save_package() {
-    local archive=$(progdir)/../gentoo/distfiles
-
-    mkdir -p $archive
-	cp /usr/portage/distfiles/$(get_tbz_filename) $archive
 }
 
 create_deb_package() {
@@ -191,8 +137,8 @@ create_tbz_package() {
 	gen_changelog
     copy_sources_to_workdir
     tar_sources
-    save_package
-	clean_tmp_dirs
+    copy_package_to_portage_distfiles_directory
+	clean_tmp_dir
 }
 
 main() {
