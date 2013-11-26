@@ -1,5 +1,5 @@
 #!/bin/bash
-source $(cd $(dirname $0)/.. ; pwd)/bin/bashlibs-intree-init > /dev/null 2>&1 \
+source $(cd $(dirname $0)/.. ; pwd)/src/bashlibs-build-utils/bin/bashlibs-intree-init > /dev/null 2>&1 \
     || $(bashlibs --load-base)
 include package_build.sh
 include verbose.sh
