@@ -1,26 +1,37 @@
 #!/bin/bash
 
-date_Y_m_d()
-{
-  local delimiter=${1:-'.'}
-  date +%Y${delimiter}%m${delimiter}%d
+default_delimiter() {
+    echo '.'
 }
 
-date_hour_H_M()
-{
-  local delimiter=$1
-  date +%H${delimiter}%M
+date_str() {
+    local delimiter=${1:-$(default_delimiter)}
+
+    date +%Y${delimiter}%m${delimiter}%d
 }
 
-date_hour_H_M_S()
-{
-  local delimiter=$1
-  date +%H${delimiter}%M${delimiter}%S
+time_str() {
+    local delimiter=${1:-$(default_delimiter)}
+
+    date +%H${delimiter}%M
 }
 
-date_date_hour()
-{
-  local delimiter=${1:-'.'}
-  local hour_delimiter=${2:-'-'}
-  echo $(date_Y_m_d $delimiter)${hour_delimiter}$(date_hour_H_M $delimiter)
+time_with_seconds_str() {
+    local delimiter=${1:-$(default_delimiter)}
+
+    date +%H${delimiter}%M${delimiter}%S
+}
+
+date_time_str() {
+    local delimiter=${1:-$(default_delimiter)}
+    local hour_delimiter=${2:-'-'}
+
+    echo $(date_str $delimiter)${hour_delimiter}$(time_str $delimiter)
+}
+
+date_time_with_seconds_str() {
+    local delimiter=${1:-$(default_delimiter)}
+    local hour_delimiter=${2:-'-'}
+
+    echo $(date_str $delimiter)${hour_delimiter}$(time_with_seconds_str $delimiter)
 }

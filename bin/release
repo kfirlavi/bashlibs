@@ -3,7 +3,7 @@ source $(cd $(dirname $0)/.. ; pwd)/src/bashlibs-build-utils/bin/bashlibs-intree
     || $(bashlibs --load-base)
 include deb_repository.sh
 include verbose.sh
-source /home/kfir/bin/lib/date
+include date.sh
 include verbose.sh
 
 release_dir() {
@@ -17,7 +17,7 @@ iso_dir() {
 }
 
 filename_prefix() {
-    echo $(date_date_hour)-$(repository_name)
+    echo $(date_time_str)-$(repository_name)
 }
 
 tar_filename() {

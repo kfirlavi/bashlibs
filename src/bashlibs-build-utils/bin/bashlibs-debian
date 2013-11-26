@@ -49,6 +49,7 @@ main() {
     create_package bashlibs-initramfs
     create_package bashlibs-os-detection
     create_package bashlibs-usage
+    create_package bashlibs-date
     create_repository
 }
 main
