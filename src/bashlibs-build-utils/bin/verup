@@ -1,0 +1,28 @@
+#!/bin/bash
+readonly PATH_TO_VERSION_FILE=${1:-'.'}
+
+version_file() {
+    echo $PATH_TO_VERSION_FILE/version
+}
+
+patch_level() {
+    cat $(version_file) \
+        | cut -d '.' -f 3
+}
+
+increment_patch_level() {
+    local i=$(patch_level)
+
+    echo $(( i+1 ))
+}
+
+modify_patch_level() {
+    sed -i \
+        "s/\.$(patch_level)$/\.$(increment_patch_level)/" \
+        $(version_file)
+}
+
+main() {
+    modify_patch_level
+}
+main

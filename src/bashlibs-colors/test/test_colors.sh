@@ -1,5 +1,5 @@
 #!/bin/bash
-$(bashlibs --include include.sh)
+$(bashlibs --load-base)
 include shunit2_enhancements.sh
 include colors.sh
 
@@ -12,6 +12,12 @@ test_to_upper() {
 test_spaces_to_underscors() {
     returns light_blue "spaces_to_underscors light blue"
     returns light_blue "spaces_to_underscors light      blue"
+}
+
+test_strip_colors() {
+
+    returns "*12345*" \
+        "strip_colors \"$(color blue)*$(color yellow)12345$(color green)*$(no_color)\""
 }
 
 #test_color() {

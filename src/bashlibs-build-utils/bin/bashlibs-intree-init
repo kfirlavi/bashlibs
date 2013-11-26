@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# This variable is exported to sub shell, so we need to clear it for 
+# sub shell to work properly
+export _LIBRARIES_INCLUDED=
+
+[[ -z $BASHLIBS_SOURCE_TREE ]] \
+    && readonly BASHLIBS_SOURCE_TREE=$(cd $(dirname $0)/.. ; pwd)
+
+if [[ -d $BASHLIBS_SOURCE_TREE/src ]]; then
+    export BASHLIBS_SOURCE_TREE
+    $($BASHLIBS_SOURCE_TREE/bin/bashlibs --load-base)
+else
+    $(bashlibs --load-base)
+fi
+
+srcdir() {
+    echo $(progdir)/../src
+}

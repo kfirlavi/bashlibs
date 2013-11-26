@@ -1,11 +1,10 @@
 #!/bin/bash
-include() { true; }
-source $(dirname $0)/../src/bashlibs-base/lib/header.sh
-source $(dirname $0)/../src/bashlibs-colors/lib/colors.sh
-source $(dirname $0)/../src/bashlibs-verbose/lib/verbose.sh
-source $(dirname $0)/../src/bashlibs-date/lib/date.sh
-source $(progdir)/debrepos-common
-source $(progdir)/pkg-common
+source $(cd $(dirname $0)/.. ; pwd)/src/bashlibs-build-utils/bin/bashlibs-intree-init > /dev/null 2>&1 \
+    || $(bashlibs --load-base)
+include deb_repository.sh
+include verbose.sh
+source /home/kfir/bin/lib/date
+include verbose.sh
 
 release_dir() {
     create_dir_if_needed \

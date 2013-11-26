@@ -1,5 +1,12 @@
 #!/bin/bash
-source /usr/lib/bashlibs/base.sh
+BASHLIBS_SOURCE_TREE=$(cd $(dirname $0)/.. ; pwd)
+if [[ -f $BASHLIBS_SOURCE_TREE/src/bashlibs-base/lib/base.sh ]]; then
+    source $BASHLIBS_SOURCE_TREE/src/bashlibs-base/lib/base.sh
+else
+    BASHLIBS_SOURCE_TREE=
+    source /usr/lib/bashlibs/base.sh
+fi
+
 include code_clarity.sh
 include verbose.sh
 include usage.sh
@@ -74,17 +81,18 @@ cmdline() {
 		     ;;
 		 x)
 		     set -x
+             readonly DEBUG='-x'
 		     ;;
          t)
              RUN_TESTS=$OPTARG
              vinfo "Running tests"
              ;;
          i)
-             source_library $OPTARG
+             include $OPTARG
              exit
              ;;
          b)
-             source_base_library
+             include_base_library
              exit
              ;;
          p)
@@ -99,16 +107,21 @@ cmdline() {
         && exit 1
 }
 
-source_library() {
-    local library=$1
-
-    save_library_as_included $library
-    echo "source $(libraries_path)/$library"
+intree_include() {
+    [[ -n $BASHLIBS_SOURCE_TREE ]]
 }
 
-source_base_library() {
+libraries_path() {
+    intree_include \
+        && echo $BASHLIBS_SOURCE_TREE \
+        || echo /usr/lib/bashlibs
+}
+
+include_base_library() {
     save_library_as_included base.sh
-    echo "source $(libraries_path)/base.sh"
+    intree_include \
+        && echo "source $(libraries_path)/src/bashlibs-base/lib/base.sh" \
+        || echo "source $(libraries_path)/base.sh"
 }
 
 main() {
