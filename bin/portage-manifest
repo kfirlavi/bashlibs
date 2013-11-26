@@ -1,5 +1,6 @@
 #!/bin/bash                                                                
-source $(dirname $0)/../src/bashlibs-base/lib/header.sh
+source $(cd $(dirname $0)/.. ; pwd)/src/bashlibs-build-utils/bin/bashlibs-intree-init > /dev/null 2>&1 \
+    || $(bashlibs --load-base)
 
 gen_manifests() {
     local portage_dir=$1

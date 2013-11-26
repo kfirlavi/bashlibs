@@ -5,9 +5,14 @@ repository_name() {
     echo bashlibs-repository
 }
 
+repository_store_dir() {
+    create_dir_if_needed \
+        $(progdir)/../debian
+}
+
 repository_dir() {
     create_dir_if_needed \
-        $(progdir)/../debian/$(repository_name)/$(repository_architecture)
+        $(repository_store_dir)/$(repository_name)/$(repository_architecture)
 }
 
 repository_binary_dir() {
@@ -148,5 +153,30 @@ copy_newest_debs_to_repository() {
 
 create_repository() {
     copy_newest_debs_to_repository
-    $(progdir)/debrepos $(repository_dir)
+    generate_binary_index
+    generate_sources_index
+}
+
+generate_index() {
+    local index_type=$1 # binary, source
+    local index_name=$2 # Packages, Sources
+
+    vinfo "Generating debian repository $index_type index in $(repository_dir)"
+
+    cd $(repository_dir)
+
+    create_dir_if_needed $index_type > /dev/null
+
+    dpkg-scanpackages $index_type /dev/null 2> /dev/null \
+        | gzip -9c > $index_type/$index_name.gz
+
+    cd - > /dev/null 2>&1
+}
+
+generate_binary_index() {
+    generate_index binary Packages
+}
+
+generate_sources_index() {
+    generate_index source Sources
 }

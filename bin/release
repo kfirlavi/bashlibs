@@ -1,5 +1,6 @@
 #!/bin/bash
-source $(dirname $0)/bashlibs-intree-init
+source $(cd $(dirname $0)/.. ; pwd)/src/bashlibs-build-utils/bin/bashlibs-intree-init > /dev/null 2>&1 \
+    || $(bashlibs --load-base)
 include deb_repository.sh
 include verbose.sh
 source /home/kfir/bin/lib/date
