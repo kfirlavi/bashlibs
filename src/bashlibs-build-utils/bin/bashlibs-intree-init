@@ -13,7 +13,3 @@ if [[ -d $BASHLIBS_SOURCE_TREE/src ]]; then
 else
     $(bashlibs --load-base)
 fi
-
-srcdir() {
-    echo $(progdir)/../src
-}
