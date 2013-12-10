@@ -50,15 +50,28 @@ gen_changelog() {
 	cd - > /dev/null 2>&1
 }
 
+terminal_size() {
+    tput cols
+}
+
 print_ruler() {
     local sign=${1:-'*'}
-    local length=${2:-80}
+    local length=${2:-$(terminal_size)}
 
     printf "${sign}%.0s" $(eval echo {1..$length})
     echo
 }
 
-gap() {
+print_box_sides() {
+    local sign=${1:-'*'}
+    local length=${2:-$(terminal_size)}
+
+    echo -n "$sign"
+    print_gap $(( length - 2 ))
+    echo "$sign"
+}
+
+print_gap() {
     local length=$1
 
     printf " %.0s" $(eval echo {1..$length})
@@ -69,19 +82,19 @@ print_header_midline() {
     local name_color=$2
     local sign=$3
     local box_color=$4
-    local line_length=$5
-    local length=${#package_name}
-    local side=$(((line_length - length)/2 - 1))
+    local line_length=${5:-$(terminal_size)}
+    local package_name_length=${#package_name}
+    local side=$(((line_length - package_name_length)/2 - 1))
 
     color $box_color
     echo -n "$sign"
-    gap $side
+    print_gap $side
 
     color $name_color
     echo -n $package_name
 
     color $box_color
-    gap $((side+length%2))
+    print_gap $((side + (line_length - package_name_length)%2))
     echo -n "$sign"
 
     no_color
@@ -92,22 +105,22 @@ print_header() {
     local name_color=$2
     local sign=$3
     local box_color=$4
-    local header_size=$5
 
     echo
-    color blue
-    print_ruler "$sign" $header_size
+    color $box_color
+    print_ruler "$sign"
+    print_box_sides "$sign"
 
     print_header_midline \
         $package_name \
-        yellow \
+        $name_color \
         "$sign" \
-        blue \
-        $header_size
+        $box_color
 
     echo
-    color blue
-    print_ruler "$sign" $header_size
+    color $box_color
+    print_box_sides "$sign"
+    print_ruler "$sign"
 
     echo
     no_color
@@ -116,10 +129,9 @@ print_header() {
 run_cmake() {
     print_header \
         $(cmake_project_name) \
-        yellow \
+        green \
         "*" \
-        blue \
-        80
+        blue
 
     vinfo "Making package"
     run_remote \
@@ -180,7 +192,7 @@ cmake_deb_filename() {
 }
 
 run_remote() {
-	ssh root@$(host) $@
+	ssh -t root@$(host) $@
 }
 
 remote_mkdir() {

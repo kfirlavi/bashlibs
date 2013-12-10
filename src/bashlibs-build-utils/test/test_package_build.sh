@@ -66,9 +66,6 @@ test_create_dir_if_needed() {
 }
 
 test_print_ruler() {
-    returns "********************************************************************************" \
-        "print_ruler"
-
     returns "****" \
         "print_ruler '*' 4"
 
@@ -203,6 +200,5 @@ test_tar_sources() {
     return_true "tar tf $tarfile | grep -q version"
 }
 
-test_
 # load shunit2
 source /usr/share/shunit2/shunit2
