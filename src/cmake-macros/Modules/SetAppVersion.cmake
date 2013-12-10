@@ -30,7 +30,9 @@ macro(SET_APP_VERSION)
 
 endmacro(SET_APP_VERSION)
 
-SET_APP_VERSION()
-message(STATUS "App version: ${APPLICATION_VERSION}")
-message(STATUS "Library version: ${LIBRARY_VERSION}")
-message(STATUS "Library soversion: ${LIBRARY_SOVERSION}")
+if(NOT DEFINED APPLICATION_VERSION)
+    SET_APP_VERSION()
+    message(STATUS "App version: ${APPLICATION_VERSION}")
+    message(STATUS "Library version: ${LIBRARY_VERSION}")
+    message(STATUS "Library soversion: ${LIBRARY_SOVERSION}")
+endif(NOT DEFINED APPLICATION_VERSION)
