@@ -160,10 +160,11 @@ create_repository() {
 generate_index() {
     local index_type=$1 # binary, source
     local index_name=$2 # Packages, Sources
+    local repository_dir=$3
 
-    vinfo "Generating debian repository $index_type index in $(repository_dir)"
+    vinfo "Generating debian repository $index_type index in $repository_dir"
 
-    cd $(repository_dir)
+    cd $repository_dir
 
     create_dir_if_needed $index_type > /dev/null
 
@@ -174,9 +175,9 @@ generate_index() {
 }
 
 generate_binary_index() {
-    generate_index binary Packages
+    generate_index binary Packages $(repository_dir)
 }
 
 generate_sources_index() {
-    generate_index source Sources
+    generate_index source Sources $(repository_dir)
 }
