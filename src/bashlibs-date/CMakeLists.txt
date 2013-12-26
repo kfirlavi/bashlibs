@@ -10,7 +10,7 @@ include(BashLibs)
 include(SetAppVersion)
 SET_APP_VERSION(0 0 1)
 set(CPACK_PACKAGING_INSTALL_PREFIX "/")
-set(CPACK_DEBIAN_PACKAGE_DEPENDS "shunit2, bash, bashlibs-utils")
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "bashlibs-utils")
 include(PackageCreator)
 
 include(InstallDocs)

@@ -3,7 +3,7 @@ EAPI="4"
 inherit cmake-utils flag-o-matic
 
 MY_P="${P}-Source"
-DESCRIPTION="bashlibs file manipulation library"
+DESCRIPTION="Generic Cmake macros"
 SRC_URI="${MY_P}.tar.bz2"
 RESTRICT="fetch" # This file resides locally and can't be fetched
 
@@ -13,10 +13,10 @@ SLOT="0"
 KEYWORDS="~x86 ~amd64"
 IUSE=""
 
-RDEPEND="
-    >=dev-bash/bashlibs-utils-0.0.6
+DEPEND="
+	>=dev-util/cmake-2.6
 "
-DEPEND=""
+RDEPEND=""
 
 S="${WORKDIR}/${MY_P}"
 
@@ -30,4 +30,3 @@ src_configure() {
 src_install() {
 	cmake-utils_src_install
 }
- 

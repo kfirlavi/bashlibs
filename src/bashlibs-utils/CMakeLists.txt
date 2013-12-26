@@ -9,13 +9,11 @@ list(APPEND CMAKE_MODULE_PATH
 include(BashLibs)
 set(CPACK_PACKAGING_INSTALL_PREFIX "/")
 set(CPACK_DEBIAN_PACKAGE_DEPENDS
-    "shunit2, 
-    bashlibs-shunit2-enhancements (>= 0.0.2),
+    "bashlibs-shunit2-enhancements (>= 0.0.2),
     bashlibs-code-clarity (>= 0.0.2),
     bashlibs-verbose (>= 0.0.5),
     bashlibs-usage (>= 0.0.2),
-    bashlibs-base (>= 0.0.7),
-    bash")
+    bashlibs-base (>= 0.0.7)")
 include(PackageCreator)
 
 

@@ -3,7 +3,7 @@ EAPI="4"
 inherit cmake-utils flag-o-matic
 
 MY_P="${P}-Source"
-DESCRIPTION="bashlibs common"
+DESCRIPTION="bashlibs date library, provide date string for stamping filenames etc."
 SRC_URI="${MY_P}.tar.bz2"
 RESTRICT="fetch" # This file resides locally and can't be fetched
 
@@ -14,8 +14,7 @@ KEYWORDS="~x86 ~amd64"
 IUSE=""
 
 RDEPEND="
-    >=dev-bash/bashlibs-shunit2-enhancements-0.0.2
-    >=dev-bash/bashlibs-code-clarity-0.0.2
+    >=dev-bash/bashlibs-utils-0.0.6
 "
 DEPEND=""
 

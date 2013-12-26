@@ -3,7 +3,7 @@ EAPI="4"
 inherit cmake-utils flag-o-matic
 
 MY_P="${P}-Source"
-DESCRIPTION="bashlibs grub manipulation library"
+DESCRIPTION="bashlibs file manipulation library"
 SRC_URI="${MY_P}.tar.bz2"
 RESTRICT="fetch" # This file resides locally and can't be fetched
 
@@ -15,6 +15,7 @@ IUSE=""
 
 RDEPEND="
     >=dev-bash/bashlibs-utils-0.0.6
+    >=dev-bash/bashlibs-shunit2-enhancements-0.0.2
 "
 DEPEND=""
 
@@ -30,3 +31,4 @@ src_configure() {
 src_install() {
 	cmake-utils_src_install
 }
+ 

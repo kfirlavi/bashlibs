@@ -3,7 +3,7 @@ EAPI="4"
 inherit cmake-utils flag-o-matic
 
 MY_P="${P}-Source"
-DESCRIPTION="bashlibs verbose library"
+DESCRIPTION="BASH libs utilities for managing the libraries"
 SRC_URI="${MY_P}.tar.bz2"
 RESTRICT="fetch" # This file resides locally and can't be fetched
 
@@ -14,7 +14,14 @@ KEYWORDS="~x86 ~amd64"
 IUSE=""
 
 RDEPEND="
-    >=dev-bash/bashlibs-utils-0.0.6
+	dev-util/shunit2
+"
+PDEPEND="
+    >=dev-bash/bashlibs-shunit2-enhancements-0.0.2
+    >=dev-bash/bashlibs-code-clarity-0.0.2
+    >=dev-bash/bashlibs-verbose-0.0.5
+    >=dev-bash/bashlibs-usage-0.0.2
+    >=dev-bash/bashlibs-base-0.0.7
 "
 DEPEND=""
 
