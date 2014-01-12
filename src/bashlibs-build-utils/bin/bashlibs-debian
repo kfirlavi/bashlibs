@@ -39,6 +39,7 @@ main() {
     create_package bashlibs-cmake-macros
     create_package bashlibs-base
     create_package bashlibs-shunit2-enhancements
+    create_package bashlibs-directories
     create_package bashlibs-build-utils
     create_package bashlibs-code-clarity
     create_package bashlibs-colors

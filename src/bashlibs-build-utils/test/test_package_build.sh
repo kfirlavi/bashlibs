@@ -53,18 +53,6 @@ test_tmp_dir() {
         "tmp_dir"
 }
 
-test_create_dir_if_needed() {
-    local dir=/tmp/test_dir_24235
-
-    return_false "[[ -d $dir ]]"
-    create_dir_if_needed $dir > /dev/null 2>&1
-    return_true "[[ -d $dir ]]"
-    create_dir_if_needed $dir > /dev/null 2>&1
-    return_true "[[ -d $dir ]]"
-
-    rmdir $dir
-}
-
 test_print_ruler() {
     returns "****" \
         "print_ruler '*' 4"

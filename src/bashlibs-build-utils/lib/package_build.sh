@@ -1,6 +1,7 @@
 #!/bin/bash
 include verbose.sh
 include colors.sh
+include directories.sh
 
 cmake_project_name() {
 	grep -i "project" $(project_path)/CMakeLists.txt \
@@ -29,15 +30,6 @@ verify_target_build_host() {
 
     run_remote ls / > /dev/null \
         || eexit "host $remote_host should respond to 'ssh root@$remote_host' without password prompt. Use ssh-keygen and ssh-copy-id to solve the problem."
-}
-
-create_dir_if_needed() {
-    local dir=$1
-
-    [[ -d $dir ]] \
-        || mkdir -p $dir
-
-    readlink -m $dir
 }
 
 app_version() {
