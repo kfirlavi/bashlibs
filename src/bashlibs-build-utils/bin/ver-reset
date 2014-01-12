@@ -1,0 +1,11 @@
+#!/bin/bash
+readonly PATH_TO_VERSION_FILE=${1:-'.'}
+
+version_file() {
+    echo $PATH_TO_VERSION_FILE/version
+}
+
+main() {
+    echo "0.0.1" > $(version_file)
+}
+main
