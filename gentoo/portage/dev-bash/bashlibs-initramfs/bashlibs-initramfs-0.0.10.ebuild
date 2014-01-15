@@ -18,7 +18,10 @@ RDEPEND="
     >=dev-bash/bashlibs-verbose-0.0.5
     dev-bash/bashlibs-file-manipulations
 "
-DEPEND=""
+
+DEPEND="
+	dev-bash/bashlibs-cmake-macros
+"
 
 S="${WORKDIR}/${MY_P}"
 

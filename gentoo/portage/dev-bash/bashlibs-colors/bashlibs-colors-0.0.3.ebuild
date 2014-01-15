@@ -15,8 +15,12 @@ IUSE=""
 
 RDEPEND="
     >=dev-bash/bashlibs-utils-0.0.6
+    >=dev-bash/bashlibs-shunit2-enhancements-0.0.2
 "
-DEPEND=""
+
+DEPEND="
+	dev-bash/bashlibs-cmake-macros
+"
 
 S="${WORKDIR}/${MY_P}"
 

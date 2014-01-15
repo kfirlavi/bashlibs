@@ -14,16 +14,16 @@ KEYWORDS="~x86 ~amd64"
 IUSE=""
 
 RDEPEND="
-	dev-util/shunit2
-"
-PDEPEND="
     >=dev-bash/bashlibs-shunit2-enhancements-0.0.2
     >=dev-bash/bashlibs-code-clarity-0.0.2
     >=dev-bash/bashlibs-verbose-0.0.5
     >=dev-bash/bashlibs-usage-0.0.2
     >=dev-bash/bashlibs-base-0.0.7
 "
-DEPEND=""
+
+DEPEND="
+	dev-bash/bashlibs-cmake-macros
+"
 
 S="${WORKDIR}/${MY_P}"
 

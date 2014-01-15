@@ -17,7 +17,10 @@ RDEPEND="
     >=dev-bash/bashlibs-utils-0.0.6
     dev-bash/bashlibs-colors
 "
-DEPEND=""
+
+DEPEND="
+	dev-bash/bashlibs-cmake-macros
+"
 
 S="${WORKDIR}/${MY_P}"
 
