@@ -10,10 +10,17 @@ host() {
     echo $HOST
 }
 
+log_and_run() {
+    local cmd="$@"
+
+    echo "$cmd"
+    $cmd
+}
+
 create_package() {
     local package_name=$1
 
-    $(progdir)/bashlibs-build \
+    log_and_run $(progdir)/bashlibs-build \
         --package-type deb \
         --server $(host) \
         --project-path $(progdir)/../src/$package_name
