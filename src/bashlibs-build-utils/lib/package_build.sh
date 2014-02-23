@@ -25,13 +25,6 @@ check_project_path() {
         && eexit "You need to provide a cmake source dir. $(project_path)/CMakeLists.txt not found!"
 }
 
-verify_target_build_host() {
-    local remote_host=$1
-
-    run_remote ls / > /dev/null \
-        || eexit "host $remote_host should respond to 'ssh root@$remote_host' without password prompt. Use ssh-keygen and ssh-copy-id to solve the problem."
-}
-
 app_version() {
 	cat $(project_path)/version
 }
@@ -284,4 +277,37 @@ tar_sources() {
 copy_package_to_portage_distfiles_directory() {
     cp $(local_distfiles_directory)/$(tbz_filename) \
         $(distfiles_directory)
+}
+
+rsa_ssh_key() {
+    echo ~/.ssh/id_rsa
+}
+
+private_key_exist() {
+    [[ -f $(rsa_ssh_key).pub ]]
+}
+
+create_key() {
+    ssh-keygen -f $(rsa_ssh_key) -t rsa -N ''
+}
+
+ssh_is_working_with_keys() {
+    ssh -o BatchMode=yes "root@$(host)" true
+}
+
+copy_ssh_keys() {
+    ssh-copy-id root@$(host)
+}
+
+verify_target_build_host() {
+    private_key_exist \
+        || create_key
+
+    ssh_is_working_with_keys \
+        || copy_ssh_keys
+
+    ssh_is_working_with_keys \
+        && vinfo "ssh passwordless connection works to root@$(host)" \
+        || eexit "ssh passwordless connection does not work to root@$(host). After setting keys. Please check!"
+
 }
