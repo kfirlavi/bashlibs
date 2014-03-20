@@ -25,6 +25,7 @@ usage() {
 	$(item p library-path 'Show bash libs library path')
 	$(item b load-base 'Include the base library in the code')
 	$(item i include 'Include a library')
+	$(item r run 'execute command/function from one of the bashlibs')
 	$(items_test_help_verbose_debug)
 
 	
@@ -38,6 +39,9 @@ usage() {
 
 	$(example_description 'To include a library, use this line in your code:')
 	$(example \$\($(progname) --include verbose.sh\))
+
+	$(example_description 'Run a command to check if current os is ubuntu:')
+	$(example $(progname) --include os_detection.sh --run is_ubuntu \&\& echo LINUX_UBUNTU=ON)
 
 	$(example_test $(progname))
 	EOF
@@ -55,6 +59,7 @@ cmdline() {
 		 --library-path) args="${args}-p ";;
 		    --load-base) args="${args}-b ";;
 		      --include) args="${args}-i ";;
+		          --run) args="${args}-r ";;
 		         --test) args="${args}-t ";;
 			     --help) args="${args}-h ";;
 		      --verbose) args="${args}-v ";;
@@ -68,7 +73,7 @@ cmdline() {
 	#Reset the positional parameters to the short options
 	eval set -- $args
 
-	while getopts "vhxpbt:i:" OPTION
+	while getopts "vhxpbt:i:r:" OPTION
 	do
 	     case $OPTION in
 		 v)
@@ -89,7 +94,9 @@ cmdline() {
              ;;
          i)
              include $OPTARG
-             exit
+             ;;
+         r)
+             RUN_COMMAND=$OPTARG
              ;;
          b)
              include_base_library
@@ -102,7 +109,7 @@ cmdline() {
 	     esac
 	done
 
-	[[ -z $RUN_TESTS ]] \
+	[[ -z $RUN_TESTS && -z $RUN_COMMAND ]] \
 		&& usage \
         && exit 1
 }
@@ -124,13 +131,24 @@ include_base_library() {
         || echo "source $(libraries_path)/base.sh"
 }
 
+run_command() {
+
+    if [[ -n $RUN_COMMAND ]]; then
+        eval $RUN_COMMAND
+        exit $?
+    fi
+}
+
 main() {
     cmdline $(args)
 
     include shunit2_enhancements.sh
 
-    run_tests \
-        $(libraries_tests_dir) \
-        $DEBUG
+    run_command
+
+    [[ -n $RUN_TESTS ]] \
+        && run_tests \
+            $(libraries_tests_dir) \
+            $DEBUG
 }
 main
