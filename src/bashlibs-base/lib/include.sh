@@ -24,6 +24,8 @@ save_library_as_included() {
 include() {
     local library_name=$1
 
+    exit_if_library_does_not_exists $library_name
+
     is_library_included $library_name \
         || source $(find_library $library_name)
 
