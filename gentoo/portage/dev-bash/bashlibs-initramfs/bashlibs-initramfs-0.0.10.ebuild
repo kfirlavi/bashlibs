@@ -5,7 +5,6 @@ inherit cmake-utils flag-o-matic
 MY_P="${P}-Source"
 DESCRIPTION="bashlibs verbose library"
 SRC_URI="${MY_P}.tar.bz2"
-RESTRICT="fetch" # This file resides locally and can't be fetched
 
 
 LICENSE="BSD"
