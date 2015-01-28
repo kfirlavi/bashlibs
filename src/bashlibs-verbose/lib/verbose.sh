@@ -1,5 +1,6 @@
 include colors.sh
 
+export VERBOSE=0
 VINFO=1
 VDEBUG=2
 
@@ -39,11 +40,35 @@ colors_are_on() {
     [[ -n $VERBOSE_IN_COLORS ]]
 }
 
+name_to_level() {
+	local level_name=$1
+
+	case $level_name in 
+		Info)    echo 1;;
+		Debug)   echo 2;;
+		Warning) echo 3;;
+		Error)   echo 4;;
+		*) eexit "no such verbose level '$level_name'";;
+	esac
+}
+
+level_is_on() {
+	local level_name=$1
+
+	[[ -n $VERBOSE ]] \
+		|| return
+	
+	(( $VERBOSE >= $(name_to_level $level_name) ))
+}
+
 vout() {
     local color=$1; shift
     local level=$1; shift
     local str=$@
 
+    level_is_on $level \
+    	|| return
+    
     colors_are_on \
         && echo -e "$(color $color)$level: $(no_color)$str" \
         || echo "$level: $str"
