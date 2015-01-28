@@ -8,4 +8,3 @@ create_dir_if_needed() {
 
     readlink -m $dir
 }
-
