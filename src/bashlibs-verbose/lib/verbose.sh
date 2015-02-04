@@ -44,10 +44,10 @@ name_to_level() {
 	local level_name=$1
 
 	case $level_name in 
+		Error)   echo 0;;
 		Info)    echo 1;;
 		Debug)   echo 2;;
 		Warning) echo 3;;
-		Error)   echo 4;;
 		*) eexit "no such verbose level '$level_name'";;
 	esac
 }
