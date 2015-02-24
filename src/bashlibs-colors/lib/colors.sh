@@ -15,6 +15,14 @@ _color_major_minor_light_purple() { echo '1;35' ;}
 _color_major_minor_yellow()       { echo '1;33' ;}
 _color_major_minor_white()        { echo '1;37' ;}
 
+set_no_color() {
+    _NO_COLOR=true
+}
+
+color_off() {
+    [[ $_NO_COLOR ]]
+}
+
 to_upper() {
     local str=$@
 
@@ -32,12 +40,18 @@ spaces_to_underscors() {
 color() {
     local color_name=$(spaces_to_underscors $@)
 
+    color_off \
+        && return
+
     echo -en "\033[$(_color_major_minor_$color_name)m"
 }
 
 no_color()
 {
-	echo -en "\033[0m"
+    color_off \
+        && return
+
+    echo -en "\033[0m"
 }
 
 strip_colors() {

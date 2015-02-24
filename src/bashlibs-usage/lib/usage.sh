@@ -92,6 +92,10 @@ example_test() {
 	EOF
 }
 
+item_no_color() {
+    item none no-color 'do not print colors'
+}
+
 item_help() {
     item h help 'Show this message'
 }
@@ -110,6 +114,7 @@ items_test_help_verbose_debug() {
 	cat <<- EOF
 	$(item_test)
 	$(item_help)
+	$(item_no_color)
 	$(item_verbose)
 	$(item_debug)
 	EOF

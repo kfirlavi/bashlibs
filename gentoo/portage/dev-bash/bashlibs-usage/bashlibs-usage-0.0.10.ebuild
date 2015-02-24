@@ -14,7 +14,7 @@ IUSE=""
 
 RDEPEND="
     >=dev-bash/bashlibs-utils-0.0.6
-    dev-bash/bashlibs-colors
+    >=dev-bash/bashlibs-colors-0.0.7
 "
 
 DEPEND="
