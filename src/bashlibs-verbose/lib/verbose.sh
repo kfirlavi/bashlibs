@@ -52,13 +52,13 @@ name_to_level() {
 	esac
 }
 
-level_is_on() {
+level_is_off() {
 	local level_name=$1
 
-	[[ -n $VERBOSE ]] \
-		|| return
+	[[ -z $VERBOSE ]] \
+		&& return
 	
-	(( $VERBOSE >= $(name_to_level $level_name) ))
+	(( $VERBOSE < $(name_to_level $level_name) ))
 }
 
 vout() {
@@ -66,8 +66,8 @@ vout() {
     local level=$1; shift
     local str=$@
 
-    level_is_on $level \
-    	|| return
+    level_is_off $level \
+    	&& return
     
     colors_are_on \
         && echo -e "$(color $color)$level: $(no_color)$str" \
