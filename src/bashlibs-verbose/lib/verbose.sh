@@ -5,7 +5,7 @@ VINFO=1
 VDEBUG=2
 
 verbose() {
-	local strength=$1; shift
+    local strength=$1; shift
     local str=$@
 
     [[ $strength == $VINFO ]] \
@@ -16,8 +16,8 @@ verbose() {
 }
 
 eexit() {
-	verror "$@"
-	exit 1
+    verror "$@"
+    exit 1
 }
 
 eerror() { 
@@ -41,24 +41,24 @@ colors_are_on() {
 }
 
 name_to_level() {
-	local level_name=$1
+    local level_name=$1
 
-	case $level_name in 
-		Error)   echo 0;;
-		Info)    echo 1;;
-		Debug)   echo 2;;
-		Warning) echo 3;;
-		*) eexit "no such verbose level '$level_name'";;
-	esac
+    case $level_name in 
+        Error)   echo 0;;
+        Info)    echo 1;;
+        Warning) echo 2;;
+        Debug)   echo 3;;
+        *) eexit "no such verbose level '$level_name'";;
+    esac
 }
 
 level_is_off() {
-	local level_name=$1
+    local level_name=$1
 
-	[[ -z $VERBOSE ]] \
-		&& return
-	
-	(( $VERBOSE < $(name_to_level $level_name) ))
+    [[ -z $VERBOSE ]] \
+        && return
+    
+    (( $VERBOSE < $(name_to_level $level_name) ))
 }
 
 vout() {
@@ -67,7 +67,7 @@ vout() {
     local str=$@
 
     level_is_off $level \
-    	&& return
+        && return
     
     colors_are_on \
         && echo -e "$(color $color)$level: $(no_color)$str" \
