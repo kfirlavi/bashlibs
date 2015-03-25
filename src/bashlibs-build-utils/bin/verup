@@ -1,28 +1,117 @@
 #!/bin/bash
-readonly PATH_TO_VERSION_FILE=${1:-'.'}
+my_real_dir() {
+    dirname $(realpath --physical $0)
+}
+
+source $(my_real_dir)/bake-intree-init > /dev/null 2>&1 \
+    || $(bashlibs --load-base)
+include bake.sh
+include verbose.sh
+include usage.sh
+VERBOSE=2
+
+gentoo_portage_tree() {
+
+    [[ -n $PORTAGE_TREE ]] \
+        || eexit "PORTAGE_TREE is not defined"
+
+    local portage_dir=$(realpath $(top_level_path)/$PORTAGE_TREE)
+
+    [[ -d $portage_dir ]] \
+        && echo $portage_dir
+
+}
+
+project_path() {
+    [[ -z $(args) ]] \
+        && echo '.' \
+        || echo $(args)
+}
+
+project_name() {
+    cat $(project_path)/CMakeLists.txt \
+        | grep project \
+        | cut -d '(' -f 2 \
+        | cut -d ')' -f 1
+}
 
 version_file() {
-    echo $PATH_TO_VERSION_FILE/version
+    echo $(project_path)/version
 }
 
 patch_level() {
-    cat $(version_file) \
+    local version=$1
+
+    echo $version \
         | cut -d '.' -f 3
 }
 
 increment_patch_level() {
-    local i=$(patch_level)
+    local version=$1
+    local i=$(patch_level $version)
 
     echo $(( i+1 ))
 }
 
-modify_patch_level() {
-    sed -i \
-        "s/\.$(patch_level)$/\.$(increment_patch_level)/" \
-        $(version_file)
+next_version() {
+    local version=$1
+
+    echo $version \
+        | sed "s/\.$(patch_level $version)$/\.$(increment_patch_level $version)/"
+}
+
+modify_version_file() {
+    local last_version=$1
+
+    vinfo "modifying version file: $(version_file)"
+    echo $(next_version $last_version) > $(version_file)
+}
+
+current_version() {
+    cat $(version_file)
+}
+
+ebuild_name() {
+    local version=$1
+
+    echo "$(project_name)-$version.ebuild"
+}
+
+find_project_ebuild() {
+    local version=$1
+
+    find $(gentoo_portage_tree) \
+        -name "$(ebuild_name $version)"
+}
+
+check_ebuild_exist() {
+    local version=$1
+
+    [[ -z $(find_project_ebuild $version) ]] \
+        && eexit "Can't find ebuild: $(ebuild_name $version)"
+}
+
+modify_gentoo_ebuild_version() {
+    local version=$1
+
+    vinfo "Gentoo portage tree is in: $(gentoo_portage_tree)"
+    check_ebuild_exist $version
+    vinfo "Found project ebuild: $(find_project_ebuild $version)"
+
+    local ebuild=$(find_project_ebuild $version)
+    local ebuild_dir=$(dirname $ebuild)
+    local next_ebuild=$ebuild_dir/$(ebuild_name $(next_version $version))
+
+    git mv $ebuild $next_ebuild
+
 }
 
 main() {
-    modify_patch_level
+    load_configuration_files
+    local last_version=$(current_version)
+    local next_version=$(next_version $last_version)
+    vinfo "changing version: $last_version -> $next_version"
+    modify_version_file $last_version $next_version
+    modify_gentoo_ebuild_version $last_version
 }
 main

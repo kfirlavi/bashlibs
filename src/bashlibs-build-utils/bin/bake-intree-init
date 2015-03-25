@@ -1,0 +1,27 @@
+#!/bin/bash
+ARGS=$@
+
+# This variable is exported to sub shell, so we need to clear it for 
+# sub shell to work properly
+export _LIBRARIES_INCLUDED=
+
+running_in_src_tree() {
+    [[ -f $(my_real_dir)/../CMakeLists.txt ]]
+}
+
+bashlibs_src_tree() {
+    my_real_dir \
+        | sed 's|bashlibs/src/.*$|bashlibs|'
+}
+
+load_bashlibs_from_src_tree() {
+    export BASHLIBS_SOURCE_TREE=$(bashlibs_src_tree)
+    $($BASHLIBS_SOURCE_TREE/bin/bashlibs --load-base)
+}
+
+load_bashlibs() {
+    running_in_src_tree \
+        && load_bashlibs_from_src_tree $ARGS \
+        || $(bashlibs --load-base)
+}
+load_bashlibs

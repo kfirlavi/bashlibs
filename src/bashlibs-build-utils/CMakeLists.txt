@@ -10,7 +10,7 @@ include(BashLibs)
 set(CPACK_PACKAGING_INSTALL_PREFIX "/")
 set(CPACK_DEBIAN_PACKAGE_DEPENDS 
     "bashlibs-shunit2-enhancements (>= 0.0.9),
-    bashlibs-usage (>= 0.0.8),
+    bashlibs-usage (>= 0.0.11),
     bashlibs-utils (>= 0.0.11)")
 include(PackageCreator)
 

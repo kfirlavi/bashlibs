@@ -1,2 +1,2 @@
-install(PROGRAMS bashlibs-build verup ver-reset bashlibs-debian bashlibs-intree-init
+install(PROGRAMS bake verup ver-reset bashlibs-debian bake-intree-init
     DESTINATION usr/bin)

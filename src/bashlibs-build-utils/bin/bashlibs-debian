@@ -1,13 +1,15 @@
 #!/bin/bash
-source $(cd $(dirname $0)/.. ; pwd)/src/bashlibs-build-utils/bin/bashlibs-intree-init > /dev/null 2>&1 \
+my_real_dir() {
+    dirname $(realpath --physical $0)
+}
+
+source $(my_real_dir)/bake-intree-init > /dev/null 2>&1 \
     || $(bashlibs --load-base)
-include package_build.sh
-include deb_repository.sh
+include bake.sh
+include verbose.sh
 
-readonly HOST=$1
-
-host() {
-    echo $HOST
+hosts() {
+    args
 }
 
 log_and_run() {
@@ -19,46 +21,40 @@ log_and_run() {
 
 create_package() {
     local package_name=$1
+    local host=$2
 
-    log_and_run $(progdir)/bashlibs-build \
-        --package-type deb \
-        --server $(host) \
-        --project-path $(progdir)/../src/$package_name
+    log_and_run $(progdir)/bake \
+        -v -v \
+        --server $host \
+        --find $package_name
 }
 
-remove_package() {
-    local package_name=$1
+all_packages() {
+    echo cmake-macros
+    echo bashlibs-cmake-macros
+    echo bashlibs-base
 
-    run_remote \
-        dpkg --purge --force-depends $package_name
-}
-
-install_dependency_packages() {
-    local packages=$@
-
-    run_remote \
-        apt-get install $packages
+    $(progdir)/bake -l \
+        | awk '{print $2}' \
+        | grep -v cmake-macros \
+        | grep -v bashlibs-cmake-macros \
+        | grep -v bashlibs-base \
+        | grep -v skelaton \
+        | xargs basename -a
 }
 
 main() {
-    install_dependency_packages cmake shunit2
-    create_package cmake-macros
-    create_package bashlibs-cmake-macros
-    create_package bashlibs-base
-    create_package bashlibs-shunit2-enhancements
-    create_package bashlibs-directories
-    create_package bashlibs-build-utils
-    create_package bashlibs-code-clarity
-    create_package bashlibs-colors
-    create_package bashlibs-verbose
-    create_package bashlibs-utils
-    create_package bashlibs-file-manipulations
-    create_package bashlibs-grub
-    create_package bashlibs-initramfs
-    create_package bashlibs-os-detection
-    create_package bashlibs-usage
-    create_package bashlibs-date
-    create_package bashlibs-string
-    create_repository
+    local host
+    local i
+
+    cd $(progdir)/..
+
+    for host in $(hosts)
+    do
+        for i in $(all_packages)
+        do
+            create_package $i $host
+        done
+    done
 }
 main

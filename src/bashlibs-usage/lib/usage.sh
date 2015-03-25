@@ -125,5 +125,13 @@ print_usage_and_exit_if_args_are_empty() {
 
     [[ -z $args ]] \
         && usage \
-        && exit
+        && eexit "No arguments supplied"
 }
+
+exit_if_args_are_empty() {
+    local args=$@
+
+    [[ -z $args ]] \
+        && eexit "No arguments supplied"
+}
+

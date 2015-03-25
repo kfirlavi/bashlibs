@@ -39,11 +39,6 @@ repository_architecture() {
     esac
 }
 
-deb_archive_dir() {
-    create_dir_if_needed \
-        $(progdir)/../debian/deb-archive/$(repository_architecture)
-}
-
 copy_deb_to_repository() {
     local debfile=$1
 

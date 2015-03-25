@@ -1,0 +1,10 @@
+TOP_RC=1
+PORTAGE_TREE=gentoo/portage
+PORTAGE_TREE_NAME=bashlibs
+
+PRE_COMPILE_DEPEND="cmake shunit2"
+
+ALL_REPOSITORIES="bashlibs"
+REPOSITORY_COLOR_bashlibs="red"
+
+REPOSITORIES_NAMES="bashlibs"
