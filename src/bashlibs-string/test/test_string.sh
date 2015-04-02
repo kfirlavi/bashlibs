@@ -63,6 +63,13 @@ test_commas_to_spaces() {
     return_equals " a    b    " "echo ' a   ,b   ,' | commas_to_spaces"
 }
 
+test_underscores_to_spaces() {
+    return_equals "my test string" "echo 'my_test_string' | underscores_to_spaces"
+    return_equals "   " "echo '___' | underscores_to_spaces"
+    return_equals "a b     " "echo 'a_b   _ ' | underscores_to_spaces"
+    return_equals " a    b    " "echo ' a   _b   _' | underscores_to_spaces"
+}
+
 test_tabs_to_spaces() {
     return_equals " " "echo -e '\t' | tabs_to_spaces"
     return_equals "    " "echo -e ' \t\t ' | tabs_to_spaces"

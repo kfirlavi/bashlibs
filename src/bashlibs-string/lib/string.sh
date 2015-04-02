@@ -68,6 +68,12 @@ commas_to_spaces() {
         | sed 's/,/ /g'
 }
 
+underscores_to_spaces() {
+    IFS= read -r
+    echo "$REPLY" \
+        | sed 's/_/ /g'
+}
+
 tabs_to_spaces() {
     IFS= read -r
     echo "$REPLY" \
