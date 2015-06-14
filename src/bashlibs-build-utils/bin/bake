@@ -1,6 +1,14 @@
 #!/bin/bash
+REAL_DIR=
+
 my_real_dir() {
-    dirname $(realpath --physical $0)
+    if [[ -z $REAL_DIR ]]
+    then
+        REAL_DIR=$(dirname $(realpath $0))
+        echo $REAL_DIR
+    else
+        echo $REAL_DIR
+    fi
 }
 
 source $(my_real_dir)/bake-intree-init > /dev/null 2>&1 \

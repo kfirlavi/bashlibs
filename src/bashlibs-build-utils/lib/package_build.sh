@@ -260,11 +260,6 @@ distfiles_directory() {
         /usr/portage/distfiles
 }
 
-local_distfiles_directory() {
-    create_dir_if_needed \
-        $(progdir)/../gentoo/distfiles
-}
-
 tar_sources() {
     local f=$(local_distfiles_directory)/$(tbz_filename)
 
