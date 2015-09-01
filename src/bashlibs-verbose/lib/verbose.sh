@@ -1,6 +1,7 @@
 include colors.sh
 
 export VERBOSE=0
+export QUIET=
 VINFO=1
 VDEBUG=2
 
@@ -92,6 +93,28 @@ verror() {
 
 vcritical() {
     vout purple Critical $@
+}
+
+increase_verbose_level() {
+    (( VERBOSE+=1 ))
+}
+
+decrease_verbose_level() {
+    [[ $VERBOSE != 0 ]] \
+        && (( VERBOSE-=1 ))
+}
+
+no_verbose() {
+    VERBOSE=0
+}
+
+set_quiet_mode() {
+    no_verbose
+    QUIET=1
+}
+
+is_quiet_mode_on() {
+    [[ $QUIET == 1 ]]
 }
 
 turn_verbose_colors_on

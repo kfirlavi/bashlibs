@@ -87,11 +87,10 @@ cmdline() {
     do
         case $OPTION in
         q)
-            VERBOSE=0
-            QUIET=1
+            set_quiet_mode
             ;;
         v)
-            VERBOSE=$(($VERBOSE+1))
+            increase_verbose_level
             ;;
         h)
             usage
