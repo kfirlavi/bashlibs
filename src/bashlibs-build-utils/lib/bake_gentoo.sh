@@ -1,3 +1,8 @@
+emerge_quiet() {
+    [[ -n $QUIET ]] \
+        && echo '--quiet'
+}
+
 local_distfiles_directory() {
     create_dir_if_needed $(repositories_dir)/gentoo/distfiles
 }
@@ -95,12 +100,12 @@ set_local_portage_tree_on_server() {
 }
 
 modify_gentoo_configuration_files_requierd_by_package() {
-    run_remote CONFIG_PROTECT_MASK="/etc/portage" emerge --autounmask-write --oneshot $(project_name)
+    run_remote CONFIG_PROTECT_MASK="/etc/portage" emerge $(emerge_quiet) --autounmask-write --oneshot $(project_name)
 }
 
 install_package_on_gentoo() {
     modify_gentoo_configuration_files_requierd_by_package
-    run_remote emerge --update --oneshot --buildpkg $(project_name)
+    run_remote emerge $(emerge_quiet) --update --oneshot --buildpkg $(project_name)
 }
 
 create_tbz_package() {

@@ -72,6 +72,7 @@ cmdline() {
                  --test) args="${args}-t ";;
                  --help) args="${args}-h ";;
               --verbose) args="${args}-v ";;
+                --quiet) args="${args}-q ";;
                 --debug) args="${args}-x ";;
                       #pass through anything else
                       *) [[ "${arg:0:1}" == "-" ]] || delim="\""
@@ -82,12 +83,15 @@ cmdline() {
     #Reset the positional parameters to the short options
     eval set -- $args
 
-    while getopts "vhxlut:p:f:d:s:k:c:r:m:e:" OPTION
+    while getopts "qvhxlut:p:f:d:s:k:c:r:m:e:" OPTION
     do
         case $OPTION in
+        q)
+            VERBOSE=0
+            QUIET=1
+            ;;
         v)
             VERBOSE=$(($VERBOSE+1))
-            export readonly VERBOSE
             ;;
         h)
             usage

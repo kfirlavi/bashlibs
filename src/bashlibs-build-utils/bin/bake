@@ -21,6 +21,7 @@ include deb_repository.sh
 include bake_cmdline.sh
 include verbose.sh
 include usage.sh
+VERBOSE=2
 
 if_defined_declare_readonly() {
     local var_name=$1

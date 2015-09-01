@@ -104,6 +104,10 @@ item_verbose() {
     item v verbose 'Verbose. You can specify more then one -v to have more verbose'
 }
 
+item_quiet() {
+    item q quiet 'Keep quiet. Do not show any verbose'
+}
+
 item_debug() {
     item x debug 'Turn on bash -x flag'
 }
@@ -116,6 +120,7 @@ items_test_help_verbose_debug() {
 	$(item_help)
 	$(item_no_color)
 	$(item_verbose)
+	$(item_quiet)
 	$(item_debug)
 	EOF
 }
