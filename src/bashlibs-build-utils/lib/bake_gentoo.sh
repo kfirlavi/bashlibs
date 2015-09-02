@@ -120,5 +120,5 @@ create_tbz_package() {
     set_local_portage_tree_on_server
     install_package_on_gentoo
     copy_portage_tree_manifests_from_server
-    clean_tmp_dir
+    safe_delete_directory_from_tmp $(tmp_dir)
 }

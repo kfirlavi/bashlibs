@@ -213,37 +213,6 @@ tbz_filename() {
 	echo $(tbz_filename_prefix).tar.bz2
 }
 
-top_dir() {
-    local dir=$1
-
-    echo $dir \
-        | cut -d '/' -f 2
-}
-
-dir_in_tmp() {
-    local dir=$1
-
-    [[ $(top_dir $dir) == tmp ]]
-}
-
-is_directory() {
-    local dir=$1
-
-    [[ -d $dir ]]
-}
-
-clean_dir_in_tmp() {
-    local dir=$1
-
-    dir_in_tmp $dir \
-        && is_directory $dir \
-        && rm -Rf $dir
-}
-
-clean_tmp_dir() {
-    clean_dir_in_tmp $(tmp_dir)
-}
-
 workdir() {
     create_dir_if_needed \
         $(tmp_dir)/$(tbz_filename_prefix)

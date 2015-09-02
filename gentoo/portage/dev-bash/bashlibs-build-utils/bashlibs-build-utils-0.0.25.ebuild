@@ -17,6 +17,7 @@ RDEPEND="
     >=dev-bash/bashlibs-usage-0.0.12
     >=dev-bash/bashlibs-verbose-0.0.13
     >=dev-bash/bashlibs-shunit2-enhancements-0.0.9
+    >=dev-bash/bashlibs-directories-0.0.4
 "
 
 DEPEND="
