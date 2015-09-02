@@ -61,12 +61,12 @@ test_print_ruler() {
         "print_ruler '+' 6"
 }
 
-test_gap() {
+test_print_gap() {
     returns "start_gap stop_gap" \
-        "echo start_gap$(gap 1)stop_gap"
+        "echo start_gap$(print_gap 1)stop_gap"
 
     returns "start_gap          stop_gap" \
-        "echo start_gap$(gap 10)stop_gap"
+        "echo start_gap$(print_gap 10)stop_gap"
 }
 
 test_print_header_midline() {
