@@ -1,12 +1,21 @@
 #!/bin/bash
+REAL_DIR=
+
 my_real_dir() {
-    dirname $(realpath --physical $0)
+    if [[ -z $REAL_DIR ]]
+    then
+        REAL_DIR=$(dirname $(realpath $(echo $0 | sed "s/$(basename $0)/bake/")))
+        echo $REAL_DIR
+    else
+        echo $REAL_DIR
+    fi
 }
 
 source $(my_real_dir)/bake-intree-init > /dev/null 2>&1 \
     || $(bashlibs --load-base)
 include bake.sh
 include verbose.sh
+VERBOSE=2
 
 hosts() {
     args
@@ -24,7 +33,7 @@ create_package() {
     local host=$2
 
     log_and_run $(progdir)/bake \
-        -v -v \
+        -q -v -v \
         --server $host \
         --find $package_name
 }
