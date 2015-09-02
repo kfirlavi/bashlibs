@@ -6,8 +6,7 @@ include usage.sh
 verbose_should_equal_to() {
     local value=$1
 
-    assertTrue "Verbose level should be $value but it is $VERBOSE" \
-        "[[ $value == $VERBOSE ]]"
+    value_should_be VERBOSE $value
 }
 
 test_increase_verbose_level() {
@@ -51,9 +50,7 @@ test_set_quiet_mode() {
 
     set_quiet_mode
     verbose_should_equal_to 0
-    assertTrue \
-        "QUIET should equal 1, but it is set to QUIET=$QUIET" \
-        "[[ $QUIET == 1 ]]"
+    value_should_be QUIET 1
 }
 
 test_is_quiet_mode_on() {

@@ -17,6 +17,17 @@ it_cannt() {
     assertFalse "It cannt $1" "$2"
 }
 
+value_should_be() {
+    local variable_name=$1
+    local should_be=$2
+
+    local value=$(eval echo $(echo \$$variable_name))
+
+    assertTrue \
+        "$variable_name should equal $should_be, but it is $variable_name=$value" \
+        "[[ $value == $should_be ]]"
+}
+
 return_should() {
     assertTrue "It should $1" "$2"
 }
