@@ -9,7 +9,8 @@ list(APPEND CMAKE_MODULE_PATH
 include(BashLibs)
 set(CPACK_PACKAGING_INSTALL_PREFIX "/")
 set(CPACK_DEBIAN_PACKAGE_DEPENDS
-    "bashlibs-utils (>= 0.0.6), 
+    "cpio,
+    bashlibs-utils (>= 0.0.6), 
     bashlibs-verbose (>= 0.0.5),
     bashlibs-file-manipulations")
 include(PackageCreator)
