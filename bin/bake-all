@@ -64,6 +64,8 @@ main() {
         do
             create_package $i $host
         done
+
+        ssh root@$host bashlibs -v -v --test all
     done
 }
 main
