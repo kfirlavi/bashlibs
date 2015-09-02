@@ -2,6 +2,7 @@
 $(bashlibs --load-base)
 include shunit2_enhancements.sh
 include initramfs.sh
+include directories.sh
 
 create_test_initramfs() {
     local tmpdir=$(mktemp -d)
@@ -14,8 +15,7 @@ create_test_initramfs() {
     gzip $initrd_file
     mv $initrd_file{.gz,}
 
-    [[ -d $tmpdir && $tmpdir =~ /tmp/tmp ]] \
-        && rm -Rf $tmpdir
+    safe_delete_directory_from_tmp $tmpdir
 
     echo $initrd_file
 

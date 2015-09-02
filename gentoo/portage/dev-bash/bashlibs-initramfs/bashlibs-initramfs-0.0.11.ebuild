@@ -16,6 +16,7 @@ RDEPEND="
     >=dev-bash/bashlibs-utils-0.0.6
     >=dev-bash/bashlibs-verbose-0.0.5
     dev-bash/bashlibs-file-manipulations
+	app-arch/cpio
 "
 
 DEPEND="
