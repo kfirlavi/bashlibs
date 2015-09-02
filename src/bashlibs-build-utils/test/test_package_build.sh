@@ -27,6 +27,9 @@ oneTimeTearDown() {
         $TEST_PROJECT_PATH
 
     safe_delete_directory_from_tmp \
+        $(progdir)
+
+    safe_delete_directory_from_tmp \
         /tmp/local_distfiles_directory
 
     unset -f \

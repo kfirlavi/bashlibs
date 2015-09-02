@@ -2,34 +2,38 @@
 $(bashlibs --load-base)
 include shunit2_enhancements.sh
 include deb_repository.sh
+include directories.sh
+
+tmp_project_path() {
+    echo /tmp/test_project
+}
+
+packages_dir() {
+    echo $(tmp_project_path)/packages
+}
 
 oneTimeSetUp() {
-    TEST_PROJECT_PATH=/tmp/test_project
-
-    mkdir -p $TEST_PROJECT_PATH
+    mkdir -p $(tmp_project_path)
     echo "project (bashlibs-build-utils)" \
-        > $TEST_PROJECT_PATH/CMakeLists.txt
+        > $(tmp_project_path)/CMakeLists.txt
     echo "0.0.9" \
-        > $TEST_PROJECT_PATH/version
+        > $(tmp_project_path)/version
 
-    PACKAGES_DIR=$TEST_PROJECT_PATH/packages
-
-    mkdir -p $PACKAGES_DIR
-    touch $PACKAGES_DIR/Packages.gz
-    touch $PACKAGES_DIR/bashlibs-base-0.0.4-Linux.deb
-    touch $PACKAGES_DIR/bashlibs-base-0.0.5-Linux.deb
-    touch $PACKAGES_DIR/bashlibs-base-0.0.10-Linux.deb
-    touch $PACKAGES_DIR/bashlibs-cmake-macros-0.0.25-Linux.deb
+    mkdir -p $(packages_dir)
+    touch $(packages_dir)/Packages.gz
+    touch $(packages_dir)/bashlibs-base-0.0.4-Linux.deb
+    touch $(packages_dir)/bashlibs-base-0.0.5-Linux.deb
+    touch $(packages_dir)/bashlibs-base-0.0.10-Linux.deb
+    touch $(packages_dir)/bashlibs-cmake-macros-0.0.25-Linux.deb
 }
 
 oneTimeTearDown() {
-    [[ -d $TEST_PROJECT_PATH ]] \
-        && [[ $TEST_PROJECT_PATH =~ /tmp/ ]] \
-        && rm -Rf $TEST_PROJECT_PATH
+    safe_delete_directory_from_tmp \
+        $(tmp_project_path)
 }
 
 progdir() {
-    echo /tmp/test_project/bin
+    echo $(tmp_project_path)/bin
 }
 
 progname() {
@@ -72,15 +76,17 @@ test_deb_archive_dir() {
 test_copy_deb_to_repository() {
     touch /tmp/mydeb.deb
 
-    return_false "[[ -f /tmp/test_project/debian/bashlibs-repository/amd64/binary/mydeb.deb ]]"
+    file_shouldnt_exist "$(repository_binary_dir)/mydeb.deb"
 
     copy_deb_to_repository /tmp/mydeb.deb
 
-    return_true "[[ -f /tmp/test_project/debian/bashlibs-repository/amd64/binary/mydeb.deb ]]"
+    file_should_exist "$(repository_binary_dir)/mydeb.deb"
+
+    rm -f /tmp/mydeb.deb
 }
 
 test_uniq_packages() {
-    local dir=$PACKAGES_DIR
+    local dir=$(packages_dir)
 
     return_value_should_include "bashlibs-base" \
         "uniq_packages $dir"
@@ -145,7 +151,7 @@ test_max_version() {
 }
 
 test_all_versions_of_pacakge() {
-    local dir=$PACKAGES_DIR
+    local dir=$(packages_dir)
 
     return_value_should_include "bashlibs-base-0.0.4-Linux.deb" \
         "all_versions_of_pacakge $dir/bashlibs-base"
@@ -156,7 +162,7 @@ test_all_versions_of_pacakge() {
 }
 
 test_package_by_version() {
-    local dir=$PACKAGES_DIR
+    local dir=$(packages_dir)
 
     return_value_should_include "$dir/bashlibs-base-0.0.5-Linux.deb" \
         "package_by_version $dir/bashlibs-base 0.0.5"
@@ -164,7 +170,7 @@ test_package_by_version() {
 }
 
 test_newest_package() {
-    local dir=$PACKAGES_DIR
+    local dir=$(packages_dir)
 
     returns "$dir/bashlibs-base-0.0.10-Linux.deb" \
         "newest_package $dir/bashlibs-base"
@@ -174,7 +180,7 @@ test_newest_package() {
 }
 
 test_copy_newest_debs_to_repository() {
-    local dir=$PACKAGES_DIR
+    local dir=$(packages_dir)
     mkdir -p $(deb_archive_dir)
     touch $(deb_archive_dir)/bashlibs-base-0.0.4-Linux.deb
     touch $(deb_archive_dir)/bashlibs-base-0.0.5-Linux.deb
@@ -182,10 +188,14 @@ test_copy_newest_debs_to_repository() {
     touch $(deb_archive_dir)/bashlibs-cmake-macros-0.0.25-Linux.deb
 
     copy_newest_debs_to_repository
-    return_value_should_include "bashlibs-base-0.0.10-Linux.deb" \
-        "ls -1 $(repository_binary_dir)"
-    return_value_should_include "bashlibs-cmake-macros-0.0.25-Linux.deb" \
-        "ls -1 $(repository_binary_dir)"
+    file_should_exist \
+        "$(repository_binary_dir)/bashlibs-base-0.0.10-Linux.deb"
+    file_should_exist \
+        "$(repository_binary_dir)/bashlibs-cmake-macros-0.0.25-Linux.deb"
+    file_shouldnt_exist \
+        "$(repository_binary_dir)/bashlibs-base-0.0.4-Linux.deb"
+    file_shouldnt_exist \
+        "$(repository_binary_dir)/bashlibs-base-0.0.5-Linux.deb"
 }
 
 # load shunit2

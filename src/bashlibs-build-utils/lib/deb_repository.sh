@@ -15,6 +15,11 @@ repository_dir() {
         $(repository_store_dir)/$(repository_name)/$(repository_architecture)
 }
 
+deb_archive_dir() {
+    create_dir_if_needed \
+        $(repository_store_dir)/deb-archive/$(repository_architecture)
+}
+
 repository_binary_dir() {
     create_dir_if_needed \
         $(repository_dir)/binary
