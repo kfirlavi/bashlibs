@@ -1,9 +1,15 @@
-Generate portage bashlibs repository
+Generate bashlibs repository
 ------------------------------------
-# bin/gentoo
+# bin/bake-all <hosts>
 
-Generate debian repository
---------------------------
-# bin/debian <host>
+hosts are a debian/ubuntu or a gentoo
 
-host is a debian/ubuntu remote host, or localhost if your os is debian/ubuntu.
+for each host it will generate all packages.
+
+For example:
+you have 3 hosts: ubuntu32 ubuntu64 and gentoo
+
+$ bin/bake-all  ubuntu32 ubuntu64 gentoo
+
+will generate deb repository for i386 and amd64, 
+then will create a gentoo repository and source packages.
