@@ -227,6 +227,11 @@ verify_params() {
     check_gentoo_commands
 }
 
+show_build_info() {
+    vinfo "Target build host $(color red)$(target_build_host)$(no_color) is $(target_os_with_color)"
+    vinfo "Building $(color blue)$(package_type)$(no_color) package for $(target_os_with_color)"
+}
+
 main() {
     cmdline $(args)
 
@@ -237,8 +242,7 @@ main() {
     do
         TARGET_BUILD_HOST=$host
         verify_params
-        vinfo "Target build host $(color red)$(target_build_host)$(no_color) is $(target_os_with_color)"
-        vinfo "Building $(color blue)$(package_type)$(no_color) package for $(target_os_with_color)"
+        show_build_info
         create_$(package_type)_package
     done
 }
