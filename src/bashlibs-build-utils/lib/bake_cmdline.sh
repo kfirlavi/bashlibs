@@ -11,7 +11,7 @@ usage() {
 	    Package type to be generated is determined automatically checking the target os provided with --server.
 
 	$(section_options)
-	$(item s server 'IP or hostname of the target system')
+	$(item s server 'IP or hostname of the target system. This option can be specified multiple times, to compile on different hosts')
 	$(item p project-path 'path to the project you want to build')
 	$(item f find 'project name you want to build - case insensitive (project name provided by CMakeLists.txt)')
 	$(item l list 'list all projects in the tree')
@@ -24,8 +24,11 @@ usage() {
 	$(items_test_help_verbose_debug)
 	
 	$(section_examples)
-	$(example_description 'Build a debian package')
+	$(example_description 'Build package bashlibs-verbose for host 192.168.1.2')
 	$(example $(progname) --server 192.168.1.2 --project-path src/bashlibs-verbose)
+
+	$(example_description 'Build package bashlibs-verbose for multiple hosts: gentoo, ubuntu32 and ubuntu64')
+	$(example $(progname) -s gentoo -s ubuntu32 -s ubuntu64 --project-path src/bashlibs-verbose)
 
 	$(example_description 'Same as above but using --find flag')
 	$(example $(progname) --server 192.168.1.2 --find bashlibs-verbose)
@@ -104,7 +107,7 @@ cmdline() {
             vinfo "Running tests"
             ;;
         s)
-            readonly TARGET_BUILD_HOST=$OPTARG
+            TARGET_BUILD_HOSTS="$TARGET_BUILD_HOSTS $OPTARG"
             ;;
         p)
             readonly PROJECT_PATH=$(cd $OPTARG; pwd)
@@ -147,7 +150,7 @@ cmdline() {
     if_defined_declare_readonly PORTAGE_TREE
     if_defined_declare_readonly PORTAGE_TREE_NAME
     if_defined_declare_readonly PRE_COMPILE_DEPEND
-    if_defined_declare_readonly TARGET_BUILD_HOST
+    if_defined_declare_readonly TARGET_BUILD_HOSTS
 
     load_configuration_files
 
@@ -156,11 +159,4 @@ cmdline() {
     readonly PORTAGE_TREE
     readonly PORTAGE_TREE_NAME
     readonly PRE_COMPILE_DEPEND
-
-    [[ -z $PROJECT_NAME && -z $PROJECT_PATH ]] \
-        && eexit "project name or project path need to be provided. None was given."
-    check_project_name
-    check_project_path
-    verify_target_build_host
-    check_gentoo_commands
 }

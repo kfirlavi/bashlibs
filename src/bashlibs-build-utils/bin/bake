@@ -217,12 +217,29 @@ repositories_dir() {
         || create_user_repositories_dir
 }
 
+verify_params() {
+    [[ -z $PROJECT_NAME && -z $PROJECT_PATH ]] \
+        && eexit "project name or project path need to be provided. None was given."
+
+    check_project_name
+    check_project_path
+    verify_target_build_host
+    check_gentoo_commands
+}
+
 main() {
     cmdline $(args)
 
-    vinfo "Target build host $(color red)$(target_build_host)$(no_color) is $(target_os_with_color)"
-    vinfo "Building $(color blue)$(package_type)$(no_color) package for $(target_os_with_color)"
-    
-    create_$(package_type)_package
+    local host
+
+    vinfo "Building on hosts: $TARGET_BUILD_HOSTS"
+    for host in $TARGET_BUILD_HOSTS
+    do
+        TARGET_BUILD_HOST=$host
+        verify_params
+        vinfo "Target build host $(color red)$(target_build_host)$(no_color) is $(target_os_with_color)"
+        vinfo "Building $(color blue)$(package_type)$(no_color) package for $(target_os_with_color)"
+        create_$(package_type)_package
+    done
 }
 main
