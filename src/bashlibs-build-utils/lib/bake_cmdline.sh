@@ -136,6 +136,9 @@ cmdline() {
     [[ -n $LIST_PROJECTS ]] \
         && list_projects
 
+    [[ -z $PROJECTS ]] \
+        && eexit "project name or project path need to be provided. None was given."
+
     # commandline arguments have precedence on configuration files
     if_defined_declare_readonly REPOSITORIES_NAMES
     if_defined_declare_readonly CMAKE_OPTIONS
