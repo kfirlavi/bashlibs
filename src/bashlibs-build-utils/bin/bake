@@ -252,7 +252,7 @@ main() {
     for host in $TARGET_BUILD_HOSTS
     do
         TARGET_BUILD_HOST=$host
-        verify_target_build_host
+        verify_target_build_host $host
 
         for project in $PROJECTS
         do

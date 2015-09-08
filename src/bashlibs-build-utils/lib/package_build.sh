@@ -256,22 +256,28 @@ create_key() {
 }
 
 ssh_is_working_with_keys() {
-    ssh -o BatchMode=yes "root@$(host)" true
+    local host=$1
+
+    ssh -o BatchMode=yes "root@$host" true
 }
 
 copy_ssh_keys() {
-    ssh-copy-id root@$(host)
+    local host=$1
+
+    ssh-copy-id root@$host
 }
 
 verify_target_build_host() {
+    local host=$1
+
     private_key_exist \
         || create_key
 
-    ssh_is_working_with_keys \
-        || copy_ssh_keys
+    ssh_is_working_with_keys $host \
+        || copy_ssh_keys $host
 
-    ssh_is_working_with_keys \
-        && vinfo "ssh passwordless connection works to root@$(host)" \
-        || eexit "ssh passwordless connection does not work to root@$(host). After setting keys. Please check!"
+    ssh_is_working_with_keys $host \
+        && vinfo "ssh passwordless connection works to root@$host" \
+        || eexit "ssh passwordless connection does not work to root@$host. After setting keys. Please check!"
 
 }
