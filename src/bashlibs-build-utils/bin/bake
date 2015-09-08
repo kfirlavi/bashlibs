@@ -30,10 +30,6 @@ if_defined_declare_readonly() {
         && readonly $var_name
 }
 
-project_name() {
-    echo $PROJECT_NAME
-}
-
 repository_color() {
     local rep_name=$1
     local rep_color_var=REPOSITORY_COLOR_$rep_name
@@ -113,10 +109,6 @@ target_os_with_color() {
 
     target_os_is_ubuntu \
         && echo $(color yellow)ubuntu$(no_color)
-}
-
-project_path() {
-    echo $PROJECT_PATH
 }
 
 package_type() {
@@ -208,6 +200,13 @@ sources_root_dir() {
     pwd
 }
 
+create_function_to_return_static_string() {
+    local function_name=$1;shift
+    local string=$@
+
+    eval "$function_name() { echo $string; }"
+}
+
 main() {
     cmdline $(args)
 
@@ -247,8 +246,13 @@ main() {
                         $src_root_dir)
             fi
 
-            PROJECT_NAME=$project_name
-            PROJECT_PATH=$(realpath $project_path)
+            create_function_to_return_static_string \
+                project_name \
+                $project_name
+
+            create_function_to_return_static_string \
+                project_path \
+                $(realpath $project_path)
 
             load_configuration_files
             vinfo "top_level_path=$(top_level_path)"
