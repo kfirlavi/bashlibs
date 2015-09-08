@@ -14,8 +14,7 @@ usage() {
 
 	$(section_options)
 	$(item s server 'IP or hostname of the target system. This option can be specified multiple times, to compile on different hosts')
-	$(item p project-path 'path to the project you want to build')
-	$(item f find 'project name you want to build - case insensitive (project name provided by CMakeLists.txt). This option can be specified multiple times, in order to build few projects')
+	$(item p project 'project name or project path. Can be specified multiple times')
 	$(item l list 'list all projects in the tree')
 	$(item d depend 'provide a list of packages that must be installed before compilation. $(progname) will install them before compilation.')
 	$(item u apt-update 'update apt on ubuntu/debian like os after compilation')
@@ -27,27 +26,24 @@ usage() {
 	
 	$(section_examples)
 	$(example_description 'Build package bashlibs-verbose for host 192.168.1.2')
-	$(example $(progname) --server 192.168.1.2 --project-path src/bashlibs-verbose)
+	$(example $(progname) --server 192.168.1.2 --project src/bashlibs-verbose)
 
-	$(example_description 'Build package bashlibs-verbose for multiple hosts: gentoo, ubuntu32 and ubuntu64')
-	$(example $(progname) -s gentoo -s ubuntu32 -s ubuntu64 --project-path src/bashlibs-verbose)
-
-	$(example_description 'Same as above but using --find flag')
-	$(example $(progname) --server 192.168.1.2 --find bashlibs-verbose)
+	$(example_description 'Build package bashlibs-verbose and bashlibs-colors for multiple hosts: gentoo, ubuntu32 and ubuntu64. For bashlibs-verbose we use path, and for bashlibs-colors we use project name and ask bake to find the project for us')
+	$(example $(progname) -s gentoo -s ubuntu32 -s ubuntu64 -p src/bashlibs-verbose -p bashlibs-colors)
 
 	$(example_description 'Build a gentoo tbz package')
-	$(example $(progname) --server 192.168.1.2 --find bashlibs-verbose --portage-tree portage --portage-tree-name aaa)
+	$(example $(progname) --server 192.168.1.2 --project bashlibs-verbose --portage-tree portage --portage-tree-name aaa)
 
 	$(example_description 'compilation require flex and bison')
-	$(example $(progname) --server 192.168.1.2 --find bashlibs-verbose --depend flex --depend bison)
+	$(example $(progname) --server 192.168.1.2 --project bashlibs-verbose --depend flex --depend bison)
 
 	$(example_description 'Add cmake definition, for example TARGET_OS=Linux, when building debian package')
-	$(example $(progname) --server 192.168.1.2 --find bashlibs-verbose --cmake-options '-DTARGET_OS=Linux')
+	$(example $(progname) --server 192.168.1.2 --project bashlibs-verbose --cmake-options '-DTARGET_OS=Linux')
 
 	$(example_description "This will create the repository 'aaa' in $(repositories_dir)")
-	$(example $(progname) --server 192.168.1.2 --find bashlibs-verbose --repository aaa)
+	$(example $(progname) --server 192.168.1.2 --project bashlibs-verbose --repository aaa)
 	$(example_description "Same as before but the package will reside in 'aaa' and 'bbb' repositories")
-	$(example $(progname) --server 192.168.1.2 --find bashlibs-verbose --repository aaa --repository bbb)
+	$(example $(progname) --server 192.168.1.2 --project bashlibs-verbose --repository aaa --repository bbb)
 
 	$(example_test $(progname))
 	EOF
@@ -64,8 +60,7 @@ cmdline() {
         local delim=""
         case "$arg" in
             #translate --gnu-long-options to -g (short options)
-         --project-path) args="${args}-p ";;
-                 --find) args="${args}-f ";;
+              --project) args="${args}-p ";;
                  --list) args="${args}-l ";;
                --depend) args="${args}-d ";;
            --update-apt) args="${args}-u ";;
@@ -88,7 +83,7 @@ cmdline() {
     #Reset the positional parameters to the short options
     eval set -- $args
 
-    while getopts "qvhxlut:p:f:d:s:k:c:r:m:e:" OPTION
+    while getopts "qvhxlut:p:d:s:k:c:r:m:e:" OPTION
     do
         case $OPTION in
         q)
@@ -112,9 +107,6 @@ cmdline() {
             TARGET_BUILD_HOSTS="$TARGET_BUILD_HOSTS $OPTARG"
             ;;
         p)
-            readonly PROJECT_PATH=$(cd $OPTARG; pwd)
-            ;;
-        f)
             PROJECTS="$PROJECTS $OPTARG"
             ;;
         l)

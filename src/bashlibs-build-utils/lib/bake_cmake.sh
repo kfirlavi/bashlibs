@@ -28,6 +28,16 @@ cmake_project_file() {
     done
 }
 
+cmake_project_path() {
+    local project_name=$1
+    local path=$2
+
+    local cmake_file=$(cmake_project_file $project_name $path)
+
+    [[ -f $cmake_file ]] \
+        && dirname $cmake_file
+}
+
 project_exist() {
     local project_name=$1
     local path=$2
@@ -49,4 +59,25 @@ extract_project_name_from_cmake_file() {
     grep project $cmake_file \
         | cut -d '(' -f 2 \
         | cut -d ')' -f 1
+}
+
+extract_project_name_from_path() {
+    local path=$1
+    local cmake_file=$path/CMakeLists.txt
+
+    extract_project_name_from_cmake_file \
+        $cmake_file
+}
+
+is_path() {
+    local path=$1
+
+    [[ -d $path ]]
+}
+
+is_valid_project_path() {
+    local path=$1
+    local name=$(extract_project_name_from_path $path)
+
+    [[ -n $name ]]
 }

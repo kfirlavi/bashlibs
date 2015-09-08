@@ -83,6 +83,23 @@ test_cmake_project_file() {
         "cmake_project_file non_exist_project_name $TEST_DIR"
 }
 
+test_cmake_project_path() {
+    returns \
+        "$TEST_DIR/proj1" \
+        "cmake_project_path proj1 $TEST_DIR"
+
+    returns \
+        "$TEST_DIR/proj2" \
+        "cmake_project_path proj2 $TEST_DIR"
+
+    returns \
+        "$TEST_DIR/common/proj3" \
+        "cmake_project_path proj3 $TEST_DIR"
+
+    returns_empty \
+        "cmake_project_path non_exist_project_name $TEST_DIR"
+}
+
 test_project_exist() {
     return_true \
         "project_exist proj1 $TEST_DIR"
@@ -98,6 +115,9 @@ test_project_exist() {
 
     return_false \
         "project_exist non_exist_project_name $TEST_DIR"
+
+    return_false \
+        "project_exist $TEST_DIR"
 }
 
 test_extract_project_name_from_cmake_file() {
@@ -119,6 +139,39 @@ test_extract_project_name_from_cmake_file() {
     returns_empty \
         "extract_project_name_from_cmake_file \
             $TEST_DIR/proj2/src/CMakeLists.txt"
+}
+
+test_extract_project_name_from_path() {
+    returns \
+        "proj1" \
+        "extract_project_name_from_path \
+            $TEST_DIR/proj1"
+
+    returns \
+        "proj2" \
+        "extract_project_name_from_path \
+            $TEST_DIR/proj2"
+
+    returns \
+        "proj3" \
+        "extract_project_name_from_path \
+            $TEST_DIR/common/proj3"
+
+    returns_empty \
+        "extract_project_name_from_path \
+            $TEST_DIR/proj2/src"
+}
+
+test_is_path() {
+    return_true "is_path $TEST_DIR/proj2/src"
+    return_false "is_path bashlibs-colors"
+}
+
+test_is_valid_project_path() {
+    return_true "is_valid_project_path $TEST_DIR/proj2"
+    return_true "is_valid_project_path $TEST_DIR/proj2/"
+    return_false "is_valid_project_path $TEST_DIR/proj2/src/"
+    return_false "is_valid_project_path bashlibs-colors"
 }
 
 # load shunit2
