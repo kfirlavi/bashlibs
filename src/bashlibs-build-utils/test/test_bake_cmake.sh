@@ -22,6 +22,28 @@ oneTimeTearDown() {
         $TEST_DIR
 }
 
+test_all_cmake_files() {
+    return_value_should_include \
+        "$TEST_DIR/proj1/CMakeLists.txt" \
+        "all_cmake_files $TEST_DIR"
+
+    return_value_should_include \
+        "$TEST_DIR/proj2/CMakeLists.txt" \
+        "all_cmake_files $TEST_DIR"
+
+    return_value_should_include \
+        "$TEST_DIR/common/proj3/CMakeLists.txt" \
+        "all_cmake_files $TEST_DIR"
+
+    return_value_should_include \
+        "$TEST_DIR/common/proj4/CMakeLists.txt" \
+        "all_cmake_files $TEST_DIR"
+
+    return_value_should_include \
+        "$TEST_DIR/proj2/src/CMakeLists.txt" \
+        "all_cmake_files $TEST_DIR"
+}
+
 test_all_cmake_project_files() {
     return_value_should_include \
         "$TEST_DIR/proj1/CMakeLists.txt" \
@@ -42,6 +64,61 @@ test_all_cmake_project_files() {
     return_value_shouldnt_include \
         "$TEST_DIR/proj2/src/CMakeLists.txt" \
         "all_cmake_project_files $TEST_DIR"
+}
+
+test_cmake_project_file() {
+    returns \
+        "$TEST_DIR/proj1/CMakeLists.txt" \
+        "cmake_project_file proj1 $TEST_DIR"
+
+    returns \
+        "$TEST_DIR/proj2/CMakeLists.txt" \
+        "cmake_project_file proj2 $TEST_DIR"
+
+    returns \
+        "$TEST_DIR/common/proj3/CMakeLists.txt" \
+        "cmake_project_file proj3 $TEST_DIR"
+
+    returns_empty \
+        "cmake_project_file non_exist_project_name $TEST_DIR"
+}
+
+test_project_exist() {
+    return_true \
+        "project_exist proj1 $TEST_DIR"
+
+    return_true \
+        "project_exist proj2 $TEST_DIR"
+
+    return_true \
+        "project_exist proj3 $TEST_DIR"
+
+    return_true \
+        "project_exist proj4 $TEST_DIR"
+
+    return_false \
+        "project_exist non_exist_project_name $TEST_DIR"
+}
+
+test_extract_project_name_from_cmake_file() {
+    returns \
+        "proj1" \
+        "extract_project_name_from_cmake_file \
+            $TEST_DIR/proj1/CMakeLists.txt"
+
+    returns \
+        "proj2" \
+        "extract_project_name_from_cmake_file \
+            $TEST_DIR/proj2/CMakeLists.txt"
+
+    returns \
+        "proj3" \
+        "extract_project_name_from_cmake_file \
+            $TEST_DIR/common/proj3/CMakeLists.txt"
+
+    returns_empty \
+        "extract_project_name_from_cmake_file \
+            $TEST_DIR/proj2/src/CMakeLists.txt"
 }
 
 # load shunit2
