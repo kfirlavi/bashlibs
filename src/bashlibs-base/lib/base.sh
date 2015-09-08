@@ -27,7 +27,7 @@ exit_if_library_does_not_exists() {
 
 libraries_path() {
     intree_include \
-        && echo $BASHLIBS_SOURCE_TREE \
+        && echo $BASHLIBS_SOURCE_TREE/src \
         || echo /usr/lib/bashlibs
 }
 

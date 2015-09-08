@@ -19,8 +19,8 @@ include bake_debian.sh
 include package_build.sh
 include deb_repository.sh
 include bake_cmdline.sh
+include bake_cmake.sh
 include verbose.sh
-include usage.sh
 VERBOSE=2
 
 if_defined_declare_readonly() {
@@ -50,13 +50,6 @@ check_project_name() {
             && vinfo "Found project path $(dirname $cmake_file)" \
             || eexit "Can't find project $(project_name)"
     fi
-}
-
-all_cmake_project_files() {
-    find \
-        -type f \
-        -name CMakeLists.txt \
-        -exec grep -l "project (" {} \;
 }
 
 extract_project_name_from_cmake_file() {
@@ -232,6 +225,12 @@ show_build_info() {
     vinfo "Building $(color blue)$(package_type)$(no_color) package for $(target_os_with_color)"
 }
 
+file_containing_dir() {
+    local f=$1
+
+    dirname $(realpath $f)
+}
+
 main() {
     cmdline $(args)
 
@@ -241,9 +240,25 @@ main() {
     for host in $TARGET_BUILD_HOSTS
     do
         TARGET_BUILD_HOST=$host
-        verify_params
-        show_build_info
-        create_$(package_type)_package
+
+        for project in $PROJECTS
+        do
+            PROJECT_NAME=$project
+            PROJECT_CMAKE_FILE=$(cmake_project_file $project)
+            PROJECT_PATH=$(file_containing_dir $PROJECT_CMAKE_FILE)
+
+            load_configuration_files
+
+            readonly REPOSITORIES_NAMES
+            readonly CMAKE_OPTIONS
+            readonly PORTAGE_TREE
+            readonly PORTAGE_TREE_NAME
+            readonly PRE_COMPILE_DEPEND
+
+            verify_params
+            show_build_info
+            create_$(package_type)_package
+        done
     done
 }
 main

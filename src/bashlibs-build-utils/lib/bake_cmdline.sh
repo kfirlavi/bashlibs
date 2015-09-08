@@ -1,3 +1,5 @@
+include usage.sh
+
 usage() {
 	set_column_indentation_gap 18
 	cat <<- EOF
@@ -13,7 +15,7 @@ usage() {
 	$(section_options)
 	$(item s server 'IP or hostname of the target system. This option can be specified multiple times, to compile on different hosts')
 	$(item p project-path 'path to the project you want to build')
-	$(item f find 'project name you want to build - case insensitive (project name provided by CMakeLists.txt)')
+	$(item f find 'project name you want to build - case insensitive (project name provided by CMakeLists.txt). This option can be specified multiple times, in order to build few projects')
 	$(item l list 'list all projects in the tree')
 	$(item d depend 'provide a list of packages that must be installed before compilation. $(progname) will install them before compilation.')
 	$(item u apt-update 'update apt on ubuntu/debian like os after compilation')
@@ -113,9 +115,7 @@ cmdline() {
             readonly PROJECT_PATH=$(cd $OPTARG; pwd)
             ;;
         f)
-            readonly PROJECT_NAME=$OPTARG
-            readonly PROJECT_CMAKE_FILE=$(cmake_project_file $PROJECT_NAME)
-            readonly PROJECT_PATH=$(cd $(dirname $PROJECT_CMAKE_FILE); pwd)
+            PROJECTS="$PROJECTS $OPTARG"
             ;;
         l)
             readonly LIST_PROJECTS=1
@@ -151,12 +151,4 @@ cmdline() {
     if_defined_declare_readonly PORTAGE_TREE_NAME
     if_defined_declare_readonly PRE_COMPILE_DEPEND
     if_defined_declare_readonly TARGET_BUILD_HOSTS
-
-    load_configuration_files
-
-    readonly REPOSITORIES_NAMES
-    readonly CMAKE_OPTIONS
-    readonly PORTAGE_TREE
-    readonly PORTAGE_TREE_NAME
-    readonly PRE_COMPILE_DEPEND
 }
