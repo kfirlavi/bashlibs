@@ -186,6 +186,12 @@ verify_params() {
 }
 
 show_build_info() {
+    local project_name=$1
+    local project_path=$2
+
+    vinfo "Building project: $(color purple)$project_name$(no_color)"
+    vinfo "Project Path: $(color green)$project_path$(no_color)"
+    vinfo "Sources path: $(color yellow)$(top_level_path)$(no_color)"
     vinfo "Target build host $(color red)$(target_build_host)$(no_color) is $(target_os_with_color)"
     vinfo "Building $(color blue)$(package_type)$(no_color) package for $(target_os_with_color)"
 }
@@ -254,8 +260,7 @@ main() {
                 project_path \
                 $(realpath $project_path)
 
-            load_configuration_files
-            vinfo "top_level_path=$(top_level_path)"
+            load_configuration_files $(project_path)
 
             readonly REPOSITORIES_NAMES
             readonly CMAKE_OPTIONS
@@ -264,7 +269,11 @@ main() {
             readonly PRE_COMPILE_DEPEND
 
             verify_params
-            show_build_info
+
+            show_build_info \
+                $(project_name) \
+                $(project_path)
+
             create_$(package_type)_package
         done
     done

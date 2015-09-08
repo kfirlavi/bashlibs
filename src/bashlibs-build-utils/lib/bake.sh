@@ -30,7 +30,7 @@ top_level_path() {
 }
 
 load_configuration_files() {
-    local path=$(realpath $(project_path))
+    local path=$1
 
     while [[ -z $TOP_RC && $path != '/' ]] 
     do

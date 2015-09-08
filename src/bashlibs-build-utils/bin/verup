@@ -107,7 +107,7 @@ modify_gentoo_ebuild_version() {
 }
 
 main() {
-    load_configuration_files
+    load_configuration_files $(project_path)
     local last_version=$(current_version)
     local next_version=$(next_version $last_version)
     vinfo "changing version: $last_version -> $next_version"
