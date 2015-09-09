@@ -159,6 +159,34 @@ directory_shouldnt_exist() {
         "[[ -d $d ]]"
 }
 
+var_should_be_defined() {
+    local variable_name=$1
+    local value=$(eval echo $(echo \$$variable_name))
+
+    assertTrue \
+        "variable '$variable_name' should be defined" \
+        "[[ -n $value ]]"
+}
+
+var_is_not_defined() {
+    local variable_name=$1
+    local value=$(eval echo $(echo \$$variable_name))
+
+    assertFalse \
+        "variable '$variable_name' should not be defined" \
+        "[[ -n $value ]]"
+}
+
+var_equal() {
+    local variable_name=$1
+    local should_be_value=$2
+    local value=$(eval echo $(echo \$$variable_name))
+
+    assertTrue \
+        "variable '$variable_name' value should be '$should_be_value' but is '$value'" \
+        "[[ $value == $should_be_value ]]"
+}
+
 find_shunit2() {
     local i=
 

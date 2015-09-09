@@ -15,6 +15,7 @@ usage() {
 	$(section_options)
 	$(item s server 'IP or hostname of the target system. This option can be specified multiple times, to compile on different hosts')
 	$(item p project 'project name or project path. Can be specified multiple times')
+	$(item C root 'path to sources tree, if current directory is not in the source tree')
 	$(item l list 'list all projects in the tree')
 	$(item d depend 'provide a list of packages that must be installed before compilation. $(progname) will install them before compilation.')
 	$(item u apt-update 'update apt on ubuntu/debian like os after compilation')
@@ -30,6 +31,10 @@ usage() {
 
 	$(example_description 'Build package bashlibs-verbose and bashlibs-colors for multiple hosts: gentoo, ubuntu32 and ubuntu64. For bashlibs-verbose we use path, and for bashlibs-colors we use project name and ask bake to find the project for us')
 	$(example $(progname) -s gentoo -s ubuntu32 -s ubuntu64 -p src/bashlibs-verbose -p bashlibs-colors)
+
+	$(example_description 'Running outside of the source tree')
+	$(example_description 'Lets say we are running bake from /tmp/ and the source tree is in /home/user/code:')
+	$(example $(progname) --server 192.168.1.2 --project src/bashlibs-verbose --root /home/user/code)
 
 	$(example_description 'Build a gentoo tbz package')
 	$(example $(progname) --server 192.168.1.2 --project bashlibs-verbose --portage-tree portage --portage-tree-name aaa)
@@ -60,6 +65,7 @@ cmdline() {
         local delim=""
         case "$arg" in
             #translate --gnu-long-options to -g (short options)
+                 --root) args="${args}-C ";;
               --project) args="${args}-p ";;
                  --list) args="${args}-l ";;
                --depend) args="${args}-d ";;
@@ -83,7 +89,7 @@ cmdline() {
     #Reset the positional parameters to the short options
     eval set -- $args
 
-    while getopts "qvhxlut:p:d:s:k:c:r:m:e:" OPTION
+    while getopts "qvhxlut:p:d:s:k:c:r:m:e:C:" OPTION
     do
         case $OPTION in
         q)
@@ -101,10 +107,12 @@ cmdline() {
             ;;
         t)
             RUN_TESTS=$OPTARG
-            vinfo "Running tests"
             ;;
         s)
             TARGET_BUILD_HOSTS="$TARGET_BUILD_HOSTS $OPTARG"
+            ;;
+        C)
+            SOURCES_TREE_ROOT=$OPTARG
             ;;
         p)
             PROJECTS="$PROJECTS $OPTARG"
@@ -132,12 +140,6 @@ cmdline() {
             ;;
         esac
     done
-
-    [[ -n $LIST_PROJECTS ]] \
-        && list_projects
-
-    [[ -z $PROJECTS ]] \
-        && eexit "project name or project path need to be provided. None was given."
 
     # commandline arguments have precedence on configuration files
     if_defined_declare_readonly REPOSITORIES_NAMES

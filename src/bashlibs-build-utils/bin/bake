@@ -13,7 +13,7 @@ my_real_dir() {
 
 source $(my_real_dir)/bake-intree-init > /dev/null 2>&1 \
     || $(bashlibs --load-base)
-include bake.sh
+include bake_config.sh
 include bake_gentoo.sh
 include bake_debian.sh
 include package_build.sh
@@ -240,8 +240,26 @@ set_project_name_and_project_path() {
 
 }
 
+is_source_tree_root_defined() {
+    [[ -n $SOURCES_TREE_ROOT ]]
+}
+
+work_from_source_tree_root() {
+    is_source_tree_root_defined \
+        && cd $SOURCES_TREE_ROOT
+
+}
+
 main() {
     cmdline $(args)
+
+    [[ -n $LIST_PROJECTS ]] \
+        && list_projects
+
+    [[ -z $PROJECTS ]] \
+        && eexit "project name or project path need to be provided. None was given."
+
+    work_from_source_tree_root
 
     local host
     local project

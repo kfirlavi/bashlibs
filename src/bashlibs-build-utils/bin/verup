@@ -5,7 +5,7 @@ my_real_dir() {
 
 source $(my_real_dir)/bake-intree-init > /dev/null 2>&1 \
     || $(bashlibs --load-base)
-include bake.sh
+include bake_config.sh
 include verbose.sh
 include usage.sh
 VERBOSE=2
