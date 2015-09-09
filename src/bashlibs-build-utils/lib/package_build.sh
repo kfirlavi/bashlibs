@@ -14,17 +14,6 @@ tmp_dir() {
     echo /tmp/$(progname)
 }
 
-check_project_path() {
-    [[ -z $(project_path) ]] \
-        && eexit "You need to provide a project path"
-
-    [[ ! -d $(project_path) ]] \
-        && eexit "project path '$(project_path)': is not a directory!"
-
-    [[ ! -f $(project_path)/CMakeLists.txt ]] \
-        && eexit "You need to provide a cmake source dir. $(project_path)/CMakeLists.txt not found!"
-}
-
 app_version() {
 	cat $(project_path)/version
 }
