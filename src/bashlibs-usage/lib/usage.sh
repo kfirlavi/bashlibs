@@ -76,7 +76,7 @@ example_description() {
 
 item_test() {
     item t test \
-        "Run test suit to check vtestbed. Get a test file name or the 'all' to run all tests."
+        "Run test suit. Get a test file name or the 'all' to run all tests."
 }
 
 example_test() {
