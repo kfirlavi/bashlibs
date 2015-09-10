@@ -259,14 +259,15 @@ copy_ssh_keys() {
 verify_target_build_host() {
     local host=$1
 
+    vdebug "verify $host privet key exist"
     private_key_exist \
         || create_key
 
+    vdebug "verify $host ssh working with keys"
     ssh_is_working_with_keys $host \
         || copy_ssh_keys $host
 
     ssh_is_working_with_keys $host \
         && vinfo "ssh passwordless connection works to root@$host" \
         || eexit "ssh passwordless connection does not work to root@$host. After setting keys. Please check!"
-
 }

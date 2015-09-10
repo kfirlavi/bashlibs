@@ -1,11 +1,17 @@
 #!/bin/bash
 my_real_dir() {
-    dirname $(realpath --physical $0)
+    if [[ $(type -t progdir) == function ]]
+    then
+        progdir
+    else
+        dirname $(realpath $0)
+    fi
 }
 
 source $(my_real_dir)/bake-intree-init > /dev/null 2>&1 \
     || $(bashlibs --load-base)
 include bake_config.sh
+include bake.sh
 include verbose.sh
 include usage.sh
 VERBOSE=2
@@ -107,6 +113,9 @@ modify_gentoo_ebuild_version() {
 }
 
 main() {
+    local current_dir=$(pwd)
+    work_from_source_tree_root
+    cd $current_dir
     load_configuration_files $(project_path)
     local last_version=$(current_version)
     local next_version=$(next_version $last_version)
