@@ -13,3 +13,11 @@ $ bin/bake-all  ubuntu32 ubuntu64 gentoo
 
 will generate deb repository for i386 and amd64, 
 then will create a gentoo repository and source packages.
+
+delete all packages on ubuntu
+-----------------------------
+dpkg --configure -a; apt-get purge $(dpkg -l | grep bashlibs | awk '{print $2}') -y ; apt-get autoremove -y
+
+delete all bashlibs packages from gentoo
+----------------------------------------
+emerge -q -C $(eix --only-names bashlibs)

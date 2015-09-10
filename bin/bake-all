@@ -1,71 +1,51 @@
 #!/bin/bash
-REAL_DIR=
-
 my_real_dir() {
-    if [[ -z $REAL_DIR ]]
+    if [[ $(type -t progdir) == function ]]
     then
-        REAL_DIR=$(dirname $(realpath $(echo $0 | sed "s/$(basename $0)/bake/")))
-        echo $REAL_DIR
+        progdir
     else
-        echo $REAL_DIR
+        dirname $(realpath $(echo $0 | sed "s/$(basename $0)/bake/"))
     fi
 }
 
 source $(my_real_dir)/bake-intree-init > /dev/null 2>&1 \
     || $(bashlibs --load-base)
-include bake.sh
 include verbose.sh
-VERBOSE=2
+set_verbose_level_to_info
+include bake_config.sh
 
 hosts() {
-    args
-}
-
-log_and_run() {
-    local cmd="$@"
-
-    echo "$cmd"
-    $cmd
-}
-
-create_package() {
-    local package_name=$1
-    local host=$2
-
-    log_and_run $(progdir)/bake \
-        -q -v -v \
-        --server $host \
-        --find $package_name
-}
-
-all_packages() {
-    echo cmake-macros
-    echo bashlibs-cmake-macros
-    echo bashlibs-base
-
-    $(progdir)/bake -l \
-        | awk '{print $2}' \
-        | grep -v cmake-macros \
-        | grep -v bashlibs-cmake-macros \
-        | grep -v bashlibs-base \
-        | grep -v skelaton \
-        | xargs basename -a
+    args \
+        | sed 's/-s//g' \
+        | sed 's/--server//g'
 }
 
 main() {
-    local host
-    local i
-
-    cd $(progdir)/..
+    $(progdir)/bake \
+        $(args) \
+		-p cmake-macros \
+		-p bashlibs-cmake-macros \
+		-p bashlibs-shunit2-enhancements \
+		-p bashlibs-colors \
+		-p bashlibs-verbose \
+		-p bashlibs-usage \
+		-p bashlibs-directories \
+		-p bashlibs-file-manipulations \
+		-p bashlibs-code-clarity \
+		-p bashlibs-base \
+		-p bashlibs-utils \
+		-p bashlibs-date \
+		-p bashlibs-grub \
+		-p bashlibs-initramfs \
+		-p bashlibs-math \
+		-p bashlibs-os-detection \
+		-p bashlibs-string \
+		-p bashlibs-build-utils
 
     for host in $(hosts)
     do
-        for i in $(all_packages)
-        do
-            create_package $i $host
-        done
-
         ssh root@$host bashlibs -v -v --test all
     done
+
 }
 main
