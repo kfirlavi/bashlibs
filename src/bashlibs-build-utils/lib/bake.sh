@@ -155,6 +155,15 @@ show_build_info() {
     local project_name=$1
     local project_path=$2
 
+    is_quiet_mode_on \
+        && return
+
+    print_header \
+        $project_name-$(package_version $project_path) \
+        green \
+        "*" \
+        blue
+
     vdebug "$(progname) dir is $(progdir)"
     vinfo "Building project: $(color purple)$project_name$(no_color)"
     vinfo "Project Path: $(color green)$project_path$(no_color)"

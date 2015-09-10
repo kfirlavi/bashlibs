@@ -101,12 +101,6 @@ print_header() {
 }
 
 run_cmake() {
-    print_header \
-        $(cmake_project_name) \
-        green \
-        "*" \
-        blue
-
     vinfo "Making package"
     run_remote \
         "cd $(get_target_cmp_dir) \
