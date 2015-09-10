@@ -1,13 +1,10 @@
 #!/bin/bash
-REAL_DIR=
-
 my_real_dir() {
-    if [[ -z $REAL_DIR ]]
+    if [[ $(type -t progdir) == function ]]
     then
-        REAL_DIR=$(dirname $(realpath $0))
-        echo $REAL_DIR
+        progdir
     else
-        echo $REAL_DIR
+        dirname $(realpath $0)
     fi
 }
 
@@ -180,17 +177,12 @@ show_build_info() {
     local project_name=$1
     local project_path=$2
 
+    vdebug "$(progname) dir is $(progdir)"
     vinfo "Building project: $(color purple)$project_name$(no_color)"
     vinfo "Project Path: $(color green)$project_path$(no_color)"
     vinfo "Sources path: $(color yellow)$(top_level_path)$(no_color)"
     vinfo "Target build host $(color red)$(target_build_host)$(no_color) is $(target_os_with_color)"
     vinfo "Building $(color blue)$(package_type)$(no_color) package for $(target_os_with_color)"
-}
-
-file_containing_dir() {
-    local f=$1
-
-    dirname $(realpath $f)
 }
 
 sources_root_dir() {
@@ -223,11 +215,11 @@ set_project_name_and_project_path() {
 
         exit_if_project_not_found \
             $project_name \
-            $src_root_dir
+            $(top_level_path)
         
         project_path=$(cmake_project_path \
                 $project_name \
-                $src_root_dir)
+                $(top_level_path))
     fi
 
     create_function_to_return_static_string \
@@ -240,14 +232,22 @@ set_project_name_and_project_path() {
 
 }
 
-is_source_tree_root_defined() {
-    [[ -n $SOURCES_TREE_ROOT ]]
-}
-
 work_from_source_tree_root() {
-    is_source_tree_root_defined \
-        && cd $SOURCES_TREE_ROOT
+    local path=$(pwd)
+    local root_path
 
+    [[ -n $SOURCES_TREE_ROOT ]] \
+        && path=$SOURCES_TREE_ROOT
+
+    root_path=$(find_root_sources_path $path)
+
+    if [[ -z $root_path ]]
+    then
+        eexit "Can't find the sources root dir, maybe you need to use --root or run $(progname) from the sources root dir"
+    else
+        cd $root_path
+        set_top_level_path $root_path
+    fi
 }
 
 main() {
@@ -264,9 +264,8 @@ main() {
     local host
     local project
 
-    local src_root_dir=$(sources_root_dir)
+    vinfo "Building on hosts: $(color red)$TARGET_BUILD_HOSTS$(no_color)"
 
-    vinfo "Building on hosts: $TARGET_BUILD_HOSTS"
     for host in $TARGET_BUILD_HOSTS
     do
         TARGET_BUILD_HOST=$host

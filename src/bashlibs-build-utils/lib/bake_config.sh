@@ -37,7 +37,6 @@ load_configuration_files() {
     while [[ -z $TOP_RC && $path != '/' ]] 
     do
         load_config_file $path
-        set_top_level_path $path
         path=$(realpath $path/..)
     done
 }
@@ -54,16 +53,15 @@ is_top_level_path() {
 }
 
 find_root_sources_path() {
-    local path=$1
+    local path=$(realpath $1)
 
     [[ $path == '/' ]] \
         && return
 
     if is_top_level_path $path
     then
-        set_top_level_path $path
         echo $path
     else
-        find_root_sources_path $(realpath $path/..)
+        find_root_sources_path $path/..
     fi
 }

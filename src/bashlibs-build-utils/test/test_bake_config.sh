@@ -75,6 +75,14 @@ test_find_root_sources_path() {
     returns "$TEST_DIR" \
         "find_root_sources_path $TEST_DIR/common/proj4"
 
+    cd $TEST_DIR
+    returns "$TEST_DIR" \
+        "find_root_sources_path proj1"
+
+    cd $TEST_DIR/common
+    returns "$TEST_DIR" \
+        "find_root_sources_path proj3"
+
 
     rm $TEST_DIR/.bakerc
 
