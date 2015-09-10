@@ -61,12 +61,23 @@ extract_project_name_from_cmake_file() {
         | cut -d ')' -f 1
 }
 
+cmake_file() {
+    local path=$1
+
+    echo $path/CMakeLists.txt
+}
+
+cmake_file_exist() {
+    local path=$1
+
+    [[ -f $(cmake_file $path) ]]
+}
+
 extract_project_name_from_path() {
     local path=$1
-    local cmake_file=$path/CMakeLists.txt
 
     extract_project_name_from_cmake_file \
-        $cmake_file
+        $(cmake_file $path)
 }
 
 is_path() {
@@ -77,7 +88,7 @@ is_path() {
 
 is_valid_project_path() {
     local path=$1
-    local name=$(extract_project_name_from_path $path)
 
-    [[ -n $name ]]
+    cmake_file_exist $path \
+        && [[ -n $(extract_project_name_from_path $path) ]]
 }

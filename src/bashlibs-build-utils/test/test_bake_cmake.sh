@@ -4,7 +4,7 @@ include shunit2_enhancements.sh
 include bake_cmake.sh
 include directories.sh
 
-oneTimeSetUp() {
+setUp() {
     TEST_DIR=$(mktemp -d)
 
     mkdir -p $TEST_DIR/{proj1,proj2,common/{proj3,proj4}}
@@ -17,7 +17,7 @@ oneTimeSetUp() {
     touch $TEST_DIR/proj2/src/CMakeLists.txt
 }
 
-oneTimeTearDown() {
+tearDown() {
     safe_delete_directory_from_tmp \
         $TEST_DIR
 }
@@ -162,6 +162,16 @@ test_extract_project_name_from_path() {
             $TEST_DIR/proj2/src"
 }
 
+test_cmake_file() {
+    returns "/aaa/CMakeLists.txt" "cmake_file /aaa"
+}
+
+test_cmake_file_exist() {
+    return_true "cmake_file_exist $TEST_DIR/proj2"
+    rm $TEST_DIR/proj2/CMakeLists.txt
+    return_false "cmake_file_exist $TEST_DIR/proj2"
+}
+
 test_is_path() {
     return_true "is_path $TEST_DIR/proj2/src"
     return_false "is_path bashlibs-colors"
@@ -170,6 +180,10 @@ test_is_path() {
 test_is_valid_project_path() {
     return_true "is_valid_project_path $TEST_DIR/proj2"
     return_true "is_valid_project_path $TEST_DIR/proj2/"
+
+    rm $TEST_DIR/proj2/CMakeLists.txt
+    return_false "is_valid_project_path $TEST_DIR/proj2"
+
     return_false "is_valid_project_path $TEST_DIR/proj2/src/"
     return_false "is_valid_project_path bashlibs-colors"
 }

@@ -10,6 +10,8 @@ my_real_dir() {
 
 source $(my_real_dir)/bake-intree-init > /dev/null 2>&1 \
     || $(bashlibs --load-base)
+include bake_cmake.sh
+include package_build.sh
 include bake_config.sh
 include bake.sh
 include verbose.sh
@@ -34,11 +36,9 @@ project_path() {
         || echo $(args)
 }
 
-project_name() {
-    cat $(project_path)/CMakeLists.txt \
-        | grep project \
-        | cut -d '(' -f 2 \
-        | cut -d ')' -f 1
+verify_project_path() {
+    is_valid_project_path $(project_path) \
+        || eexit "$(project_path) is not a valid project path"
 }
 
 version_file() {
@@ -80,7 +80,7 @@ current_version() {
 ebuild_name() {
     local version=$1
 
-    echo "$(project_name)-$version.ebuild"
+    echo "$(cmake_project_name)-$version.ebuild"
 }
 
 find_project_ebuild() {
@@ -116,6 +116,7 @@ main() {
     local current_dir=$(pwd)
     work_from_source_tree_root
     cd $current_dir
+    verify_project_path
     load_configuration_files $(project_path)
     local last_version=$(current_version)
     local next_version=$(next_version $last_version)
