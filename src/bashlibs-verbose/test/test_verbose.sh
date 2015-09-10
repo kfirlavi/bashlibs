@@ -35,6 +35,20 @@ test_decrease_verbose_level() {
     verbose_should_equal_to 0
 }
 
+test_set_verbose_level_to_info() {
+    local VERBOSE=4
+
+    set_verbose_level_to_info
+    verbose_should_equal_to 1
+}
+
+test_set_verbose_level_to_debug() {
+    local VERBOSE=4
+
+    set_verbose_level_to_debug
+    verbose_should_equal_to 2
+}
+
 test_no_verbose() {
     local VERBOSE=3
 

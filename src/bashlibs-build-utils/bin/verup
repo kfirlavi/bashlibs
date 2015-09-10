@@ -10,13 +10,13 @@ my_real_dir() {
 
 source $(my_real_dir)/bake-intree-init > /dev/null 2>&1 \
     || $(bashlibs --load-base)
+include verbose.sh
+set_verbose_level_to_info
 include bake_cmake.sh
 include package_build.sh
 include bake_config.sh
 include bake.sh
-include verbose.sh
 include usage.sh
-VERBOSE=2
 
 gentoo_portage_tree() {
 

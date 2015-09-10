@@ -104,6 +104,14 @@ decrease_verbose_level() {
         && (( VERBOSE-=1 ))
 }
 
+set_verbose_level_to_info() {
+    VERBOSE=$VINFO
+}
+
+set_verbose_level_to_debug() {
+    VERBOSE=$VDEBUG
+}
+
 no_verbose() {
     VERBOSE=0
 }
