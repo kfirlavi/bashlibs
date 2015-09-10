@@ -100,12 +100,16 @@ set_local_portage_tree_on_server() {
 }
 
 modify_gentoo_configuration_files_requierd_by_package() {
-    run_remote CONFIG_PROTECT_MASK="/etc/portage" emerge $(emerge_quiet) --autounmask-write --oneshot $(project_name)
+    local projects=$@
+
+    run_remote CONFIG_PROTECT_MASK="/etc/portage" emerge $(emerge_quiet) --autounmask-write --oneshot $projects
 }
 
 install_package_on_gentoo() {
-    modify_gentoo_configuration_files_requierd_by_package
-    run_remote emerge $(emerge_quiet) --update --oneshot --buildpkg $(project_name)
+    local projects=$@
+
+    modify_gentoo_configuration_files_requierd_by_package $projects
+    run_remote emerge $(emerge_quiet) --update --oneshot --buildpkg $projects
 }
 
 create_tbz_package() {
@@ -118,7 +122,6 @@ create_tbz_package() {
     exit_if_ebuild_dont_exist
     update_ebuild_manifest
     set_local_portage_tree_on_server
-    install_package_on_gentoo
     copy_portage_tree_manifests_from_server
     safe_delete_directory_from_tmp $(tmp_dir)
 }

@@ -58,6 +58,9 @@ main() {
 
             create_$(package_type)_package
         done
+
+        target_os_is_gentoo \
+            && install_package_on_gentoo $PROJECTS
     done
 }
 main
