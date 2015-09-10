@@ -1,6 +1,6 @@
 Generate bashlibs repository
 ------------------------------------
-# bin/bake-all <hosts>
+# bin/bake-all --server a --server b -s c -s d ...
 
 hosts are a debian/ubuntu or a gentoo
 
@@ -9,7 +9,7 @@ for each host it will generate all packages.
 For example:
 you have 3 hosts: ubuntu32 ubuntu64 and gentoo
 
-$ bin/bake-all  ubuntu32 ubuntu64 gentoo
+$ bin/bake-all -s ubuntu32 -s ubuntu64 -s gentoo
 
 will generate deb repository for i386 and amd64, 
 then will create a gentoo repository and source packages.
