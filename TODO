@@ -1,7 +1,15 @@
-* integrate skel with bashlibs-tools
-* add ebuilds for all libraries
-* add cmake-macros
-* remove the global cmake-macros loading to the bashlibs-cmake-macros module
-* write README for each lib with example of usage
+* move all todos here to githubs issues system
 * write blog post with examples
-* need to warn when no document found. Now it is just INFO.
+* run tests by package name:
+   $ bashlibs -t build-utils
+
+* generated repositories dir by bake should be in git root dir
+* ssh functions in build-utils should be extracted to ssh library
+* bake --no-color not working
+* git hook script should have a way to install it
+* show .bakerc content when running bake in debug mode
+* gentoo ebuild should run tests and implement 'test' use flag
+* add debug statements for debugging ease to bake
+* when building on gentoo, we need to have just package creation without installing
+* implement parallel project build on seperate servers
+* move all -v -t -x -h -q to a seperate function
