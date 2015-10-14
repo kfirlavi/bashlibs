@@ -1,0 +1,22 @@
+#!/bin/bash
+my_real_dir() {
+    if [[ $(type -t progdir) == function ]]
+    then
+        progdir
+    else
+        dirname $(realpath $(echo $0 | sed "s/$(basename $0)/bake/"))
+    fi
+}
+
+source $(my_real_dir)/bake-intree-init > /dev/null 2>&1 \
+    || $(bashlibs --load-base)
+include verbose.sh
+set_verbose_level_to_info
+include bake_config.sh
+
+main() {
+    rsync -av \
+        $(progdir)/../git-hooks/ \
+        $(progdir)/../.git/hooks/
+}
+main

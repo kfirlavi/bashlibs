@@ -1,3 +1,8 @@
+# After cloning
+To setup repository you should run:
+`$ cd bashlibs.git`
+`$ bin/setup`
+
 # Generate bashlibs repository
 `$ bin/bake-all --server a --server b -s c -s d ...`
 

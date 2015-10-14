@@ -1,0 +1,51 @@
+#!/bin/sh
+readonly COMMIT_FILE=$1
+
+commit_file() {
+    echo $COMMIT_FILE
+}
+
+commit_file_content() {
+    cat $(commit_file)
+}
+
+staged_files() {
+    git diff --cached --name-status \
+        | awk '{print $2}'
+}
+
+modified_packages_paths() {
+    staged_files \
+        | grep version \
+        | xargs dirname
+}
+
+project_name() {
+    local project_path=$1
+
+	grep -i "project" $project_path/CMakeLists.txt \
+		| head -1 \
+		| cut -d '(' -f 2 | cut -d ')' -f 1 \
+		| tr ' ' '.' \
+        | sed 's/bashlibs-//'
+}
+
+project_version() {
+    local project_path=$1
+
+	cat $project_path/version
+}
+
+changed_projects() {
+    local i
+
+    for i in $(modified_packages_paths)
+    do
+        echo "$(project_name $i)-$(project_version $i)"
+    done
+}
+
+main() {
+    echo -e "$(changed_projects)\n$(commit_file_content)" > $(commit_file)
+}
+main
