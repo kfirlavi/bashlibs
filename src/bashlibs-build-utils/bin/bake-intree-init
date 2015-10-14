@@ -10,8 +10,7 @@ running_in_src_tree() {
 }
 
 bashlibs_src_tree() {
-    my_real_dir \
-        | sed 's|bashlibs/src/.*$|bashlibs|'
+    realpath $(my_real_dir)/../../../
 }
 
 load_bashlibs_from_src_tree() {
