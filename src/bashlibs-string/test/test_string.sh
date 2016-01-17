@@ -108,5 +108,17 @@ test_str_to_camelcase() {
     return_equals "AbcDef" "echo 'abc-_-def--___' | str_to_camelcase"
 }
 
+test_upcase_str() {
+    return_equals "ABC"     "echo 'abc'     | upcase_str"
+    return_equals "ABC"     "echo 'Abc'     | upcase_str"
+    return_equals "ABC DEF" "echo 'abc def' | upcase_str"
+}
+
+test_downcase_str() {
+    return_equals "abc"     "echo 'ABC'     | downcase_str"
+    return_equals "abc"     "echo 'Abc'     | downcase_str"
+    return_equals "abc def" "echo 'AbC DEF' | downcase_str"
+}
+
 # load shunit2
 source /usr/share/shunit2/shunit2

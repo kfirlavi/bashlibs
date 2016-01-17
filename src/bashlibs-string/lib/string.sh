@@ -107,3 +107,15 @@ str_to_camelcase() {
         | sed -e 's/\b\(.\)/\u\1/g' \
         | delete_spaces
 }
+
+upcase_str() {
+    IFS= read -r
+    echo "$REPLY" \
+        | awk '{print toupper($0)}'
+}
+
+downcase_str() {
+    IFS= read -r
+    echo "$REPLY" \
+        | awk '{print tolower($0)}'
+}
