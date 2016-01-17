@@ -74,6 +74,12 @@ underscores_to_spaces() {
         | sed 's/_/ /g'
 }
 
+dash_to_spaces() {
+    IFS= read -r
+    echo "$REPLY" \
+        | sed 's/-/ /g'
+}
+
 tabs_to_spaces() {
     IFS= read -r
     echo "$REPLY" \
@@ -91,4 +97,13 @@ string_inside_quotes() {
     IFS= read -r
     echo "$REPLY" \
         | sed 's/.*"\(.*\)".*/\1/'
+}
+
+str_to_camelcase() {
+    IFS= read -r
+    echo "$REPLY" \
+        | underscores_to_spaces \
+        | dash_to_spaces \
+        | sed -e 's/\b\(.\)/\u\1/g' \
+        | delete_spaces
 }

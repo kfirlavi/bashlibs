@@ -70,6 +70,13 @@ test_underscores_to_spaces() {
     return_equals " a    b    " "echo ' a   _b   _' | underscores_to_spaces"
 }
 
+test_dash_to_spaces() {
+    return_equals "my test string" "echo 'my-test-string' | dash_to_spaces"
+    return_equals "   " "echo '---' | dash_to_spaces"
+    return_equals "a b     " "echo 'a-b   - ' | dash_to_spaces"
+    return_equals " a    b    " "echo ' a   -b   -' | dash_to_spaces"
+}
+
 test_tabs_to_spaces() {
     return_equals " " "echo -e '\t' | tabs_to_spaces"
     return_equals "    " "echo -e ' \t\t ' | tabs_to_spaces"
@@ -91,6 +98,14 @@ test_string_inside_quotes() {
     return_equals " abc " "echo '\" abc \"' | string_inside_quotes"
     return_equals "a" "echo 'b \"a\" c' | string_inside_quotes"
     return_equals "a line of" "echo 'this is \"a line of\" example' | string_inside_quotes"
+}
+
+test_str_to_camelcase() {
+    return_equals "Abc"    "echo 'abc'            | str_to_camelcase"
+    return_equals "Abc"    "echo 'Abc'            | str_to_camelcase"
+    return_equals "AbcDef" "echo 'abc def'        | str_to_camelcase"
+    return_equals "AbcDef" "echo 'abc_def'        | str_to_camelcase"
+    return_equals "AbcDef" "echo 'abc-_-def--___' | str_to_camelcase"
 }
 
 # load shunit2
