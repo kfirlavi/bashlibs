@@ -14,6 +14,7 @@ IUSE=""
 
 DEPEND="
 	>=dev-util/cmake-2.6
+	dev-bash/bashlibs-os-detection
 "
 RDEPEND=""
 
