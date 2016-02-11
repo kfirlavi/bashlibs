@@ -55,6 +55,25 @@ find_ebuild_for_package() {
         -name "*$(cmake_project_name)-$(app_version)*"
 }
 
+package_category() {
+    find_ebuild_for_package \
+        | rev \
+        | cut -d '/' -f 3 \
+        | rev
+}
+
+package_name_with_version() {
+    find_ebuild_for_package \
+        | rev \
+        | cut -d '/' -f 1 \
+        | cut -d '.' -f 2- \
+        | rev
+}
+
+package_full_name_with_version() {
+    echo $(package_category)/$(package_name_with_version)
+}
+
 ebuild_exist() {
     [[ -n $(find_ebuild_for_package) ]]
 }
@@ -100,16 +119,27 @@ set_local_portage_tree_on_server() {
 }
 
 modify_gentoo_configuration_files_requierd_by_package() {
-    local projects=$@
+    local packages=$@
 
-    run_remote CONFIG_PROTECT_MASK="/etc/portage" emerge $(emerge_quiet) --autounmask-write --oneshot $projects
+    run_remote CONFIG_PROTECT_MASK="/etc/portage" emerge $(emerge_quiet) --autounmask-write --oneshot $packages
+}
+
+print_packages_names() {
+    local packages=$@
+    local i
+    
+    for i in $packages
+    do
+        vinfo "Emerging package: $(color red)$i$(no_color)"
+    done
 }
 
 install_package_on_gentoo() {
-    local projects=$@
+    local packages=$@
 
-    modify_gentoo_configuration_files_requierd_by_package $projects
-    run_remote emerge $(emerge_quiet) --update --oneshot --buildpkg $projects
+    print_packages_names $packages
+    modify_gentoo_configuration_files_requierd_by_package $packages
+    run_remote emerge $(emerge_quiet) --update --oneshot --buildpkg $packages
 }
 
 create_tbz_package() {

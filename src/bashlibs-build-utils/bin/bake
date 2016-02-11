@@ -24,6 +24,7 @@ include bake.sh
 main() {
     local host
     local project
+    local projects=
 
     cmdline $(args)
     list_projects_if_needed
@@ -57,10 +58,12 @@ main() {
                 $(project_path)
 
             create_$(package_type)_package
+
+            projects="$projects =$(package_full_name_with_version)"
         done
 
         target_os_is_gentoo \
-            && install_package_on_gentoo $PROJECTS
+            && install_package_on_gentoo $projects
     done
 }
 main
