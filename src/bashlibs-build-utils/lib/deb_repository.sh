@@ -25,10 +25,6 @@ repository_binary_dir() {
         $(repository_dir)/binary
 }
 
-run_remote() {
-    ssh root@$(host) -- $@
-}
-
 target_architecture() {
     run_remote "uname -i"
 }

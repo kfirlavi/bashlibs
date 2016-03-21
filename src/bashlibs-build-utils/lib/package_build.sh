@@ -159,10 +159,6 @@ cmake_deb_filename() {
 	echo $(cmake_project_name)-$(app_version)-Linux.deb
 }
 
-run_remote() {
-	ssh -t root@$(host) $@
-}
-
 remote_mkdir() {
 	local dir=$1
 

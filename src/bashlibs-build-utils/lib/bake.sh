@@ -1,3 +1,16 @@
+run_on_host() {
+    local host=$1; shift
+    local cmd=$@
+
+	ssh root@$host -- $cmd
+}
+
+run_remote() {
+    local cmd=$@
+
+	ssh root@$(host) -- $cmd
+}
+
 if_defined_declare_readonly() {
     local var_name=$1
 

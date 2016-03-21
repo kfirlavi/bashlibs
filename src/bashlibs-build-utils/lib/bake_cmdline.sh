@@ -15,6 +15,7 @@ usage() {
 	$(section_options)
 	$(item s server 'IP or hostname of the target system. This option can be specified multiple times, to compile on different hosts')
 	$(item p project 'project name or project path. Can be specified multiple times')
+	$(item i install 'compile on one traget and then deploy the package on another machine (no compilation). For now just Gentoo is supported')
 	$(item C root 'path to sources tree, if current directory is not in the source tree')
 	$(item l list 'list all projects in the tree')
 	$(item d depend 'provide a list of packages that must be installed before compilation. $(progname) will install them before compilation.')
@@ -31,6 +32,10 @@ usage() {
 
 	$(example_description 'Build package bashlibs-verbose and bashlibs-colors for multiple hosts: gentoo, ubuntu32 and ubuntu64. For bashlibs-verbose we use path, and for bashlibs-colors we use project name and ask bake to find the project for us')
 	$(example $(progname) -s gentoo -s ubuntu32 -s ubuntu64 -p src/bashlibs-verbose -p bashlibs-colors)
+
+	$(example_description 'lets say I have few virtual machines that are the same, I want to compile on one but install on all')
+	$(example_description 'this will create a fast install on gentoo using quickpkg')
+	$(example $(progname) --server vm1 --install vm2 --install vm3 --project bashlibs-verbose)
 
 	$(example_description 'Running outside of the source tree')
 	$(example_description 'Lets say we are running bake from /tmp/ and the source tree is in /home/user/code:')
@@ -67,6 +72,7 @@ cmdline() {
             #translate --gnu-long-options to -g (short options)
                  --root) args="${args}-C ";;
               --project) args="${args}-p ";;
+              --install) args="${args}-i ";;
                  --list) args="${args}-l ";;
                --depend) args="${args}-d ";;
            --update-apt) args="${args}-u ";;
@@ -89,7 +95,7 @@ cmdline() {
     #Reset the positional parameters to the short options
     eval set -- $args
 
-    while getopts "qvhxlut:p:d:s:k:c:r:m:e:C:" OPTION
+    while getopts "qvhxlut:p:d:s:k:c:r:m:e:C:i:" OPTION
     do
         case $OPTION in
         q)
@@ -116,6 +122,9 @@ cmdline() {
             ;;
         p)
             PROJECTS="$PROJECTS $OPTARG"
+            ;;
+        i)
+            HOSTS_TO_INSTALL_BIN_PACKAGES="$HOSTS_TO_INSTALL_BIN_PACKAGES $OPTARG"
             ;;
         l)
             readonly LIST_PROJECTS=1
@@ -148,4 +157,5 @@ cmdline() {
     if_defined_declare_readonly PORTAGE_TREE_NAME
     if_defined_declare_readonly PRE_COMPILE_DEPEND
     if_defined_declare_readonly TARGET_BUILD_HOSTS
+    if_defined_declare_readonly HOSTS_TO_INSTALL_BIN_PACKAGES
 }
