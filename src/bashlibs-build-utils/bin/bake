@@ -57,7 +57,7 @@ main() {
                 $(project_name) \
                 $(project_path)
 
-            create_$(package_type)_package
+            create_$(package_type)_package $host
 
             projects="$projects =$(package_full_name_with_version)"
         done

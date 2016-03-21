@@ -8,11 +8,11 @@ emerge_quiet() {
 }
 
 emerge_cmd() {
-    echo emerge $(emerge_quiet) --oneshot --buildpkg=y
+    echo CONFIG_PROTECT=\"/etc/portage\" emerge $(emerge_quiet) --autounmask-write --oneshot --buildpkg=y
 }
 
 emerge_bin_pkg(){
-    echo $(emerge_cmd) -GK
+    echo emerge -q -k
 }
 
 local_distfiles_directory() {
@@ -35,11 +35,13 @@ create_target_distdir_if_needed() {
     run_remote mkdir -p $(target_distdir)
 }
 
-copy_tbz_package_to_server() {
+copy_tbz_package_to_host() {
+    local host=$1
+
     create_target_distdir_if_needed
     rsync \
         $(local_distfiles_directory)/$(tbz_filename) \
-        root@$(target_build_host):$(target_distdir)/
+        root@$host:$(target_distdir)/
 }
 
 copy_portage_tree_to_host() {
@@ -63,12 +65,14 @@ change_portage_tree_name_on_host() {
         root@$host:$(gentoo_local_portage_path)/profiles/
 }
 
-copy_portage_tree_manifests_from_server() {
+copy_portage_tree_manifests_from_host() {
+    local host=$1
+
     rsync -r \
         --include="*/" \
         --include=Manifest \
         --exclude="*" \
-        root@$(target_build_host):$(gentoo_local_portage_path)/ \
+        root@$host:$(gentoo_local_portage_path)/ \
         $(portage_tree)
 }
 
@@ -118,12 +122,16 @@ remote_ebuild_category_path() {
 }
 
 remote_delete_manifest_file() {
-    run_remote "rm $(remote_ebuild_category_path)/Manifest"
+    local host=$1
+
+    run_on_host $host "rm $(remote_ebuild_category_path)/Manifest"
 }
 
 update_ebuild_manifest() {
-    remote_delete_manifest_file
-    run_remote "ebuild $(remote_ebuild_path) manifest"
+    local host=$1
+
+    remote_delete_manifest_file $host
+    run_on_host $host "ebuild $(remote_ebuild_path) manifest"
 }
 
 portage_overlay_line() {
@@ -142,13 +150,6 @@ set_local_portage_tree_on_host() {
         || run_on_host $host "echo '$(portage_overlay_line)' >> /etc/portage/make.conf"
 }
 
-modify_gentoo_configuration_files_requierd_by_package() {
-    local host=$1; shift
-    local packages=$@
-
-    run_on_host $host CONFIG_PROTECT_MASK="/etc/portage" emerge --oneshot --autounmask-write $packages
-}
-
 print_host() {
     local host=$1
 
@@ -165,14 +166,23 @@ print_packages_names() {
     done
 }
 
+portage_configurations_have_changed() {
+    local host=$1
+
+    run_on_host $host \
+        find /etc/portage/ -name '._cfg*' \
+        | grep -q _cfg
+}
+
 install_package_on_gentoo() {
     local host=$1; shift
     local packages=$@
 
     vinfo "building packages on $(print_host $host)"
     print_packages_names $packages
-    modify_gentoo_configuration_files_requierd_by_package $host $packages
     run_on_host $host $(emerge_cmd) $packages
+    portage_configurations_have_changed $host \
+        && run_on_host $host $(emerge_cmd) $packages
     copy_bin_pkg_from_server $host
     quick_install_on_other_gentoo_hosts $packages
 }
@@ -181,7 +191,7 @@ copy_bin_pkg_from_server() {
     local host=$1
 
     rsync -aR \
-        root@$host:$(target_pkgdir) \
+        root@$host:$(dirname $(target_pkgdir)) \
         $(tmp_dir)
 }
 
@@ -189,7 +199,7 @@ copy_bin_pkg_to_host() {
     local host=$1
 
     rsync -a \
-        $(tmp_dir)/$(target_pkgdir) \
+        $(tmp_dir)/$(dirname $(target_pkgdir))/ \
         root@$host:$(dirname $(target_pkgdir))
 }
 
@@ -204,21 +214,24 @@ quick_install_on_other_gentoo_hosts() {
         change_portage_tree_name_on_host $host
         copy_bin_pkg_to_host $host
         set_local_portage_tree_on_host $host
-        modify_gentoo_configuration_files_requierd_by_package $host $packages
         run_on_host $host $(emerge_bin_pkg) -q $packages
+        portage_configurations_have_changed $host \
+            && run_on_host $host $(emerge_bin_pkg) -q $packages
     done
 }
 
 create_tbz_package() {
+    local host=$1
+
     gen_changelog
     copy_sources_to_workdir
     tar_sources
-    copy_tbz_package_to_server
-    copy_portage_tree_to_host $(target_build_host)
-    change_portage_tree_name_on_host $(target_build_host)
+    copy_tbz_package_to_host $host
+    copy_portage_tree_to_host $host
+    change_portage_tree_name_on_host $host
     exit_if_ebuild_dont_exist
-    update_ebuild_manifest
-    set_local_portage_tree_on_host $(target_build_host)
-    copy_portage_tree_manifests_from_server
+    update_ebuild_manifest $host
+    set_local_portage_tree_on_host $host
+    copy_portage_tree_manifests_from_host $host
     safe_delete_directory_from_tmp $(tmp_dir)
 }

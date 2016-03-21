@@ -2,12 +2,14 @@ run_on_host() {
     local host=$1; shift
     local cmd=$@
 
+    vdebug "$FUNCNAME $host $cmd"
 	ssh root@$host -- $cmd
 }
 
 run_remote() {
     local cmd=$@
 
+    vdebug "$FUNCNAME $host $cmd"
 	ssh root@$(host) -- $cmd
 }
 
