@@ -185,6 +185,7 @@ install_package_on_gentoo() {
         && run_on_host $host $(emerge_cmd) $packages
     copy_bin_pkg_from_server $host
     quick_install_on_other_gentoo_hosts $packages
+    safe_delete_directory_from_tmp $(tmp_dir)
 }
 
 copy_bin_pkg_from_server() {
