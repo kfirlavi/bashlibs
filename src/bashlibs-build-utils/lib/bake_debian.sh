@@ -80,6 +80,7 @@ create_deb_package() {
     install_deb
     save_deb_to_each_repository
     generate_repository_index_for_each_repository
+    clean_remote_dirs
 #    run_remote dpkg -L $(cmake_project_name)
 #    run_remote aptitude install $(cmake_project_name)
 #    run_remote $PROGNAME --test
