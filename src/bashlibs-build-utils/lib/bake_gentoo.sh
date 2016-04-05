@@ -7,12 +7,16 @@ emerge_quiet() {
         && echo '--quiet'
 }
 
-emerge_cmd() {
-    echo CONFIG_PROTECT=\"/etc/portage\" emerge $(emerge_quiet) --autounmask-write --oneshot --buildpkg=y
+emerge_base_cmd() {
+    echo emerge $(emerge_quiet) --autounmask-write --oneshot
 }
 
-emerge_bin_pkg(){
-    echo emerge -q -k
+emerge_build_package() {
+    echo $(emerge_base_cmd) --buildpkg=y
+}
+
+emerge_install_binary_package(){
+    echo $(emerge_base_cmd) --quiet --usepkg=y
 }
 
 local_distfiles_directory() {
@@ -174,15 +178,23 @@ portage_configurations_have_changed() {
         | grep -q _cfg
 }
 
+update_portage_configurations() {
+    local host=$1
+
+    run_on_host $host \
+        etc-update --automode -5 /etc/portage
+}
+
 install_package_on_gentoo() {
     local host=$1; shift
     local packages=$@
 
     vinfo "building packages on $(print_host $host)"
     print_packages_names $packages
-    run_on_host $host $(emerge_cmd) $packages
+    run_on_host $host $(emerge_build_package) $packages
     portage_configurations_have_changed $host \
-        && run_on_host $host $(emerge_cmd) $packages
+        && update_portage_configurations $host \
+        && run_on_host $host $(emerge_build_package) $packages
     copy_bin_pkg_from_server $host
     quick_install_on_other_gentoo_hosts $packages
     safe_delete_directory_from_tmp $(tmp_dir)
@@ -215,9 +227,10 @@ quick_install_on_other_gentoo_hosts() {
         change_portage_tree_name_on_host $host
         copy_bin_pkg_to_host $host
         set_local_portage_tree_on_host $host
-        run_on_host $host $(emerge_bin_pkg) -q $packages
+        run_on_host $host $(emerge_install_binary_package) $packages
         portage_configurations_have_changed $host \
-            && run_on_host $host $(emerge_bin_pkg) -q $packages
+            && update_portage_configurations $host \
+            && run_on_host $host $(emerge_install_binary_package) $packages
     done
 }
 
