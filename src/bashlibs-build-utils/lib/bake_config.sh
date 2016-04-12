@@ -33,6 +33,7 @@ top_level_path() {
 
 load_configuration_files() {
     local path=$1
+    TOP_RC=
 
     while [[ -z $TOP_RC && $path != '/' ]] 
     do

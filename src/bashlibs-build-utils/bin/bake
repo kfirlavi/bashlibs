@@ -45,12 +45,6 @@ main() {
             load_configuration_files \
                 $(project_path)
 
-            readonly REPOSITORIES_NAMES
-            readonly CMAKE_OPTIONS
-            readonly PORTAGE_TREE
-            readonly PORTAGE_TREE_NAME
-            readonly PRE_COMPILE_DEPEND
-
             check_gentoo_commands
 
             show_build_info \
