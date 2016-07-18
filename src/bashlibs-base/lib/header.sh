@@ -1,5 +1,5 @@
 export readonly _PROGNAME=$(basename $0)
-export readonly _PROGDIR=$(readlink -m $(dirname $0))
+export readonly _PROGDIR=$(readlink -m $(dirname $0) > /dev/null 2>&1 || echo $(cd $(dirname $0); pwd))
 export readonly _WORKING_DIR=$(pwd)
 export readonly _ARGS="$@"
 
