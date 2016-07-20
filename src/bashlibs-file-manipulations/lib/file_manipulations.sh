@@ -9,7 +9,7 @@ delete_line_from_file() {
     local file=$1; shift
     local line=$@
 
-    sed -i "/^$line/d" $file
+    sed -i "\|^$line|d" $file
 }
 
 line_in_file() {

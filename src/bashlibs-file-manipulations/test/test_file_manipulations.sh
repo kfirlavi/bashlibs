@@ -3,7 +3,7 @@ $(bashlibs --load-base)
 include shunit2_enhancements.sh
 include file_manipulations.sh
 
-oneTimeSetUp() {
+setUp() {
     FILE=$(mktemp)
     
     echo "first line" > $FILE
@@ -12,7 +12,7 @@ oneTimeSetUp() {
     echo "final line" >> $FILE
 }
 
-oneTimeTearDown() {
+tearDown() {
     [[ -f $FILE ]] \
         && rm -f $FILE
 }
@@ -28,6 +28,15 @@ test_add_line_to_file() {
 
 test_delete_line_from_file() {
     local line="last line in file"
+
+    delete_line_from_file $FILE $line
+
+    it_shouldnt "include the line '$line'" \
+        "grep -q '$line' $FILE"
+}
+
+test_delete_line_from_file_unix_path_handling() {
+    local line="path /a/b/c"
 
     delete_line_from_file $FILE $line
 
