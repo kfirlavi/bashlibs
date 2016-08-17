@@ -45,19 +45,30 @@ item_gap() {
         || echo $gap
 }
 
+item_color() {
+    echo cyan
+}
+
+colorize_item() {
+    local item_str=$@
+
+    echo -en "$(color $(item_color))$item_str$(no_color)"
+}
+
 item() {
     local short_param=$1; shift
     local long_param=$1; shift
-    local str=$@
-
-    [[ $short_param == none ]] \
-        && local param_str="   --$long_param" \
-        || local param_str="-$short_param --$long_param"
+    local item_description=$@
 
     indentation
-    echo -en "$(color cyan)$param_str$(no_color)"
+
+    [[ $short_param == none ]] \
+        && echo -en "   " \
+        || colorize_item "-$short_param "
+
+    colorize_item "--$long_param"
     indentation $(item_gap $long_param)
-    echo -en "$str"
+    echo -en "$item_description"
 }
 
 example() {
