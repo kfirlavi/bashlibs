@@ -1,7 +1,6 @@
 *.swp
 *.orig
 ChangeLog
-Manifest
 gentoo/distfiles
 debian
 repositories
