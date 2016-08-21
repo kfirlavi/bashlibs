@@ -70,9 +70,15 @@ vout() {
     level_is_off $level \
         && return
     
+    local color_str="$(color $color)$level: $(no_color)$str"
+    local non_color_str="$level: $str"
+
     colors_are_on \
-        && echo -e "$(color $color)$level: $(no_color)$str" \
-        || echo "$level: $str"
+        && echo -e $color_str \
+        || echo $non_color_str
+
+    [[ -n $VERBOSE_WITH_LOGGER ]] \
+        && logger $non_color_str
 }
 
 vinfo() {
@@ -110,6 +116,10 @@ set_verbose_level_to_info() {
 
 set_verbose_level_to_debug() {
     VERBOSE=$VDEBUG
+}
+
+enable_verbose_with_logger() {
+    VERBOSE_WITH_LOGGER=1
 }
 
 no_verbose() {
