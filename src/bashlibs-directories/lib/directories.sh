@@ -54,7 +54,7 @@ safe_delete_directory_from_tmp() {
             rm -Rf $dir
             true
         else
-            verror "$FUNCNAME: can't delete '$dir', because it does not exist" 
+            vdebug "$FUNCNAME: dir '$dir' does not exist. No need to delete it." 
             false
         fi
     else
