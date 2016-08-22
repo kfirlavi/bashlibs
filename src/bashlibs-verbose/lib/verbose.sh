@@ -2,6 +2,7 @@ include colors.sh
 
 export VERBOSE=0
 export QUIET=
+export VERBOSE_WITH_LOGGER=
 VINFO=1
 VDEBUG=2
 
@@ -74,11 +75,13 @@ vout() {
     local non_color_str="$level: $str"
 
     colors_are_on \
-        && echo -e $color_str \
-        || echo $non_color_str
+        && echo -e "$color_str" \
+        || echo "$non_color_str"
 
-    [[ -n $VERBOSE_WITH_LOGGER ]] \
-        && logger $non_color_str
+    verbose_with_logger_enabled \
+        && logger "$non_color_str"
+
+    true
 }
 
 vinfo() {
@@ -120,6 +123,10 @@ set_verbose_level_to_debug() {
 
 enable_verbose_with_logger() {
     VERBOSE_WITH_LOGGER=1
+}
+
+verbose_with_logger_enabled() {
+    [[ -n $VERBOSE_WITH_LOGGER ]]
 }
 
 no_verbose() {
