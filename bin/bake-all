@@ -40,7 +40,8 @@ main() {
 		-p bashlibs-math \
 		-p bashlibs-os-detection \
 		-p bashlibs-string \
-		-p bashlibs-build-utils
+		-p bashlibs-build-utils \
+		-p bashlibs-disks
 
     for host in $(hosts)
     do
