@@ -23,11 +23,19 @@ loop_device() {
         | cut -d ' ' -f 1
 }
 
+loop_first_partition() {
+    echo $(loop_device)p1
+}
+
 test_create_one_big_partition() {
     create_one_big_partition $(loop_device) > /dev/null 2>&1
 
-    returns "$(loop_device)p1       2048 8388607 8386560   4G 83 Linux" \
-        "fdisk -l $(loop_device) | grep $(loop_device)p1"
+    returns "$(loop_first_partition)       2048 8388607 8386560   4G 83 Linux" \
+        "fdisk -l $(loop_device) | grep $(loop_first_partition)"
+}
+
+test_create_ext4_filesystem() {
+    return_true "create_ext4_filesystem $(loop_first_partition)"
 }
 
 # load shunit2
