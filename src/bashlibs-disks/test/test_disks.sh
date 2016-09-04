@@ -24,7 +24,7 @@ loop_device() {
 }
 
 loop_first_partition() {
-    echo $(loop_device)p1
+    device_first_partition $(loop_device)
 }
 
 test_create_one_big_partition() {
@@ -32,6 +32,11 @@ test_create_one_big_partition() {
 
     returns "$(loop_first_partition)       2048 8388607 8386560   4G 83 Linux" \
         "fdisk -l $(loop_device) | grep $(loop_first_partition)"
+}
+
+test_device_first_partition() {
+    returns $(loop_device)p1 \
+        "device_first_partition $(loop_device)"
 }
 
 test_create_ext4_filesystem() {

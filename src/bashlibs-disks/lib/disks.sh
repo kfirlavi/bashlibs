@@ -1,3 +1,13 @@
+device_first_partition() {
+    local hd_device=$1
+
+    echo -n $(dirname $hd_device)/
+
+    lsblk --list $hd_device \
+        | cut -d ' ' -f 1 \
+        | grep 1
+}
+
 refresh_partition_table() {
     local hd_device=$1
 
