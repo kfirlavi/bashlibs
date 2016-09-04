@@ -41,6 +41,7 @@ test_device_first_partition() {
 
 test_create_ext4_filesystem() {
     return_true "create_ext4_filesystem $(loop_first_partition)"
+    return_true "create_ext4_filesystem $(loop_first_partition)"
 }
 
 # load shunit2

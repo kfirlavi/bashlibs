@@ -26,5 +26,5 @@ create_one_big_partition() {
 create_ext4_filesystem() {
     local partition_device=$1
 
-    mkfs.ext4 $partition_device
+    mkfs.ext4 -F $partition_device
 }
