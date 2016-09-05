@@ -6,6 +6,12 @@ dir_exist() {
     [[ -d $dir ]]
 }
 
+dir_is_empty() {
+    local dir=$1
+
+    [[ -z $(ls --almost-all $dir) ]]
+}
+
 create_dir_if_needed() {
     local dir=$1
 

@@ -159,6 +159,14 @@ directory_shouldnt_exist() {
         "[[ -d $d ]]"
 }
 
+directory_should_be_empty() {
+    local d=$1
+
+    assertFalse \
+        "directory is not empty $d" \
+        "[[ -z $(ls --almost-all $d) ]]"
+}
+
 var_should_be_defined() {
     local variable_name=$1
     local value=$(eval echo $(echo \$$variable_name))

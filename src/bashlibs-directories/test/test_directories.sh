@@ -11,6 +11,18 @@ test_dir_exist() {
     return_false "dir_exist $dir"
 }
 
+test_dir_is_empty() {
+    local dir=$(mktemp -d)
+
+    touch $dir/a
+    return_false "dir_is_empty $dir"
+
+    rm -f $dir/a
+    return_true "dir_is_empty $dir"
+
+    rmdir $dir
+}
+
 test_create_dir_if_needed() {
     local dir=$(mktemp -d)
     rmdir $dir
