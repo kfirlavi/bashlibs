@@ -13,11 +13,11 @@ KEYWORDS="~x86 ~amd64"
 IUSE=""
 
 RDEPEND="
-    >=dev-bash/bashlibs-utils-0.0.6
+	>=dev-bash/bashlibs-utils-0.0.6
 "
 
 DEPEND="                                                              
-    dev-bash/bashlibs-cmake-macros                                    
+	dev-bash/bashlibs-cmake-macros                                    
 "                                                                     
 
 S="${WORKDIR}/${MY_P}"

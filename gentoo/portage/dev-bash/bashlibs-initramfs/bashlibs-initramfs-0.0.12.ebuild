@@ -13,9 +13,9 @@ KEYWORDS="~x86 ~amd64"
 IUSE=""
 
 RDEPEND="
-    >=dev-bash/bashlibs-utils-0.0.6
-    >=dev-bash/bashlibs-verbose-0.0.5
-    dev-bash/bashlibs-file-manipulations
+	>=dev-bash/bashlibs-utils-0.0.6
+	>=dev-bash/bashlibs-verbose-0.0.5
+	dev-bash/bashlibs-file-manipulations
 	app-arch/cpio
 "
 

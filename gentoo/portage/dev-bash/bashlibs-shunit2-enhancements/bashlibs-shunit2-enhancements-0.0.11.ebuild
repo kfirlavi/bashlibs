@@ -13,8 +13,8 @@ KEYWORDS="~x86 ~amd64"
 IUSE=""
 
 RDEPEND="
-    dev-util/shunit2
-    >=dev-bash/bashlibs-utils-0.0.6
+	dev-util/shunit2
+	>=dev-bash/bashlibs-utils-0.0.6
 "
 
 DEPEND="
