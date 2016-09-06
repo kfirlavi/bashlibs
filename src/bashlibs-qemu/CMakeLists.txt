@@ -11,6 +11,7 @@ set(CPACK_PACKAGING_INSTALL_PREFIX "/")
 set(CPACK_DEBIAN_PACKAGE_DEPENDS
     "bashlibs-utils,
     bashlibs-directories (>=0.0.6),
+    bashlibs-disks,
     bashlibs-shunit2-enhancements (>=0.0.12),
     qemu-utils")
 include(PackageCreator)

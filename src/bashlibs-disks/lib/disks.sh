@@ -11,7 +11,8 @@ device_first_partition() {
 refresh_partition_table() {
     local hd_device=$1
 
-    partx --update $hd_device
+    partx --update $hd_device \
+        > /dev/null 2>&1
 }
 
 create_one_big_partition() {

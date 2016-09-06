@@ -1,5 +1,6 @@
 include verbose.sh
 include directories.sh
+include disks.sh
 
 nbd_device() {
     echo /dev/nbd
@@ -47,11 +48,20 @@ create_mount_point() {
 
 nbd_connect() {
     local image_file=$1
+    local readonly_flag=$2
+    local extra_params=
+
+    [[ -n $readonly_flag ]] \
+        && extra_params="--read-only"
 
     load_nbd_module
-    qemu-nbd \
+
+    qemu-nbd $extra_params \
         --connect=$(nbd_first_device) \
         $image_file
+
+    refresh_partition_table \
+        $(nbd_first_device)
 }
 
 nbd_disconnect() {
@@ -80,10 +90,23 @@ mount_qcow2_image() {
     local image_file=$1
     local partition_number=$2
     local mount_point=$3
+    local readonly_flag=$4
 
     create_mount_point $mount_point
-    nbd_connect $image_file
+    nbd_connect $image_file $readonly_flag
     mount $(nbd_first_device)p$partition_number $mount_point
+}
+
+mount_qcow2_image_readonly() {
+    local image_file=$1
+    local partition_number=$2
+    local mount_point=$3
+
+    mount_qcow2_image \
+        $image_file \
+        $partition_number \
+        $mount_point \
+        readonly
 }
 
 umount_qcow2_image() {

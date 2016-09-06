@@ -49,22 +49,74 @@ test_nbd_connected() {
     return_false "nbd_connected $(qfile)"
 }
 
-test_mount_qemu_image() {
-    local mount_point=/tmp/testdir
-
+create_test_qcow2_with_filesystem() {
     nbd_connect $(qfile)
 
     create_one_big_partition $(nbd_first_device) > /dev/null 2>&1
     create_ext4_filesystem $(device_first_partition $(nbd_first_device)) > /dev/null 2>&1
 
-    mount_qcow2_image $(qfile) 1 $mount_point > /dev/null 2>&1
-    directory_should_exist $mount_point/lost+found
+    nbd_disconnect
+}
 
-    umount_qcow2_image $mount_point
-    directory_shouldnt_exist $mount_point/lost+found
-    directory_should_be_empty $mount_point
+tmp_mount_point() {
+    echo /tmp/testdir
+}
 
-    safe_delete_directory_from_tmp $mount_point
+tmp_testfile() {
+    echo $(tmp_mount_point)/testfile
+}
+
+verify_filesystem_is_read_write() {
+    file_shouldnt_exist $(tmp_testfile)
+    touch $(tmp_testfile) > /dev/null 2>&1
+    file_should_exist $(tmp_testfile)
+}
+
+verify_filesystem_is_read_only() {
+    file_shouldnt_exist $(tmp_testfile)
+    touch $(tmp_testfile) > /dev/null 2>&1
+    file_shouldnt_exist $(tmp_testfile)
+}
+
+verify_filesystem_created() {
+    directory_should_exist \
+        $(tmp_mount_point)/lost+found
+}
+
+verify_mount_point_was_released() {
+    directory_shouldnt_exist \
+        $(tmp_mount_point)/lost+found
+
+    directory_should_be_empty \
+        $(tmp_mount_point)
+}
+
+test_mount_qcow2_image() {
+    create_test_qcow2_with_filesystem
+
+    mount_qcow2_image $(qfile) 1 $(tmp_mount_point) > /dev/null 2>&1
+
+    verify_filesystem_created
+    verify_filesystem_is_read_write
+
+    umount_qcow2_image $(tmp_mount_point)
+    verify_mount_point_was_released
+
+    safe_delete_directory_from_tmp $(tmp_mount_point)
+}
+
+test_mount_qcow2_image_readonly() {
+    create_test_qcow2_with_filesystem
+
+    mount_qcow2_image_readonly $(qfile) 1 $(tmp_mount_point) > /dev/null 2>&1
+
+    verify_filesystem_created
+    verify_filesystem_is_read_only
+
+    umount_qcow2_image $(tmp_mount_point)
+    verify_mount_point_was_released
+
+    safe_delete_directory_from_tmp $(tmp_mount_point)
 }
 
 # load shunit2
