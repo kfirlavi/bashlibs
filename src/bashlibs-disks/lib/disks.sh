@@ -25,7 +25,16 @@ create_one_big_partition() {
 }
 
 create_ext4_filesystem() {
+    local partition_device=$1; shift
+    local extra_args=$@
+
+    mkfs.ext4 $extra_args -F $partition_device
+}
+
+inode_count() {
     local partition_device=$1
 
-    mkfs.ext4 -F $partition_device
+    dumpe2fs $partition_device 2> /dev/null \
+        | grep 'Inode count:' \
+        | awk '{print $3}'
 }

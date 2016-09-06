@@ -42,6 +42,18 @@ test_device_first_partition() {
 test_create_ext4_filesystem() {
     return_true "create_ext4_filesystem $(loop_first_partition)"
     return_true "create_ext4_filesystem $(loop_first_partition)"
+
+    return_true "create_ext4_filesystem $(loop_first_partition) -T small"
+    returns "1048576" "inode_count $(loop_first_partition)"
+
+    return_true "create_ext4_filesystem $(loop_first_partition) -T huge"
+    returns "65536" "inode_count $(loop_first_partition)"
+}
+
+test_inode_count() {
+    return_true "create_ext4_filesystem $(loop_first_partition)"
+
+    returns "262144" "inode_count $(loop_first_partition)"
 }
 
 # load shunit2
