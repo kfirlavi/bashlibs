@@ -48,6 +48,7 @@ create_mount_point() {
 nbd_connect() {
     local image_file=$1
 
+    load_nbd_module
     qemu-nbd \
         --connect=$(nbd_first_device) \
         $image_file
@@ -59,11 +60,20 @@ nbd_disconnect() {
         > /dev/null
 }
 
+process_is_running() {
+    local ps_fax_process_identifier_str=$@
+
+    ps fax \
+        | grep "$ps_fax_process_identifier_str" \
+        | grep -v grep \
+        | grep -q "$ps_fax_process_identifier_str"
+}
+
 nbd_connected() {
     local image_file=$1
 
-    ps fax \
-        | grep -q "qemu-nbd --connect=$(nbd_first_device) $image_file"
+    process_is_running \
+        "qemu-nbd --connect=$(nbd_first_device) $image_file"
 }
 
 mount_qcow2_image() {
@@ -72,7 +82,6 @@ mount_qcow2_image() {
     local mount_point=$3
 
     create_mount_point $mount_point
-    load_nbd_module
     nbd_connect $image_file
     mount $(nbd_first_device)p$partition_number $mount_point
 }

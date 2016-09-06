@@ -39,17 +39,14 @@ test_verify_image_is_qcow2() {
     return_true  "verify_image_is_qcow2 $(qfile)"
 }
 
-test_nbd_connect_disconnect() {
+test_nbd_connected() {
+    rmmod nbd
+
     nbd_connect $(qfile)
     return_true "nbd_connected $(qfile)"
+
     nbd_disconnect
     return_false "nbd_connected $(qfile)"
-}
-
-test_nbd_connected() {
-    nbd_connect $(qfile)
-    return_true "nbd_connected $(qfile)"
-    nbd_disconnect
 }
 
 test_mount_qemu_image() {
