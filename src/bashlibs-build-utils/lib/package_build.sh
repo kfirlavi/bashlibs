@@ -115,11 +115,42 @@ copy_deb_to_apt_archives() {
         /var/cache/apt/archives/
 }
 
+remote_apt_installation_fix() {
+    vinfo "fixing apt installation"
+
+	run_remote \
+        DEBIAN_FRONTEND=noninteractive \
+        apt-get \
+            --assume-yes \
+            --force-yes \
+            --allow-unauthenticated \
+            -f \
+            install
+
+}
+
+remote_dist_upgrade() {
+    remote_apt_installation_fix
+
+    vinfo "issuing dist-upgrade to solve dependencies"
+
+	run_remote \
+        DEBIAN_FRONTEND=noninteractive \
+        apt-get \
+            --assume-yes \
+            --force-yes \
+            --allow-unauthenticated \
+            dist-upgrade
+
+}
+
 install_deb() {
     vinfo "Installing $(cmake_deb_filename) on $(host)"
 	run_remote \
         dpkg -i --force-depends \
         /var/cache/apt/archives/$(cmake_deb_filename)
+
+    remote_dist_upgrade
 }
 
 get_target_cmp_dir() {

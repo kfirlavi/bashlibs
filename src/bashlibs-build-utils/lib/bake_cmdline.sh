@@ -95,7 +95,7 @@ cmdline() {
     #Reset the positional parameters to the short options
     eval set -- $args
 
-    while getopts "qvhxlut:p:d:s:k:c:r:m:e:C:i:" OPTION
+    while getopts "qvhxlutp:d:s:k:c:r:m:e:C:i:" OPTION
     do
         case $OPTION in
         q)
@@ -112,7 +112,7 @@ cmdline() {
             set -x
             ;;
         t)
-            RUN_TESTS=$OPTARG
+            RUN_TESTS=1
             ;;
         s)
             TARGET_BUILD_HOSTS="$TARGET_BUILD_HOSTS $OPTARG"

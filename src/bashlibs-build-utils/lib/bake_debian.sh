@@ -58,7 +58,14 @@ should_install_pre_compiled_depend() {
 
 install_pre_compile_dependencies() {
     vinfo "Installing $PRE_COMPILE_DEPEND"
-    run_remote DEBIAN_FRONTEND=noninteractive apt-get -y --force-yes install $PRE_COMPILE_DEPEND
+    run_remote \
+        DEBIAN_FRONTEND=noninteractive \
+        apt-get \
+            --assume-yes \
+            --force-yes \
+            --allow-unauthenticated \
+            -f \
+            install $PRE_COMPILE_DEPEND
 }
 
 update_apt() {
@@ -66,7 +73,34 @@ update_apt() {
         && run_remote DEBIAN_FRONTEND=noninteractive apt-get update
 }
 
+package_test_files() {
+    run_remote \
+        dpkg -L $(cmake_project_name) \
+           | grep test_
+}
+
+package_has_test_files() {
+    [[ -n $(package_test_files) ]]
+}
+
+run_tests_of_package() {
+    [[ -z $RUN_TESTS ]] \
+        && return
+
+    package_has_test_files \
+        || return
+
+    local i
+
+    for i in $(package_test_files)
+    do
+        run_remote \
+            bashlibs -v --test $(basename $i)
+    done
+}
+
 create_deb_package() {
+    remote_dist_upgrade
     should_install_pre_compiled_depend \
         && install_pre_compile_dependencies
 
@@ -81,6 +115,7 @@ create_deb_package() {
     save_deb_to_each_repository
     generate_repository_index_for_each_repository
     clean_remote_dirs
+    run_tests_of_package
 #    run_remote dpkg -L $(cmake_project_name)
 #    run_remote aptitude install $(cmake_project_name)
 #    run_remote $PROGNAME --test
