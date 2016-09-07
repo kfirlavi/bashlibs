@@ -1,3 +1,5 @@
+include bake_test.sh
+
 deb_archive_dir_intree() {
     local repo_name=$1
 
@@ -81,32 +83,6 @@ update_apt() {
         && return
         
     run_remote $(apt_get_cmd) update
-}
-
-package_test_files() {
-    run_remote \
-        dpkg -L $(cmake_project_name) \
-           | grep test_
-}
-
-package_has_test_files() {
-    [[ -n $(package_test_files) ]]
-}
-
-run_tests_of_package() {
-    [[ -z $RUN_TESTS ]] \
-        && return
-
-    package_has_test_files \
-        || return
-
-    local i
-
-    for i in $(package_test_files)
-    do
-        run_remote \
-            bashlibs -v --test $(basename $i)
-    done
 }
 
 create_deb_package() {

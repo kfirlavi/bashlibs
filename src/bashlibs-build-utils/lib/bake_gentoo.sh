@@ -1,3 +1,5 @@
+include bake_test.sh
+
 make_conf() {
     echo /etc/portage/make.conf
 }
@@ -192,6 +194,7 @@ install_package_on_gentoo() {
     vinfo "building packages on $(print_host $host)"
     print_packages_names $packages
     run_on_host $host $(emerge_build_package) $packages
+    run_tests_of_package
     portage_configurations_have_changed $host \
         && update_portage_configurations $host \
         && run_on_host $host $(emerge_build_package) $packages
