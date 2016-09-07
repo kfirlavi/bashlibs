@@ -57,6 +57,9 @@ should_install_pre_compiled_depend() {
 }
 
 install_pre_compile_dependencies() {
+    should_install_pre_compiled_depend \
+        || return
+
     vinfo "Installing $PRE_COMPILE_DEPEND"
     run_remote \
         DEBIAN_FRONTEND=noninteractive \
@@ -101,9 +104,7 @@ run_tests_of_package() {
 
 create_deb_package() {
     remote_dist_upgrade
-    should_install_pre_compiled_depend \
-        && install_pre_compile_dependencies
-
+    install_pre_compile_dependencies
     clean_remote_dirs
     gen_changelog
     copy_sources_to_target
@@ -116,7 +117,4 @@ create_deb_package() {
     generate_repository_index_for_each_repository
     clean_remote_dirs
     run_tests_of_package
-#    run_remote dpkg -L $(cmake_project_name)
-#    run_remote aptitude install $(cmake_project_name)
-#    run_remote $PROGNAME --test
 }
