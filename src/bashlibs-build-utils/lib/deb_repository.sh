@@ -183,6 +183,10 @@ generate_repository_index() {
     dpkg-scanpackages $repo_type /dev/null 2> /dev/null \
         | gzip -9c > $index_file
 
+    [[ -f $index_file ]] \
+        && vinfo "$index_file generated" \
+        || eexit "$index_file wasn't generated"
+
     cd - > /dev/null 2>&1
 }
 
