@@ -198,5 +198,10 @@ test_copy_newest_debs_to_repository() {
         "$(repository_binary_dir)/bashlibs-base-0.0.5-Linux.deb"
 }
 
+test_repository_index_file_name() {
+    returns Packages "repository_index_file_name binary"
+    returns Sources  "repository_index_file_name source"
+}
+
 # load shunit2
 source /usr/share/shunit2/shunit2

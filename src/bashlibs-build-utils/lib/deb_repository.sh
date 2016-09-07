@@ -11,14 +11,15 @@ repository_store_dir() {
 }
 
 repository_dir() {
+    local repo_name=${1:-$(repository_name)}
+
     create_dir_if_needed \
-        $(repository_store_dir)/$(repository_name)/$(repository_architecture)
+        $(repository_store_dir)/$repo_name/$(repository_architecture)
 }
 
-#deb_archive_dir() {
-#    create_dir_if_needed \
-#        $(repository_store_dir)/deb-archive/$(repository_architecture)
-#}
+deb_archive_dir() {
+    repository_dir deb-archive
+}
 
 repository_binary_dir() {
     create_dir_if_needed \
@@ -153,27 +154,48 @@ create_repository() {
     generate_sources_index
 }
 
-generate_index() {
+repository_index_file_name() {
     local index_type=$1 # binary, source
-    local index_name=$2 # Packages, Sources
-    local repository_dir=$3
+    
+    case $index_type in
+        binary) echo Packages ;;
+        source) echo Sources  ;;
+    esac
+}
 
-    vinfo "Generating debian repository $index_type index in $repository_dir"
+generate_repository_index() {
+    local repo_type=$1 # binary, source
+    local arch=$2
+    local repository_dir=$(realpath $3)
+    local index_file_path=$repository_dir/$arch/$repo_type
+    local index_file=$index_file_path/$(repository_index_file_name $repo_type).gz
 
-    cd $repository_dir
+    vinfo "Generating deb repository index"
+    vinfo "repository path: $repository_dir"
+    vinfo "repository architecture: $arch"
+    vinfo "repository type: $repo_type"
 
-    create_dir_if_needed $index_type > /dev/null
 
-    dpkg-scanpackages $index_type /dev/null 2> /dev/null \
-        | gzip -9c > $index_type/$index_name.gz
+    create_dir_if_needed $index_file_path > /dev/null
+
+    cd $repository_dir/$arch
+
+    dpkg-scanpackages $repo_type /dev/null 2> /dev/null \
+        | gzip -9c > $index_file
 
     cd - > /dev/null 2>&1
 }
 
 generate_binary_index() {
-    generate_index binary Packages $(repository_dir)
+    generate_repository_index \
+        binary \
+        $(repository_architecture) \
+        $(repository_dir)/..
 }
 
 generate_sources_index() {
-    generate_index source Sources $(repository_dir)
+    generate_repository_index \
+        source \
+        $(repository_architecture) \
+        $(repository_dir)/..
 }

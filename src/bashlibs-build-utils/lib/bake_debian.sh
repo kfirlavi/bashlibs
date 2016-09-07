@@ -1,50 +1,50 @@
 deb_archive_dir_intree() {
-    local rep_name=$1
+    local repo_name=$1
 
     create_dir_if_needed \
-        $(repositories_dir)/$rep_name/$(repository_architecture)/binary
+        $(repositories_dir)/$repo_name/$(repository_architecture)/binary
 }
 
 deb_archive_dir_real_system() {
-    local rep_name=$1
+    local repo_name=$1
 
     create_dir_if_needed \
-        $(repositories_dir)/$rep_name/$(repository_architecture)/binary
+        $(repositories_dir)/$repo_name/$(repository_architecture)/binary
 }
 
-deb_archive_dir() {
-    local rep_name=$1
+deb_repo_dir() {
+    local repo_name=$1
 
     running_in_src_tree \
-        && deb_archive_dir_intree $rep_name \
-        || deb_archive_dir_real_system $rep_name
+        && deb_archive_dir_intree $repo_name \
+        || deb_archive_dir_real_system $repo_name
 }
 
 save_deb_to_each_repository() {
-    local rep_name
+    local repo_name
     local tmpfile=/tmp/$(cmake_deb_filename)
 
     archive_deb \
         /var/cache/apt/archives/$(cmake_deb_filename) \
         /tmp
 
-    for rep_name in $(repositories_names)
+    for repo_name in $(repositories_names)
     do
-        cp $tmpfile $(deb_archive_dir $rep_name)
+        cp $tmpfile $(deb_repo_dir $repo_name)
     done
 
     rm -f $tmpfile
 }
 
 generate_repository_index_for_each_repository() {
-    local rep_name
+    local repo_name
 
-    for rep_name in $(repositories_names)
+    for repo_name in $(repositories_names)
     do
-        generate_index \
+        generate_repository_index \
             binary \
-            Packages \
-            $(deb_archive_dir $rep_name)/..
+            $(repository_architecture) \
+            $(deb_repo_dir $repo_name)/../..
     done
 }
 
