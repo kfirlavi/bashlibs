@@ -48,8 +48,17 @@ generate_repository_index_for_each_repository() {
     done
 }
 
-install_all_apt_required_software() {
-    run_remote DEBIAN_FRONTEND=noninteractive apt-get -y --force-yes -f install
+apt_get_params() {
+    echo --assume-yes \
+        --force-yes \
+        --allow-unauthenticated \
+        -f
+}
+
+apt_get_cmd() {
+    echo \
+        DEBIAN_FRONTEND=noninteractive \
+        apt-get $(apt_get_params)
 }
 
 should_install_pre_compiled_depend() {
@@ -60,20 +69,18 @@ install_pre_compile_dependencies() {
     should_install_pre_compiled_depend \
         || return
 
-    vinfo "Installing $PRE_COMPILE_DEPEND"
+    vinfo "Installing $(color yellow)$PRE_COMPILE_DEPEND$(no_color)"
+
     run_remote \
-        DEBIAN_FRONTEND=noninteractive \
-        apt-get \
-            --assume-yes \
-            --force-yes \
-            --allow-unauthenticated \
-            -f \
+        $(apt_get_cmd) \
             install $PRE_COMPILE_DEPEND
 }
 
 update_apt() {
-    [[ -n $UPDATE_APT ]] \
-        && run_remote DEBIAN_FRONTEND=noninteractive apt-get update
+    [[ -z $UPDATE_APT ]] \
+        && return
+        
+    run_remote $(apt_get_cmd) update
 }
 
 package_test_files() {
