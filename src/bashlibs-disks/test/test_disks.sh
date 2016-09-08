@@ -56,5 +56,12 @@ test_inode_count() {
     returns "262144" "inode_count $(loop_first_partition)"
 }
 
+test_filesystem_uuid() {
+    return_true "create_ext4_filesystem $(loop_first_partition)"
+
+    returns 37 "filesystem_uuid $(loop_first_partition) | wc -m"
+    returns 5 "filesystem_uuid $(loop_first_partition) | sed 's/-/ /g' | wc -w"
+}
+
 # load shunit2
 source /usr/share/shunit2/shunit2

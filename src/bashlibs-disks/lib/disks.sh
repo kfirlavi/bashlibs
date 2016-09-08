@@ -38,3 +38,11 @@ inode_count() {
         | grep 'Inode count:' \
         | awk '{print $3}'
 }
+
+filesystem_uuid() {
+    local partition_device=$1
+
+    dumpe2fs $partition_device 2> /dev/null \
+        | grep 'Filesystem UUID:' \
+        | awk '{print $3}'
+}
