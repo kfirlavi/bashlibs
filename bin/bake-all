@@ -41,7 +41,9 @@ main() {
 		-p bashlibs-os-detection \
 		-p bashlibs-string \
 		-p bashlibs-build-utils \
-		-p bashlibs-disks
+		-p bashlibs-kernel-cmdline \
+		-p bashlibs-disks \
+		-p bashlibs-qemu
 
     for host in $(hosts)
     do
