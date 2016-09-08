@@ -42,13 +42,31 @@ oneTimeTearDown() {
         && rm -f $GENTOO_DISTRO_FILE
 }
 
-set_distro_file() {
+set_distro_file_for_ubuntu() {
     ubuntu_release_file() {
         echo $UBUNTU_DISTRO_FILE
     }
+}
+
+set_distro_file_for_gentoo() {
     gentoo_release_file() {
         echo $GENTOO_DISTRO_FILE
     }
+}
+
+set_distro_file() {
+    set_distro_file_for_ubuntu
+    set_distro_file_for_gentoo
+}
+
+switch_distro_to_gentoo() {
+    set_distro_file_to_none
+    set_distro_file_for_gentoo
+}
+
+switch_distro_to_ubuntu() {
+    set_distro_file_to_none
+    set_distro_file_for_ubuntu
 }
 
 set_distro_file_to_none() {
@@ -112,6 +130,14 @@ test_is_gentoo() {
 
     set_distro_file_to_none
     return_false "is_gentoo"
+}
+
+test_os_dist() {
+    switch_distro_to_ubuntu
+    returns ubuntu "distro_name"
+
+    switch_distro_to_gentoo
+    returns gentoo "distro_name"
 }
 
 # load shunit2

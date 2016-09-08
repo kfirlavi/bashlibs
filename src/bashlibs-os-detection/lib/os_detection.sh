@@ -84,3 +84,10 @@ is_gentoo() {
     [[ -f $(gentoo_release_file) ]] \
         && grep -q Gentoo $(gentoo_release_file)
 }
+
+distro_name() {
+    is_ubuntu \
+        && echo ubuntu
+    is_gentoo \
+        && echo gentoo
+}
