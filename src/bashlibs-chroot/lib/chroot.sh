@@ -8,6 +8,13 @@ check_chroot_dir_exists() {
         || eexit "chroot dir '$chroot_dir' does not exits!"
 }
 
+verify_chroot_dir() {
+    local chroot_dir=$1
+
+    dir_exist $chroot_dir \
+        && [[ $chroot_dir != / ]]
+}
+
 allow_networking_from_chroot_for_ubuntu() {
     local chroot_dir=$1
 
@@ -20,7 +27,7 @@ allow_networking_from_chroot_for_gentoo() {
     local chroot_dir=$1
 
     rsync -a \
-        /etc/resolvconf \
+        /etc/resolv.conf \
         $chroot_dir/etc
 }
 

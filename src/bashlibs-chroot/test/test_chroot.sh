@@ -1,6 +1,7 @@
 #!/bin/bash
 $(bashlibs --load-base)
 include shunit2_enhancements.sh
+include directories.sh
 include chroot.sh
 
 chroot_dir() {

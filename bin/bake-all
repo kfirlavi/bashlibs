@@ -43,7 +43,8 @@ main() {
 		-p bashlibs-build-utils \
 		-p bashlibs-kernel-cmdline \
 		-p bashlibs-disks \
-		-p bashlibs-qemu
+		-p bashlibs-qemu \
+		-p bashlibs-chroot
 
     for host in $(hosts)
     do
