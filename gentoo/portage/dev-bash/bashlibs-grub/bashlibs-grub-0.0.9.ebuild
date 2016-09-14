@@ -33,3 +33,9 @@ src_configure() {
 src_install() {
 	cmake-utils_src_install
 }
+ 
+pkg_postinst() {
+	bashlibs \
+		--verbose \
+		--test test_grub.sh
+}
