@@ -53,3 +53,12 @@ kernel_cmdline_exit_if_params_are_missing() {
     [[ -n $missing_params ]] \
         && eexit "params $(color white)$params$(no_color) must be provided as a kernel command line arguments"
 }
+
+kernel_cmdline_values_starting_with() {
+    local var_prefix=$1
+
+    kernel_cmdline \
+        | sed 's/ /\n/g' \
+        | grep "${var_prefix}.*=" \
+        | cut -d '=' -f 1
+}

@@ -71,5 +71,10 @@ test_kernel_cmdline_missing_params() {
         "kernel_cmdline_missing_params var4 ip var1 var2 aaa hd var3"
 }
 
+test_kernel_cmdline_values_starting_with() {
+    returns "var1 var2" \
+        "kernel_cmdline_values_starting_with var"
+}
+
 # load shunit2
 source /usr/share/shunit2/shunit2
