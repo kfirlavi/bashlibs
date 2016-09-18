@@ -31,6 +31,14 @@ allow_networking_from_chroot_for_gentoo() {
         $chroot_dir/etc
 }
 
+allow_networking_from_chroot() {
+    local chroot_dir=$1
+
+    set_root_path $chroot_dir
+    [[ -n $(distro_name) ]] \
+        && allow_networking_from_chroot_for_$(distro_name)
+}
+
 is_mounted() {
     local mnt_point=$1
 
@@ -133,7 +141,7 @@ chroot_to() {
     mount_dev_on_chroot      $chroot_dir
     mount_var_run_on_chroot  $chroot_dir
 
-    allow_networking_from_chroot_for_$(distro_name)
+    allow_networking_from_chroot $chroot_dir
     chroot $chroot_dir $chroot_params
     
     umount_var_run_on_chroot $chroot_dir

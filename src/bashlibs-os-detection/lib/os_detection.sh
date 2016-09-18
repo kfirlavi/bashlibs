@@ -1,17 +1,35 @@
 include code_clarity.sh
 
+set_root_path() {
+    local dir=$1
+
+    _ROOT_PATH=$dir
+}
+
+unset_root_path() {
+    _ROOT_PATH=
+}
+
+release_file_dir() {
+    echo $_ROOT_PATH/etc
+}
+
 ubuntu_release_file() {
-    local distro_file=${1:-/etc/lsb-release}
+    echo $(release_file_dir)/lsb-release
+}
 
-    is_not_defined $_UBUNTU_RELEASE_FILE \
-        && readonly _UBUNTU_RELEASE_FILE=$distro_file
-
-    echo $_UBUNTU_RELEASE_FILE
+gentoo_release_file() {
+    echo $(release_file_dir)/gentoo-release
 }
 
 is_ubuntu() {
     [[ -f $(ubuntu_release_file) ]] \
         && grep -q Ubuntu $(ubuntu_release_file)
+}
+
+is_gentoo() {
+    [[ -f $(gentoo_release_file) ]] \
+        && grep -q Gentoo $(gentoo_release_file)
 }
 
 ubuntu_version() {
@@ -69,20 +87,6 @@ is_ubuntu_newer_or_equal_to() {
         && return 0
 
     return 1
-}
-
-gentoo_release_file() {
-    local distro_file=${1:-/etc/gentoo-release}
-
-    is_not_defined $_GENTOO_RELEASE_FILE \
-        && readonly _GENTOO_RELEASE_FILE=$distro_file
-
-    echo $_GENTOO_RELEASE_FILE
-}
-
-is_gentoo() {
-    [[ -f $(gentoo_release_file) ]] \
-        && grep -q Gentoo $(gentoo_release_file)
 }
 
 distro_name() {

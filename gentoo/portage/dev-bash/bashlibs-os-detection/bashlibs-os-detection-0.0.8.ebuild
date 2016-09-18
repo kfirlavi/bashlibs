@@ -15,6 +15,7 @@ IUSE=""
 RDEPEND="
 	>=dev-bash/bashlibs-utils-0.0.6
 	dev-bash/bashlibs-code-clarity
+	dev-bash/bashlibs-directories
 "
 
 DEPEND="
