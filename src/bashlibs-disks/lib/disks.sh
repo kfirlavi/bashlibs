@@ -1,4 +1,4 @@
-device_first_partition() {
+device_bios_boot_partition() {
     local hd_device=$1
 
     echo -n $(dirname $hd_device)/
@@ -6,6 +6,16 @@ device_first_partition() {
     lsblk --list $hd_device \
         | cut -d ' ' -f 1 \
         | grep 1
+}
+
+device_first_partition() {
+    local hd_device=$1
+
+    echo -n $(dirname $hd_device)/
+
+    lsblk --list $hd_device \
+        | cut -d ' ' -f 1 \
+        | grep 2
 }
 
 refresh_partition_table() {
@@ -18,8 +28,11 @@ refresh_partition_table() {
 create_one_big_partition() {
     local hd_device=$1
 
-    echo '2048,,' \
-        | sfdisk -uS $hd_device --force
+    parted --script $hd_device \
+        mklabel gpt \
+        mkpart primary 1MiB 9MiB \
+        mkpart primary 9MiB 100% \
+        set 1 bios_grub on
 
     refresh_partition_table $hd_device
 }

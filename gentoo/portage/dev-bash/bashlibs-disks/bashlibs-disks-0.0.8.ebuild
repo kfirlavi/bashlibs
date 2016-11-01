@@ -16,6 +16,7 @@ RDEPEND="
 	>=dev-bash/bashlibs-utils-0.0.6
 	>=dev-bash/bashlibs-shunit2-enhancements-0.0.2
 	sys-apps/util-linux
+	sys-block/parted
 "
 
 DEPEND="
