@@ -76,6 +76,11 @@ install_pre_compile_dependencies() {
     run_remote \
         $(apt_get_cmd) \
             install $PRE_COMPILE_DEPEND
+
+    local ret=$?
+
+    (( $ret > 0 )) \
+        && eexit "error installing precompile depend packages"
 }
 
 update_apt() {
