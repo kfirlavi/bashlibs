@@ -18,7 +18,6 @@ RDEPEND="
 	dev-bash/bashlibs-sysfs
 	sys-apps/iproute2
 	net-misc/bridge-utils
-	sys-apps/usermode-utilities
 "
 
 DEPEND="

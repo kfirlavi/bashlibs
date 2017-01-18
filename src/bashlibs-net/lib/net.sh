@@ -154,7 +154,6 @@ add_tap() {
     for iface in $ifaces
     do
         net_debug tap $iface "creating tap interface"
-        #tunctl -t $iface > /dev/null 2>&1
         ip tuntap add $iface mode tap
         interface_up $iface
     done
@@ -168,7 +167,6 @@ del_tap() {
     do
         net_debug tap $iface "removing tap interface"
         interface_down $iface
-        #tunctl -d $iface > /dev/null 2>&1
         ip tuntap del $iface mode tap
         sleep 0.5
     done
