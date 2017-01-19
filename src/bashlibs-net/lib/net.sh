@@ -178,6 +178,7 @@ add_iface_to_bridge() {
 
     vdebug "adding $(colorize_iface none $iface) to bridge: $(colorize_iface bridge $bridge)"
     ip link set $iface master $bridge
+    interface_up $iface
 }
 
 del_iface_from_bridge() {

@@ -160,9 +160,11 @@ test_del_multiple_taps() {
 
 test_add_iface_to_bridge() {
     add_tap $(tmp_tap)
+    interface_down $(tmp_tap)
     add_bridge $(tmp_bridge)
     add_iface_to_bridge $(tmp_tap) $(tmp_bridge)
     return_true "iface_is_part_of_bridge $(tmp_tap) $(tmp_bridge)"
+    return_true "is_interface_up $(tmp_tap)"
 }
 
 test_del_iface_from_bridge() {
