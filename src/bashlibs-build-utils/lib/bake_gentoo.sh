@@ -84,7 +84,7 @@ copy_portage_tree_manifests_from_host() {
 
 find_ebuild_for_package() {
     find $(portage_tree) \
-        -name "*$(cmake_project_name)-$(app_version)*"
+        -path "*/$(cmake_project_name)-$(app_version).ebuild"
 }
 
 package_category() {
