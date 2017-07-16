@@ -1,7 +1,12 @@
 include verbose.sh
 
+user_home_dir() {
+    cd ~
+    pwd
+}
+
 rsa_ssh_key() {
-    echo '~/.ssh/id_rsa'
+    echo "$(user_home_dir)/.ssh/id_rsa"
 }
 
 rsa_ssh_public_key() {
