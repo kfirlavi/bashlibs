@@ -44,7 +44,14 @@ main() {
 		-p bashlibs-kernel-cmdline \
 		-p bashlibs-disks \
 		-p bashlibs-qemu \
-		-p bashlibs-chroot
+		-p bashlibs-chroot \
+        -p bashlibs-kernel-versioning \
+        -p bashlibs-config \
+        -p bashlibs-ssh \
+        -p bashlibs-apt \
+        -p bashlibs-net \
+        -p bashlibs-sysfs \
+        -p bashlibs-cmdline
 
     for host in $(hosts)
     do
