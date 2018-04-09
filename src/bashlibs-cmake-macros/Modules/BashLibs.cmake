@@ -7,8 +7,14 @@ set(BASH_LIBS_DIR
 set(BASH_LIBS_TESTS_DIR 
     "usr/share/bashlibs/test")
 
+set(BASH_LIBS_BIN_DIR 
+    "usr/bin")
+
 file(GLOB _libs lib/*.sh)
 INSTALL(FILES ${_libs} DESTINATION ${BASH_LIBS_DIR})
 
 file(GLOB _tests test/*.sh)
 INSTALL(FILES ${_tests} DESTINATION ${BASH_LIBS_TESTS_DIR})
+
+file(GLOB _bin bin/*.sh)
+INSTALL(PROGRAMS ${_bin} DESTINATION ${BASH_LIBS_BIN_DIR})
