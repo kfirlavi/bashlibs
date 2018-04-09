@@ -15,6 +15,3 @@ set(CPACK_DEBIAN_PACKAGE_DEPENDS
     bashlibs-usage (>= 0.0.2),
     bashlibs-base (>= 0.0.7)")
 include(PackageCreator)
-
-
-INSTALL(PROGRAMS bin/bashlibs DESTINATION usr/bin)
