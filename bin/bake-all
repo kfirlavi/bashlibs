@@ -1,4 +1,6 @@
 #!/bin/bash
+PWD=$(pwd)
+
 my_real_dir() {
     if [[ $(type -t progdir) == function ]]
     then
@@ -13,6 +15,15 @@ source $(my_real_dir)/bake-intree-init > /dev/null 2>&1 \
 include verbose.sh
 set_verbose_level_to_info
 include bake_config.sh
+include os_detection.sh
+
+load_bakerc() {
+    [[ -f $PWD/.bakerc ]] \
+        && source $PWD/.bakerc
+
+    [[ -z $PROJECTS ]] \
+        && eexit "PROJECTS variable in .bakerc is not defined"
+}
 
 hosts() {
     args \
@@ -20,43 +31,85 @@ hosts() {
         | sed 's/--server//g'
 }
 
-main() {
-    $(progdir)/bake \
-        $(args) \
-		-p cmake-macros \
-		-p bashlibs-cmake-macros \
-		-p bashlibs-shunit2-enhancements \
-		-p bashlibs-colors \
-		-p bashlibs-verbose \
-		-p bashlibs-usage \
-		-p bashlibs-directories \
-		-p bashlibs-file-manipulations \
-		-p bashlibs-code-clarity \
-		-p bashlibs-base \
-		-p bashlibs-utils \
-		-p bashlibs-date \
-		-p bashlibs-grub \
-		-p bashlibs-initramfs \
-		-p bashlibs-math \
-		-p bashlibs-os-detection \
-		-p bashlibs-string \
-		-p bashlibs-build-utils \
-		-p bashlibs-kernel-cmdline \
-		-p bashlibs-disks \
-		-p bashlibs-qemu \
-		-p bashlibs-chroot \
-        -p bashlibs-kernel-versioning \
-        -p bashlibs-config \
-        -p bashlibs-ssh \
-        -p bashlibs-apt \
-        -p bashlibs-net \
-        -p bashlibs-sysfs \
-        -p bashlibs-cmdline
+projects_to_bake_cmdline() {
+    local i
+
+    for i in $PROJECTS
+    do
+        echo -n "-p $i "
+    done
+}
+
+update_repositories() {
+    local host
 
     for host in $(hosts)
     do
-        ssh root@$host bashlibs -v -v --test all
+        ssh root@$host \
+            apt-get update
     done
+}
 
+bake_all() {
+    is_ubuntu \
+        && update_repositories
+
+    $(progdir)/bake \
+        $(args) \
+        $(projects_to_bake_cmdline)
+}
+
+run_tests() {
+    [[ $PORTAGE_TREE_NAME == bashlibs ]] \
+        || return
+
+    for host in $(hosts)
+    do
+        ssh root@$host \
+            bashlibs -v -v --test all
+    done
+}
+
+all_debs() {
+    local i
+
+    for i in $PROJECTS
+    do
+        echo -n "/var/cache/apt/archives/${i}*.deb "
+    done
+}
+
+force_install_of_all_debs() {
+    local host=$1
+
+    ssh root@$host \
+        dpkg -i $(all_debs)
+}
+
+verify_all_installed() {
+    local host
+
+    is_ubuntu \
+        || return
+
+    for host in $(hosts)
+    do
+        force_install_of_all_debs $host
+
+        ssh root@$host \
+            apt-get install -f -y
+
+        force_install_of_all_debs $host
+
+        ssh root@$host \
+            apt-get install -f -y
+    done
+}
+
+main() {
+    load_bakerc
+    bake_all
+    verify_all_installed
+    run_tests
 }
 main

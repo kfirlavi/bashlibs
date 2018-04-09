@@ -8,3 +8,35 @@ ALL_REPOSITORIES="bashlibs"
 REPOSITORY_COLOR_bashlibs="red"
 
 REPOSITORIES_NAMES="bashlibs"
+
+PROJECTS="
+    cmake-macros
+    bashlibs-cmake-macros
+    bashlibs-shunit2-enhancements
+    bashlibs-colors
+    bashlibs-verbose
+    bashlibs-usage
+    bashlibs-directories
+    bashlibs-file-manipulations
+    bashlibs-code-clarity
+    bashlibs-base
+    bashlibs-utils
+    bashlibs-date
+    bashlibs-grub
+    bashlibs-initramfs
+    bashlibs-math
+    bashlibs-os-detection
+    bashlibs-string
+    bashlibs-build-utils
+    bashlibs-kernel-cmdline
+    bashlibs-disks
+    bashlibs-qemu
+    bashlibs-chroot
+    bashlibs-kernel-versioning
+    bashlibs-config
+    bashlibs-ssh
+    bashlibs-apt
+    bashlibs-net
+    bashlibs-sysfs
+    bashlibs-cmdline
+"
