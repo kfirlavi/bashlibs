@@ -16,5 +16,5 @@ INSTALL(FILES ${_libs} DESTINATION ${BASH_LIBS_DIR})
 file(GLOB _tests test/*.sh)
 INSTALL(FILES ${_tests} DESTINATION ${BASH_LIBS_TESTS_DIR})
 
-file(GLOB _bin bin/*.sh)
+file(GLOB _bin bin/*)
 INSTALL(PROGRAMS ${_bin} DESTINATION ${BASH_LIBS_BIN_DIR})
