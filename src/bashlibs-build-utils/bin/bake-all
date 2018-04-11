@@ -45,14 +45,16 @@ update_repositories() {
 
     for host in $(hosts)
     do
+        host_is_ubuntu $host \
+            || return
+
         ssh root@$host \
             apt-get update
     done
 }
 
 bake_all() {
-    is_ubuntu \
-        && update_repositories
+    update_repositories
 
     $(progdir)/bake \
         $(args) \
@@ -86,14 +88,22 @@ force_install_of_all_debs() {
         dpkg -i $(all_debs)
 }
 
+host_is_ubuntu() {
+    local host=$1
+
+     ssh root@$host \
+        cat /etc/lsb-release 2>/dev/null \
+        | grep -q Ubuntu
+}
+
 verify_all_installed() {
     local host
 
-    is_ubuntu \
-        || return
-
     for host in $(hosts)
     do
+        host_is_ubuntu $host \
+            || return
+
         force_install_of_all_debs $host
 
         ssh root@$host \
