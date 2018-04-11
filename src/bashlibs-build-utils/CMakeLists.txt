@@ -17,5 +17,3 @@ set(CPACK_DEBIAN_PACKAGE_DEPENDS
     bashlibs-verbose (>= 0.0.16),
     bashlibs-utils (>= 0.0.11)")
 include(PackageCreator)
-
-add_subdirectory(bin)
