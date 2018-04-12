@@ -1,0 +1,216 @@
+#!/bin/bash
+my_real_dir() {
+    if [[ $(type -t progdir) == function ]]
+    then
+        progdir
+    else
+        dirname $(realpath $0)
+    fi
+}
+
+source $(my_real_dir)/bake-intree-init > /dev/null 2>&1 \
+    || $(bashlibs --load-base)
+include verbose.sh
+set_verbose_level_to_info
+include usage.sh
+include deb_repository.sh
+
+usage() {
+    set_column_indentation_gap 13
+	cat <<- EOF
+	$(section_usage) $(progname) options
+	
+	    clean old deb files and preserve the most recent
+
+	$(section_options)
+	$(item d dir 'path to directory containing deb files')
+	$(item n no-delete 'do not delete files and just print what you will do')
+	$(items_test_help_verbose_debug)
+
+	
+	$(section_examples)
+	$(example_description 'clean all old deb files and keep the most recent ones')
+	$(example $(progname) --dir /home/usre/repositories/bashlibs-repository/amd64/binary)
+
+	$(example_description "show what you will do, but don't delete old files")
+	$(example $(progname) --dir /home/usre/repositories/bashlibs-repository/amd64/binary -n)
+	EOF
+}
+
+cmdline() {
+    # got this idea from here:
+    # http://kirk.webfinish.com/2009/10/bash-shell-script-to-use-getopts-with-gnu-style-long-positional-parameters/
+    local arg=
+    for arg
+    do
+        local delim=""
+        case "$arg" in
+            #translate --gnu-long-options to -g (short options)
+            --no-delete) args="${args}-n ";;
+                  --dir) args="${args}-d ";;
+                 --test) args="${args}-t ";;
+                 --help) args="${args}-h ";;
+              --verbose) args="${args}-v ";;
+                --debug) args="${args}-x ";;
+                      #pass through anything else
+                      *) [[ "${arg:0:1}" == "-" ]] || delim="\""
+                          args="${args}${delim}${arg}${delim} ";;
+        esac
+    done
+     
+    #Reset the positional parameters to the short options
+    eval set -- $args
+
+    while getopts "vhxnt:d:" OPTION
+    do
+         case $OPTION in
+         v)
+             VERBOSE=$(($VERBOSE+1))
+             export readonly VERBOSE
+             ;;
+         h)
+             usage
+             exit
+             ;;
+         x)
+             set -x
+             readonly DEBUG='-x'
+             ;;
+         t)
+             RUN_TESTS=$OPTARG
+             vinfo "Running tests"
+             ;;
+         d)
+             WORKDIR=$OPTARG
+             ;;
+         n)
+             NO_DELTE=1
+             ;;
+         esac
+    done
+}
+
+workdir() {
+    echo $WORKDIR
+}
+
+set_workdir() {
+    [[ -z $(workdir) ]] \
+        && WORKDIR=$(working_directory)
+}
+
+verify_workdir() {
+    [[ -d $(workdir) ]] \
+        && vinfo "working directory: $(workdir)" \
+        || eexit "directory: '$(workdir)' does not exist"
+}
+
+deb_files() {
+    ls -1 *.deb \
+        2>/dev/null
+}
+
+verify_deb_files_exist() {
+    [[ -z $(deb_files) ]] \
+        && eexit "'$(workdir)' does not contain any deb files"
+}
+
+deb_files_uniq_names() {
+    deb_files \
+        | rev \
+        | cut -d '-' -f 3- \
+        | cut -d '/' -f 1 \
+        | rev \
+        | sort \
+        | uniq
+}
+
+deb_file_instances() {
+    local deb_name=$1
+
+    ls -1 $deb_name-[0-9].[0-9].[0-9]*.deb \
+        2>/dev/null
+}
+
+deb_file_instances_count() {
+    local deb_name=$1
+
+    deb_file_instances $deb_name \
+        | wc -l
+}
+
+deb_file_have_more_then_one_instance() {
+    local deb_name=$1
+
+    (( $(deb_file_instances_count $deb_name) > 1 ))
+}
+
+deb_file_newest_instance() {
+    local deb_name=$1
+
+    deb_file_instances $deb_name \
+        | sort -n \
+        | tail -1
+}
+
+old_deb_file_instances() {
+    local deb_name=$1
+
+    deb_file_instances $deb_name \
+        | sort -n \
+        | sed '$ d'
+}
+
+delete_old_deb_file_instances() {
+    local deb_name=$1
+
+    vinfo "keeping $(color white)$(deb_file_newest_instance $deb_name)$(no_color)"
+    vinfo "deleting $(color red)$(old_deb_file_instances $deb_name)$(no_color)"
+
+    [[ -z $NO_DELTE ]] \
+        && rm -f $(old_deb_file_instances $deb_name)
+}
+
+old_deb_files() {
+    local i
+
+    for i in $(deb_files_uniq_names)
+    do
+        deb_file_have_more_then_one_instance $i \
+            && delete_old_deb_file_instances $i
+    done
+}
+
+repo_type() {
+    basename $(workdir)
+}
+
+repo_arch() {
+    basename $(dirname $(workdir))
+}
+
+repo_dir() {
+    realpath $(workdir)/../..
+}
+
+generate_repo_index() {
+    [[ -n $NO_DELTE ]] \
+        && return
+
+    generate_repository_index \
+        $(repo_type) \
+        $(repo_arch) \
+        $(repo_dir)
+}
+
+main() {
+    cmdline $(args)
+    set_workdir
+    verify_workdir
+    cd $(workdir)
+    verify_deb_files_exist
+    old_deb_files
+    generate_repo_index
+    true
+}
+main
