@@ -198,42 +198,6 @@ create_function_to_return_static_string() {
     eval "$function_name() { echo $string; }"
 }
 
-set_project_name_and_project_path() {
-    local user_project_input=$1
-    local project_path
-    local project_name
-
-    if is_path $user_project_input
-    then
-        project_path=$user_project_input
-
-        is_valid_project_path $project_path \
-            || eexit "$project_path is not a valid project path"
-
-        project_name=$(extract_project_name_from_path \
-            $project_path)
-    else
-        project_name=$user_project_input
-
-        exit_if_project_not_found \
-            $project_name \
-            $(top_level_path)
-        
-        project_path=$(cmake_project_path \
-                $project_name \
-                $(top_level_path))
-    fi
-
-    create_function_to_return_static_string \
-        project_name \
-        $project_name
-
-    create_function_to_return_static_string \
-        project_path \
-        $(realpath $project_path)
-
-}
-
 work_from_source_tree_root() {
     local path=$(pwd)
     local root_path

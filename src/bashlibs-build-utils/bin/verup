@@ -17,6 +17,7 @@ include package_build.sh
 include bake_config.sh
 include bake.sh
 include usage.sh
+include cmdline.sh
 
 gentoo_portage_tree() {
 
@@ -30,15 +31,10 @@ gentoo_portage_tree() {
 
 }
 
-project_path() {
-    [[ -z $(args) ]] \
-        && echo '.' \
-        || echo $(args)
-}
-
-verify_project_path() {
-    is_valid_project_path $(project_path) \
-        || eexit "$(project_path) is not a valid project path"
+user_project_input() {
+    cmdline_args_provided \
+        && args \
+        || pwd
 }
 
 version_file() {
@@ -116,7 +112,7 @@ main() {
     local current_dir=$(pwd)
     work_from_source_tree_root
     cd $current_dir
-    verify_project_path
+    set_project_name_and_project_path $(user_project_input)
     load_configuration_files $(project_path)
     local last_version=$(current_version)
     local next_version=$(next_version $last_version)

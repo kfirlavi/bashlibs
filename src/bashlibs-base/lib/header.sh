@@ -18,4 +18,3 @@ working_directory() {
 args() {
     echo ' ' "$_ARGS"
 }
-

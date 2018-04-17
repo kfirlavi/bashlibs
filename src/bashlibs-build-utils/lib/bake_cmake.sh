@@ -92,3 +92,45 @@ is_valid_project_path() {
     cmake_file_exist $path \
         && [[ -n $(extract_project_name_from_path $path) ]]
 }
+
+set_project_name_and_project_path() {
+    local user_project_input=$1
+    local project_path
+    local project_name
+
+    if is_valid_project_path $user_project_input
+    then
+
+        project_path=$user_project_input
+
+        project_name=$(extract_project_name_from_path \
+            $project_path)
+
+    elif project_exist $user_project_input
+    then
+
+        project_name=$user_project_input
+
+        exit_if_project_not_found \
+            $project_name \
+            $(top_level_path)
+        
+        project_path=$(cmake_project_path \
+                $project_name \
+                $(top_level_path))
+
+    else
+
+        eexit "'$user_project_input' is not a valid project name or project path"
+        
+    fi
+
+    create_function_to_return_static_string \
+        project_name \
+        $project_name
+
+    create_function_to_return_static_string \
+        project_path \
+        $(realpath $project_path)
+
+}
