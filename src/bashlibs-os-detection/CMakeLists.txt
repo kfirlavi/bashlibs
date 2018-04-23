@@ -7,7 +7,6 @@ list(APPEND CMAKE_MODULE_PATH
     "/usr/share/bashlibs/cmake-macros/Modules")
 
 include(BashLibs)
-set(CPACK_PACKAGING_INSTALL_PREFIX "/")
 set(CPACK_DEBIAN_PACKAGE_DEPENDS
     "bashlibs-utils (>= 0.0.6),
     bashlibs-directories,

@@ -1,6 +1,8 @@
 include(SetAppVersion)
 include(InstallDocs)
 
+set(CPACK_PACKAGING_INSTALL_PREFIX "/")
+
 set(BASH_LIBS_DIR 
     "usr/lib/bashlibs")
 

@@ -8,7 +8,6 @@ list(APPEND CMAKE_MODULE_PATH
     "${CMAKE_SOURCE_DIR}/Modules")
 
 include(BashLibs)
-set(CPACK_PACKAGING_INSTALL_PREFIX "/")
 set(CPACK_DEBIAN_PACKAGE_DEPENDS
     "cmake-macros")
 include(PackageCreator)
