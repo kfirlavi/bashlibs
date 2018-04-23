@@ -9,6 +9,8 @@ list(APPEND CMAKE_MODULE_PATH
 
 include(BashLibs)
 set(CPACK_PACKAGING_INSTALL_PREFIX "/")
+set(CPACK_DEBIAN_PACKAGE_DEPENDS
+    "cmake-macros")
 include(PackageCreator)
 
 install(
