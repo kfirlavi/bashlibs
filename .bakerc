@@ -39,4 +39,5 @@ PROJECTS="
     bashlibs-net
     bashlibs-sysfs
     bashlibs-cmdline
+    bashlibs-user
 "
