@@ -1,0 +1,102 @@
+#!/bin/bash
+my_real_dir() {
+    if [[ $(type -t progdir) == function ]]
+    then
+        progdir
+    else
+        dirname $(realpath $0)
+    fi
+}
+
+source $(my_real_dir)/bake-intree-init > /dev/null 2>&1 \
+    || $(bashlibs --load-base)
+include verbose.sh
+include bake.sh
+include usage.sh
+set_verbose_level_to_info
+
+usage() {
+	set_column_indentation_gap 10
+	cat <<- EOF
+	$(section_usage) $(progname)
+	
+	    Will delete users repositories dir depend on which user is running this program.
+	    Program will ask for confirmation before deleting.
+
+	$(section_options)
+	$(items_test_help_verbose_debug)
+
+	EOF
+}
+
+cmdline() {
+    # got this idea from here:
+    # http://kirk.webfinish.com/2009/10/bash-shell-script-to-use-getopts-with-gnu-style-long-positional-parameters/
+    local arg=
+    for arg
+    do
+        local delim=""
+        case "$arg" in
+            #translate --gnu-long-options to -g (short options)
+                 --test) args="${args}-t ";;
+                 --help) args="${args}-h ";;
+              --verbose) args="${args}-v ";;
+                --quiet) args="${args}-q ";;
+                --debug) args="${args}-x ";;
+                      #pass through anything else
+                      *) [[ "${arg:0:1}" == "-" ]] || delim="\""
+                          args="${args}${delim}${arg}${delim} ";;
+        esac
+    done
+     
+    #Reset the positional parameters to the short options
+    eval set -- $args
+
+    while getopts "qvhx" OPTION
+    do
+        case $OPTION in
+        q)
+            set_quiet_mode
+            ;;
+        v)
+            increase_verbose_level
+            ;;
+        h)
+            usage
+            exit
+            ;;
+        x)
+            set -x
+            ;;
+        t)
+            RUN_TESTS=1
+            ;;
+        esac
+    done
+}
+
+dir_exsit() {
+    local dir=$1
+
+    [[ -d $dir ]]
+}
+
+delete_directory_if_exsits() {
+    local dir=$1
+
+    dir_exsit $dir \
+        && vwarning "deleting directory: $dir" \
+        && vwarning "press Ctrl-C to stop before deleting, or press any key to continue..." \
+        && read \
+        && rm -Rf $dir
+}
+
+main() {
+    cmdline $(args)
+
+    im_root \
+        && delete_directory_if_exsits $(root_repositories_dir) \
+        || delete_directory_if_exsits $(user_repositories_dir)
+}
+main
+

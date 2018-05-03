@@ -47,8 +47,8 @@ name_to_level() {
 
     case $level_name in 
         Error)   echo 0;;
-        Info)    echo 1;;
-        Warning) echo 2;;
+        Warning) echo 1;;
+        Info)    echo 2;;
         Debug)   echo 3;;
         *) eexit "no such verbose level '$level_name'";;
     esac

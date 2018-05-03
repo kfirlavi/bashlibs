@@ -1,3 +1,5 @@
+include directories.sh
+
 run_on_host() {
     local host=$1; shift
     local cmd=$@
@@ -154,10 +156,20 @@ repository_dir_name() {
     echo repositories
 }
 
+root_repositories_dir() {
+    create_dir_if_needed \
+        /root/$(repository_dir_name)
+}
+
+user_repositories_dir() {
+    create_dir_if_needed \
+        /home/$(whoami)/$(repository_dir_name)
+}
+
 create_user_repositories_dir() {
     im_root \
-        && create_dir_if_needed /root/$(repository_dir_name) \
-        || create_dir_if_needed /home/$(whoami)/$(repository_dir_name)
+        && root_repositories_dir \
+        || user_repositories_dir
 }
 
 repositories_dir() {

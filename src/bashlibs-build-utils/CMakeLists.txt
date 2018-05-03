@@ -14,6 +14,7 @@ set(CPACK_DEBIAN_PACKAGE_DEPENDS
     bashlibs-cmdline (>= 0.0.2),
     bashlibs-base (>= 0.0.10),
     bashlibs-usage (>= 0.0.11),
+    bashlibs-directories (>= 0.0.4),
     bashlibs-verbose (>= 0.0.16),
     bashlibs-utils (>= 0.0.11)")
 include(PackageCreator)
