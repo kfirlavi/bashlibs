@@ -3,17 +3,15 @@ include colors.sh
 export VERBOSE=0
 export QUIET=
 export VERBOSE_WITH_LOGGER=
-VINFO=1
-VDEBUG=2
 
 verbose() {
     local strength=$1; shift
     local str=$@
 
-    [[ $strength == $VINFO ]] \
+    [[ $strength == $(name_to_level Info) ]] \
         && vinfo $str
 
-    [[ $strength == $VDEBUG ]] \
+    [[ $strength == $(name_to_level Debug) ]] \
         && vdebug $str
 }
 
@@ -114,11 +112,11 @@ decrease_verbose_level() {
 }
 
 set_verbose_level_to_info() {
-    VERBOSE=$VINFO
+    VERBOSE=$(name_to_level Info)
 }
 
 set_verbose_level_to_debug() {
-    VERBOSE=$VDEBUG
+    VERBOSE=$(name_to_level Debug)
 }
 
 enable_verbose_with_logger() {
