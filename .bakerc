@@ -9,7 +9,7 @@ REPOSITORY_COLOR_bashlibs="red"
 
 REPOSITORIES_NAMES="bashlibs"
 
-PROJECTS="
+PROJECTS_ORDER="
     cmake-macros
     bashlibs-cmake-macros
     bashlibs-shunit2-enhancements

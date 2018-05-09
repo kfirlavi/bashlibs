@@ -31,8 +31,8 @@ load_bakerc() {
     [[ -f $PWD/.bakerc ]] \
         && source $PWD/.bakerc
 
-    [[ -z $PROJECTS ]] \
-        && eexit "PROJECTS variable in .bakerc is not defined"
+    [[ -z $PROJECTS_ORDER ]] \
+        && eexit "PROJECTS_ORDER variable in .bakerc is not defined"
 }
 
 hosts() {
@@ -44,7 +44,7 @@ hosts() {
 projects_to_bake_cmdline() {
     local i
 
-    for i in $PROJECTS
+    for i in $PROJECTS_ORDER
     do
         echo -n "-p $i "
     done
@@ -85,7 +85,7 @@ run_tests() {
 all_debs() {
     local i
 
-    for i in $PROJECTS
+    for i in $PROJECTS_ORDER
     do
         echo -n "/var/cache/apt/archives/${i}*.deb "
     done
