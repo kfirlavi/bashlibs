@@ -6,12 +6,22 @@ my_real_dir() {
     then
         progdir
     else
-        dirname $(realpath $(echo $0 | sed "s/$(basename $0)/bake/"))
+        dirname $(realpath $0)
     fi
 }
 
-source $(my_real_dir)/bake-intree-init > /dev/null 2>&1 \
+in_tree_file() {
+    echo $(my_real_dir)/../bake-intree-init
+}
+
+in_tree_file_exist() {
+    [[ -f $(in_tree_file) ]]
+}
+
+in_tree_file_exist \
+    && source $(in_tree_file) \
     || $(bashlibs --load-base)
+
 include verbose.sh
 set_verbose_level_to_info
 include bake_config.sh
