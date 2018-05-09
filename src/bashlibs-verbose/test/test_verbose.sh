@@ -39,14 +39,14 @@ test_set_verbose_level_to_info() {
     local VERBOSE=4
 
     set_verbose_level_to_info
-    verbose_should_equal_to 1
+    verbose_should_equal_to 2
 }
 
 test_set_verbose_level_to_debug() {
     local VERBOSE=4
 
     set_verbose_level_to_debug
-    verbose_should_equal_to 2
+    verbose_should_equal_to 3
 }
 
 test_no_verbose() {
