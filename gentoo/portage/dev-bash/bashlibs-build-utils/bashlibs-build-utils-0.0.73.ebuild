@@ -17,6 +17,7 @@ RDEPEND="
 	>=dev-bash/bashlibs-utils-0.0.11
 	>=dev-bash/bashlibs-usage-0.0.12
 	>=dev-bash/bashlibs-verbose-0.0.16
+	dev-bash/bashlibs-cmdline
 	>=dev-bash/bashlibs-shunit2-enhancements-0.0.11
 	>=dev-bash/bashlibs-directories-0.0.4
 	app-arch/dpkg
