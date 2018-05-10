@@ -94,7 +94,7 @@ verify_mount_point_was_released() {
 test_mount_qcow2_image() {
     create_test_qcow2_with_filesystem
 
-    mount_qcow2_image $(qfile) 1 $(tmp_mount_point) > /dev/null 2>&1
+    mount_qcow2_image $(qfile) 2 $(tmp_mount_point) > /dev/null 2>&1
 
     verify_filesystem_created
     verify_filesystem_is_read_write
@@ -108,7 +108,7 @@ test_mount_qcow2_image() {
 test_mount_qcow2_image_readonly() {
     create_test_qcow2_with_filesystem
 
-    mount_qcow2_image_readonly $(qfile) 1 $(tmp_mount_point) > /dev/null 2>&1
+    mount_qcow2_image_readonly $(qfile) 2 $(tmp_mount_point) > /dev/null 2>&1
 
     verify_filesystem_created
     verify_filesystem_is_read_only
