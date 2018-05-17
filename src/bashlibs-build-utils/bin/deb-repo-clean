@@ -24,6 +24,7 @@ include verbose.sh
 set_verbose_level_to_info
 include usage.sh
 include deb_repository.sh
+include directories.sh
 
 usage() {
     set_column_indentation_gap 13
@@ -33,17 +34,17 @@ usage() {
 	    clean old deb files and preserve the most recent
 
 	$(section_options)
-	$(item d dir 'path to directory containing deb files')
+	$(item d dir 'path to deb repository')
 	$(item n no-delete 'do not delete files and just print what you will do')
 	$(items_test_help_verbose_debug)
 
 	
 	$(section_examples)
 	$(example_description 'clean all old deb files and keep the most recent ones')
-	$(example $(progname) --dir /home/usre/repositories/bashlibs-repository/amd64/binary)
+	$(example $(progname) --dir /home/user/repositories/bashlibs-repository)
 
 	$(example_description "show what you will do, but don't delete old files")
-	$(example $(progname) --dir /home/usre/repositories/bashlibs-repository/amd64/binary -n)
+	$(example $(progname) --dir /home/user/repositories/bashlibs-repository -n)
 	EOF
 }
 
@@ -91,28 +92,30 @@ cmdline() {
              vinfo "Running tests"
              ;;
          d)
-             WORKDIR=$OPTARG
+             readonly REPOSITORY_DIR=$(realpath $OPTARG)
              ;;
          n)
              NO_DELTE=1
              ;;
          esac
     done
+
+    [[ -z $REPOSITORY_DIR ]] \
+        && REPOSITORY_DIR=$(pwd)
 }
 
-workdir() {
-    echo $WORKDIR
+arches() {
+    echo amd64 i386 armhf
 }
 
-set_workdir() {
-    [[ -z $(workdir) ]] \
-        && WORKDIR=$(working_directory)
+repository_dir() {
+    echo $REPOSITORY_DIR
 }
 
-verify_workdir() {
-    [[ -d $(workdir) ]] \
-        && vinfo "working directory: $(workdir)" \
-        || eexit "directory: '$(workdir)' does not exist"
+verify_repository_dir() {
+    [[ -d $(repository_dir) ]] \
+        && vinfo "repository: $(repository_dir)" \
+        || eexit "repository: '$(repository_dir)' does not exist"
 }
 
 deb_files() {
@@ -122,7 +125,7 @@ deb_files() {
 
 verify_deb_files_exist() {
     [[ -z $(deb_files) ]] \
-        && eexit "'$(workdir)' does not contain any deb files"
+        && eexit "'$(repository_dir)' does not contain any deb files"
 }
 
 deb_files_uniq_names() {
@@ -180,45 +183,136 @@ delete_old_deb_file_instances() {
 }
 
 old_deb_files() {
+    local repo_dir=$1
     local i
+    local arch
 
-    for i in $(deb_files_uniq_names)
+    for arch in $(arches)
     do
-        deb_file_have_more_then_one_instance $i \
-            && delete_old_deb_file_instances $i
+        binary_dir_exist $arch $repo_dir \
+            || return
+
+        cd $(binary_dir $arch $repo_dir)
+
+        for i in $(deb_files_uniq_names)
+        do
+            deb_file_have_more_then_one_instance $i \
+                && delete_old_deb_file_instances $i
+        done
     done
 }
 
-repo_type() {
-    basename $(workdir)
-}
-
-repo_arch() {
-    basename $(dirname $(workdir))
-}
-
-repo_dir() {
-    realpath $(workdir)/../..
-}
-
 generate_repo_index() {
-    [[ -n $NO_DELTE ]] \
-        && return
+    local repository_dir=$1
 
-    generate_repository_index \
-        $(repo_type) \
-        $(repo_arch) \
-        $(repo_dir)
+    cd $repository_dir/../
+
+    dpkg-scanpackages binary /dev/null 2> /dev/null \
+        | gzip -9c > binary/Packages.gz
+
+    cd - > /dev/null 2>&1
+}
+
+binary_dir() {
+    local arch=$1
+    local repo_dir=$2
+
+    echo $repo_dir/$arch/binary
+}
+
+binary_dir_exist() {
+    local arch=$1
+    local repo_dir=$2
+
+    [[ -d $(binary_dir $arch $repo_dir) ]]
+}
+
+repo_name() {
+    local repo_dir=$1
+
+    basename $repo_dir
+}
+
+backup_repo_name() {
+    local repo_dir=$1
+
+    echo $(repo_name $repo_dir).bak
+}
+
+backup_repo_dir() {
+    local repo_dir=$1
+    local tmpdir=$2
+
+    rsync -a \
+        $repo_dir/ \
+        $tmpdir/$(backup_repo_name $repo_dir)
+}
+
+copy_repository_to_tmp() {
+    local repo_dir=$1
+    local tmpdir=$2
+
+    vinfo "copying $repo_dir -> $tmpdir"
+
+    backup_repo_dir $repo_dir $tmpdir
+
+    local arch
+    for arch in $(arches)
+    do
+        binary_dir_exist $arch $repo_dir \
+            || return
+
+        local tmp_binary_dir=$(binary_dir $arch $tmpdir/$(repo_name $repo_dir))
+
+        mkdir -p $tmp_binary_dir
+
+        rsync -a \
+            $(binary_dir $arch $repo_dir)/*.deb \
+            $tmp_binary_dir
+    done
+}
+
+generate_repo_indexs() {
+    local repo_dir=$1
+    local arch
+
+    for arch in $(arches)
+    do
+        binary_dir_exist $arch $repo_dir \
+            || return
+        
+        generate_repo_index $(binary_dir $arch $repo_dir)
+    done
+}
+
+copy_tmp_repo_to_original_repo() {
+    local tmp_repo_dir=$1
+
+    color red
+
+    rsync -av --delete \
+        $tmp_repo_dir/ \
+        $(repository_dir)
+
+    no_color
 }
 
 main() {
     cmdline $(args)
-    set_workdir
-    verify_workdir
-    cd $(workdir)
-    verify_deb_files_exist
-    old_deb_files
-    generate_repo_index
+    local tmpdir=$(mktemp -d)
+    local tmp_repo_dir=$tmpdir/$(basename $(repository_dir))
+
+    vinfo "repository: $(color yellow)$(repository_dir)$(no_color)"
+    copy_repository_to_tmp $(repository_dir) $tmpdir
+    #verify_repository_dir
+    #verify_deb_files_exist
+    old_deb_files $tmp_repo_dir
+    generate_repo_indexs $tmp_repo_dir
+    copy_tmp_repo_to_original_repo $tmp_repo_dir
+    
+    [[ -z $NO_DELTE ]] \
+        && safe_delete_directory_from_tmp $tmpdir
+
     true
 }
 main
