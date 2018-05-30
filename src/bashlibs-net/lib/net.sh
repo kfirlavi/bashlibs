@@ -262,3 +262,26 @@ dissable_ipv6() {
             /proc/sys/net/ipv6/conf/$i/disable_ipv6
     done
 }
+
+set_iface_mac() {
+    local iface=$1
+    local mac=$2
+
+    ip link set dev $iface address $mac
+}
+
+iface_mac() {
+    local iface=$1
+
+    ip link show $iface \
+        | grep ether \
+        | awk '{print $2}'
+}
+
+iface_mac_octate() {
+    local iface=$1
+    local n=$2
+
+    iface_mac $iface \
+        | cut -d ':' -f $n
+}

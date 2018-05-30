@@ -24,6 +24,10 @@ bridge_instances() {
     echo 1 2 3 4
 }
 
+tmp_mac() {
+    echo aa:bb:cc:dd:ee:f1
+}
+
 oneTimeSetUp() {
     allow_vlan_networking
     allow_tap_networking
@@ -240,6 +244,30 @@ test_set_ip_forward() {
 
     set_ip_forward off
     returns "0" "cat /proc/sys/net/ipv4/ip_forward"
+}
+
+test_iface_mac() {
+    add_tap $(tmp_tap)
+    set_iface_mac $(tmp_tap) $(tmp_mac)
+    
+    returns "$(tmp_mac)" \
+        "iface_mac $(tmp_tap)"
+
+    del_tap $(tmp_tap)
+}
+
+test_iface_mac_octate() {
+    add_tap $(tmp_tap)
+    set_iface_mac $(tmp_tap) $(tmp_mac)
+    
+    returns aa "iface_mac_octate $(tmp_tap) 1"
+    returns bb "iface_mac_octate $(tmp_tap) 2"
+    returns cc "iface_mac_octate $(tmp_tap) 3"
+    returns dd "iface_mac_octate $(tmp_tap) 4"
+    returns ee "iface_mac_octate $(tmp_tap) 5"
+    returns f1 "iface_mac_octate $(tmp_tap) 6"
+
+    del_tap $(tmp_tap)
 }
 
 # load shunit2
