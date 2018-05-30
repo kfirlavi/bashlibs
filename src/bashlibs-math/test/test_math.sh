@@ -32,5 +32,13 @@ test_average() {
     returns 4 "average 2 $DATA"
 }
 
+test_dec_to_hex() {
+    returns a "dec_to_hex 10"
+    returns 0a "dec_to_hex 10 2"
+    returns 3e8 "dec_to_hex 1000"
+    returns 3e8 "dec_to_hex 1000 2"
+    returns 03e8 "dec_to_hex 1000 4"
+}
+
 # load shunit2
 source /usr/share/shunit2/shunit2

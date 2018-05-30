@@ -20,3 +20,10 @@ average() {
 
     awk "{ total += \$$column} END { print total/NR }" $datafile
 }
+
+dec_to_hex(){
+    local dec=$1
+    local pad=$2
+
+    printf "%0${pad}x" $dec
+}
