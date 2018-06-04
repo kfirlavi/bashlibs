@@ -195,6 +195,32 @@ var_equal() {
         "[[ $value == $should_be_value ]]"
 }
 
+function_defined() {
+    local func_name=$1
+
+    type $func_name 2>&1 \
+        | grep -q ' is a function'
+}
+
+function_not_defined() {
+    local func_name=$1
+
+    if function_defined $func_name
+    then
+        false
+    else
+        true
+    fi
+}
+
+function_should_be_defined() {
+    local func_name=$1
+
+    assertTrue \
+        "function '$func_name' should be defined" \
+        "function_defined $func_name"
+}
+
 find_shunit2() {
     local i=
 

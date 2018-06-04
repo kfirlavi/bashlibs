@@ -23,85 +23,69 @@ split_by() {
 csv_column() {
     local column=$1
 
-    IFS= read -r
-    echo "$REPLY" \
+    cat /dev/stdin \
         | cut -d ',' -f $column
 }
 
 colons_to_spaces() {
-    IFS= read -r
-    echo "$REPLY" \
+    cat /dev/stdin \
         | sed 's/:/ /g'
 }
 
 eol_to_spaces() {
-    IFS= 
-    while read -r
-    do
-        echo "$REPLY" \
-            | tr '\n' ' '
-    done \
+    cat /dev/stdin \
+        | tr '\n' ' ' \
         | delete_edge_spaces
 }
 
 delete_spaces() {
-    IFS= read -r
-    echo "$REPLY" \
+    cat /dev/stdin \
         | sed 's/ //g'
 }
 
 truncate_duplicate_spaces() {
-    IFS= read -r
-    echo "$REPLY" \
+    cat /dev/stdin \
         | sed 's/[ ][ ]*/ /g'
 }
 
 apostrophes_to_spaces() {
-    IFS= read -r
-    echo "$REPLY" \
+    cat /dev/stdin \
         | sed s/"'"/" "/g
 }
 
 commas_to_spaces() {
-    IFS= read -r
-    echo "$REPLY" \
+    cat /dev/stdin \
         | sed 's/,/ /g'
 }
 
 underscores_to_spaces() {
-    IFS= read -r
-    echo "$REPLY" \
+    cat /dev/stdin \
         | sed 's/_/ /g'
 }
 
 dash_to_spaces() {
-    IFS= read -r
-    echo "$REPLY" \
+    cat /dev/stdin \
         | sed 's/-/ /g'
 }
 
 tabs_to_spaces() {
-    IFS= read -r
-    echo "$REPLY" \
+    cat /dev/stdin \
         | sed 's/[\t]/ /g'
 }
 
 delete_edge_spaces() {
-    IFS= read -r
-    echo "$REPLY" \
-        | sed 's/^[ ][ ]*//' \
-        | sed 's/[ ][ ]*$//'
+    cat /dev/stdin \
+        | sed 's/^[[:space:]][[:space:]]*//' \
+        | sed 's/[[:space:]][[:space:]]*$//'
 }
 
 string_inside_quotes() {
-    IFS= read -r
-    echo "$REPLY" \
+    cat /dev/stdin \
         | sed 's/.*"\(.*\)".*/\1/'
 }
 
 str_to_camelcase() {
-    IFS= read -r
-    echo "$REPLY" \
+    cat /dev/stdin \
         | underscores_to_spaces \
         | dash_to_spaces \
         | sed -e 's/\b\(.\)/\u\1/g' \
@@ -109,13 +93,16 @@ str_to_camelcase() {
 }
 
 upcase_str() {
-    IFS= read -r
-    echo "$REPLY" \
+    cat /dev/stdin \
         | awk '{print toupper($0)}'
 }
 
 downcase_str() {
-    IFS= read -r
-    echo "$REPLY" \
+    cat /dev/stdin \
         | awk '{print tolower($0)}'
+}
+
+remove_bash_comments() {
+    cat /dev/stdin \
+        | sed -e 's/#.*$//'
 }

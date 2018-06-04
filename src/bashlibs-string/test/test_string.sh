@@ -87,6 +87,7 @@ test_tabs_to_spaces() {
 test_delete_edge_spaces() {
     return_equals "a" "echo ' a ' | delete_edge_spaces"
     return_equals "a b" "echo '   a b  ' | delete_edge_spaces"
+    return_equals "string with	 tabs" "echo '		   string with	 tabs  			  ' | delete_edge_spaces"
     returns_empty "echo '   ' | delete_edge_spaces"
     returns_empty "echo '  ' | delete_edge_spaces"
     returns_empty "echo ' ' | delete_edge_spaces"
@@ -118,6 +119,32 @@ test_downcase_str() {
     return_equals "abc"     "echo 'ABC'     | downcase_str"
     return_equals "abc"     "echo 'Abc'     | downcase_str"
     return_equals "abc def" "echo 'AbC DEF' | downcase_str"
+}
+
+test_remove_bash_comments() {
+	cat<<-EOF > /tmp/before
+	# just a comment
+	VAR_IN_CONF_FILE=123
+
+		  	 STRING_VAR="The variable value is 222" # and a comment
+
+	   # another comment with COMMMENT_VAR=444
+	EOF
+
+	cat<<-EOF > /tmp/correct
+	
+	VAR_IN_CONF_FILE=123
+
+		  	 STRING_VAR="The variable value is 222" 
+
+	   
+	EOF
+
+    cat /tmp/before | remove_bash_comments > /tmp/after
+
+    files_should_equal /tmp/correct /tmp/after
+
+    rm -f /tmp/{before,correct,after}
 }
 
 # load shunit2

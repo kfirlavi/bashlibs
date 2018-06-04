@@ -15,7 +15,12 @@ setUp() {
 	VAR_IN_CONF_FILE=
 
 	cat<<-EOF > $(conf_file)
+	# just a comment
 	VAR_IN_CONF_FILE=123
+
+		  	 STRING_VAR="The variable value is 222" # and a comment
+
+	   # another comment with COMMMENT_VAR=444
 	EOF
 }
 
@@ -47,6 +52,23 @@ test_load_config_if_exist() {
     delete_conf_file
     return_false "load_config_if_exist $(conf_file)"
 
+}
+
+test_all_variables_in_config() {
+    returns "VAR_IN_CONF_FILE STRING_VAR" \
+        "all_variables_in_config $(conf_file)"
+}
+
+test_config_variables_as_functions() {
+    function_not_defined var_in_conf_file
+    function_not_defined string_var
+    function_not_defined comment_var
+    load_config $(conf_file)
+    function_should_be_defined var_in_conf_file
+    function_should_be_defined string_var
+    function_not_defined comment_var
+    returns 123 "var_in_conf_file"
+    returns "The variable value is 222" "string_var"
 }
 
 # load shunit2
