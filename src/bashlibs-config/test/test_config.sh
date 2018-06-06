@@ -59,6 +59,33 @@ test_all_variables_in_config() {
         "all_variables_in_config $(conf_file)"
 }
 
+test_var_to_true_function() {
+    function_not_defined func_return_true
+    var_to_true_function func_return_true
+    function_should_be_defined func_return_true
+    return_true func_return_true
+}
+
+test_var_to_false_function() {
+    function_not_defined func_return_false
+    var_to_false_function func_return_false
+    function_should_be_defined func_return_false
+    return_false func_return_false
+}
+
+test_var_to_function() {
+    function_not_defined return_one
+    function_not_defined return_string
+    
+    var_to_function return_one 1
+    var_to_function return_string "just a sting 1234"
+
+    function_should_be_defined return_one
+    function_should_be_defined return_string
+    returns 1 return_one
+    returns "just a sting 1234" return_string
+}
+
 test_config_variables_as_functions() {
     function_not_defined var_in_conf_file
     function_not_defined string_var

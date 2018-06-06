@@ -29,13 +29,34 @@ config_value() {
         | cut -d '=' -f 2
 }
 
+var_to_function() {
+    local func_name=$1; shift
+    local return_value=$@
+
+    eval "$func_name() { echo \"$return_value\"; }"
+}
+
+var_to_true_function() {
+    local func_name=$1
+
+    eval "$func_name() { true; }"
+}
+
+var_to_false_function() {
+    local func_name=$1
+
+    eval "$func_name() { false; }"
+}
+
 config_variables_as_functions() {
     local conf_file=$1
     local i
 
     for i in $(all_variables_in_config $conf_file)
     do
-        eval "$(echo $i | downcase_str)() { echo $(config_value $conf_file $i); }"
+        var_to_function \
+            $(echo $i | downcase_str) \
+            $(config_value $conf_file $i)
     done
 }
 
