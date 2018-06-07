@@ -1,5 +1,6 @@
 include verbose.sh
 include colors.sh
+include checks.sh
 
 it_should() {
     assertTrue "It should $1" "$2"
@@ -193,24 +194,6 @@ var_equal() {
     assertTrue \
         "variable '$variable_name' value should be '$should_be_value' but is '$value'" \
         "[[ $value == $should_be_value ]]"
-}
-
-function_defined() {
-    local func_name=$1
-
-    type $func_name 2>&1 \
-        | grep -q ' is a function'
-}
-
-function_not_defined() {
-    local func_name=$1
-
-    if function_defined $func_name
-    then
-        false
-    else
-        true
-    fi
 }
 
 function_should_be_defined() {

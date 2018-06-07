@@ -15,6 +15,7 @@ IUSE=""
 RDEPEND="
 	dev-util/shunit2
 	>=dev-bash/bashlibs-utils-0.0.6
+	dev-bash/bashlibs-checks
 "
 
 DEPEND="
