@@ -115,3 +115,15 @@ umount_qcow2_image() {
     umount $mount_point
     nbd_disconnect
 }
+
+compress_qcow2_image() {
+    local input_qcow2=$1
+    local output_qcow2=$2
+
+    verify_image_is_qcow2 $input_qcow2 \
+        || eexit "$input_qcow2 is not qcow2"
+
+    qemu-img convert -c -f qcow2 -O qcow2 \
+        $input_qcow2 \
+        $output_qcow2
+}

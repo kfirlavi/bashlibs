@@ -13,12 +13,17 @@ rfile() {
     echo /tmp/test.raw
 }
 
+cfile() {
+    echo /tmp/test-compressed.qcow2
+}
+
 setUp() {
     create_qcow2_image $(qfile) 1G
     touch $(rfile)
 }
 
 tearDown() {
+    rm -f $(cfile)
     rm -f $(qfile)
     rm -f $(rfile)
 }
@@ -117,6 +122,41 @@ test_mount_qcow2_image_readonly() {
     verify_mount_point_was_released
 
     safe_delete_directory_from_tmp $(tmp_mount_point)
+}
+
+compressable_file() {
+    echo $(tmp_mount_point)/compressable_file
+}
+
+generate_compressable_file() {
+    seq 1 10000000 > $(compressable_file)
+}
+
+file_size() {
+    local file=$1
+
+    stat --printf="%s" $file
+}
+
+test_compress_qcow2_image() {
+    create_test_qcow2_with_filesystem
+
+    mount_qcow2_image $(qfile) 2 $(tmp_mount_point) > /dev/null 2>&1
+
+    verify_filesystem_created
+    verify_filesystem_is_read_write
+    generate_compressable_file
+
+    umount_qcow2_image $(tmp_mount_point)
+    verify_mount_point_was_released
+
+    safe_delete_directory_from_tmp $(tmp_mount_point)
+
+    compress_qcow2_image \
+        $(qfile) \
+        $(cfile)
+
+    return_true "(( $(file_size $(qfile)) > $(file_size $(cfile)) ))"
 }
 
 # load shunit2
