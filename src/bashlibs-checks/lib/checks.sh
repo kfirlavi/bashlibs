@@ -9,3 +9,15 @@ function_not_defined() {
 
     [[ $(type -t $func_name) != function ]]
 }
+
+file_exist() {
+    local file=$1
+
+    [[ -f $file ]]
+}
+
+file_dont_exist() {
+    local file=$1
+
+    [[ ! -f $file ]]
+}
