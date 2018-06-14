@@ -5,6 +5,7 @@ include deb_repository.sh
 include verbose.sh
 include date.sh
 include verbose.sh
+include checksum.sh
 
 release_dir() {
     create_dir_if_needed \
@@ -27,17 +28,6 @@ tar_filename() {
 iso_filename() {
     echo $(iso_dir)/$(filename_prefix).iso
 }
-
-create_md5() {
-    local filename=$1
-    local name=$(basename $filename)
-    local dir=$(dirname $filename)
-
-    cd $dir
-    md5sum $name > $name.md5
-    cd - > /dev/null 2>&1
-}
-
 
 create_release_tar() {
     cd $(repository_dir)/..
