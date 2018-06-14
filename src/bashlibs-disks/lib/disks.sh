@@ -59,3 +59,18 @@ filesystem_uuid() {
         | grep 'Filesystem UUID:' \
         | awk '{print $3}'
 }
+
+avaliable_space() {
+    local path=$1
+
+    df $path \
+        | awk '{print $4}' \
+        | tail -1
+}
+
+is_space_sufficient() {
+    local needed_space=$1
+    local path=$2
+
+    (( $(avaliable_space $path) >= $needed_space ))
+}

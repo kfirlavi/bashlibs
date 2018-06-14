@@ -75,5 +75,22 @@ test_filesystem_uuid() {
     returns 5 "filesystem_uuid $(loop_first_partition) | sed 's/-/ /g' | wc -w"
 }
 
+df() {
+    echo "/dev/root             51475068 31694492  17142752  65% /"
+}
+
+test_avaliable_space() {
+    returns 17142752 "avaliable_space /mypath"
+}
+
+test_is_space_sufficient() {
+    return_true  "is_space_sufficient 17142752 /mypath"
+    return_false "is_space_sufficient 17142753 /mypath"
+    return_false "is_space_sufficient 20000000 /mypath"
+    return_true  "is_space_sufficient 17142751 /mypath"
+    return_true  "is_space_sufficient 0 /mypath"
+    return_true  "is_space_sufficient 1233123 /mypath"
+}
+
 # load shunit2
 source /usr/share/shunit2/shunit2
