@@ -17,6 +17,9 @@ setUp() {
 	cat<<-EOF > $(conf_file)
 	# just a comment
 	VAR_IN_CONF_FILE=123
+	MULTI_LINE_VAR="first line
+	                second line
+	                third line"
 
 		  	 STRING_VAR="The variable value is 222" # and a comment
 
@@ -34,10 +37,30 @@ test_config_exist() {
     return_false "config_exist $(conf_file)"
 }
 
+test_all_variables_in_config() {
+    returns "VAR_IN_CONF_FILE MULTI_LINE_VAR STRING_VAR" \
+        "all_variables_in_config $(conf_file)"
+}
+
+test_config_value() {
+    local VAR1="str1 645"
+    returns "str1 645" "config_value VAR1"
+
+    local VAR2="str1
+                645"
+    returns "str1 645" "config_value VAR1"
+}
+
 test_load_config() {
     var_is_not_defined    VAR_IN_CONF_FILE
+    var_is_not_defined    MULTI_LINE_VAR
+    var_is_not_defined    STRING_VAR
+
     load_config $(conf_file)
+
+    var_should_be_defined MULTI_LINE_VAR
     var_should_be_defined VAR_IN_CONF_FILE
+    var_should_be_defined STRING_VAR
 
     delete_conf_file
     return_false "load_config $(conf_file)"
@@ -52,11 +75,6 @@ test_load_config_if_exist() {
     delete_conf_file
     return_false "load_config_if_exist $(conf_file)"
 
-}
-
-test_all_variables_in_config() {
-    returns "VAR_IN_CONF_FILE STRING_VAR" \
-        "all_variables_in_config $(conf_file)"
 }
 
 test_var_to_true_function() {

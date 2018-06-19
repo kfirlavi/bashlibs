@@ -174,7 +174,7 @@ var_should_be_defined() {
 
     assertTrue \
         "variable '$variable_name' should be defined" \
-        "[[ -n $value ]]"
+        "[[ -n '$value' ]]"
 }
 
 var_is_not_defined() {
@@ -183,7 +183,7 @@ var_is_not_defined() {
 
     assertFalse \
         "variable '$variable_name' should not be defined" \
-        "[[ -n $value ]]"
+        "[[ -n '$value' ]]"
 }
 
 var_equal() {
@@ -193,7 +193,7 @@ var_equal() {
 
     assertTrue \
         "variable '$variable_name' value should be '$should_be_value' but is '$value'" \
-        "[[ $value == $should_be_value ]]"
+        "[[ '$value' == '$should_be_value' ]]"
 }
 
 function_should_be_defined() {

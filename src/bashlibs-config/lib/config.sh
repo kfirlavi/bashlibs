@@ -12,21 +12,15 @@ all_variables_in_config() {
     cat $conf_file \
         | remove_bash_comments \
         | delete_edge_spaces \
+        | grep '=' \
         | cut -d '=' -f 1 \
         | eol_to_spaces
 }
 
 config_value() {
-    local conf_file=$1
-    local var=$2
+    local var=$1
 
-
-    cat $conf_file \
-        | remove_bash_comments \
-        | delete_edge_spaces \
-        | grep "^${var}=" \
-        | tail -1 \
-        | cut -d '=' -f 2
+    eval echo \$$var
 }
 
 var_to_function() {
@@ -56,7 +50,7 @@ config_variables_as_functions() {
     do
         var_to_function \
             $(echo $i | downcase_str) \
-            $(config_value $conf_file $i)
+            $(config_value $i)
     done
 }
 
