@@ -61,3 +61,19 @@ set_and_test_ssh_connection_with_keys() {
         && vinfo "ssh passwordless connection works to $user@$host" \
         || eexit "ssh passwordless connection does not work to $user@$host. After setting keys. Please check!"
 }
+
+wait_for_ssh_connection() {
+    local host=$1
+
+    vinfo "waiting for ssh connection to host '$host'"
+
+    while ! (nmap $host -PN -p ssh  | grep -q open )
+    do
+        is_verbose_level_set_to_info \
+            && echo -n '.'
+
+        sleep 1
+    done
+
+    echo
+}

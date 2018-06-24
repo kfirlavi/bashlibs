@@ -14,7 +14,9 @@ IUSE=""
 
 RDEPEND="
 	>=dev-bash/bashlibs-utils-0.0.6
+	>=dev-bash/bashlibs-verbose-0.0.24
 	>=dev-bash/bashlibs-shunit2-enhancements-0.0.2
+	net-analyzer/nmap
 "
 
 DEPEND="

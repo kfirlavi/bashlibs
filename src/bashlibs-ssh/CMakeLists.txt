@@ -8,6 +8,8 @@ list(APPEND CMAKE_MODULE_PATH
 
 include(BashLibs)
 set(CPACK_DEBIAN_PACKAGE_DEPENDS
-    "bashlibs-utils")
+    "nmap,
+	bashlibs-verbose (>= 0.0.24),
+	bashlibs-utils")
 include(PackageCreator)
 
