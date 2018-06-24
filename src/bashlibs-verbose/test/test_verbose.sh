@@ -9,6 +9,14 @@ verbose_should_equal_to() {
     value_should_be VERBOSE $value
 }
 
+test_current_verbose_level() {
+    set_verbose_level_to_info
+    returns 2 current_verbose_level
+
+    set_verbose_level_to_debug
+    returns 3 current_verbose_level
+}
+
 test_increase_verbose_level() {
     local VERBOSE=0
 
@@ -33,6 +41,20 @@ test_decrease_verbose_level() {
 
     decrease_verbose_level
     verbose_should_equal_to 0
+}
+
+test_set_verbose_level_to_error() {
+    local VERBOSE=4
+
+    set_verbose_level_to_error
+    verbose_should_equal_to 0
+}
+
+test_set_verbose_level_to_warning() {
+    local VERBOSE=4
+
+    set_verbose_level_to_warning
+    verbose_should_equal_to 1
 }
 
 test_set_verbose_level_to_info() {
@@ -73,6 +95,38 @@ test_is_quiet_mode_on() {
     return_false "is_quiet_mode_on"
     set_quiet_mode
     return_true "is_quiet_mode_on"
+}
+
+test_is_verbose_level_set_to_error() {
+    set_verbose_level_to_info
+    return_false is_verbose_level_set_to_error
+
+    set_verbose_level_to_error
+    return_true is_verbose_level_set_to_error
+}
+
+test_is_verbose_level_set_to_warning() {
+    set_verbose_level_to_info
+    return_false is_verbose_level_set_to_warning
+
+    set_verbose_level_to_warning
+    return_true is_verbose_level_set_to_warning
+}
+
+test_is_verbose_level_set_to_info() {
+    set_verbose_level_to_debug
+    return_false is_verbose_level_set_to_info
+
+    set_verbose_level_to_info
+    return_true is_verbose_level_set_to_info
+}
+
+test_is_verbose_level_set_to_debug() {
+    set_verbose_level_to_info
+    return_false is_verbose_level_set_to_debug
+
+    set_verbose_level_to_debug
+    return_true is_verbose_level_set_to_debug
 }
 
 # load shunit2

@@ -4,6 +4,10 @@ export VERBOSE=0
 export QUIET=
 export VERBOSE_WITH_LOGGER=
 
+current_verbose_level() {
+    echo $VERBOSE
+}
+
 verbose() {
     local strength=$1; shift
     local str=$@
@@ -111,6 +115,14 @@ decrease_verbose_level() {
         && (( VERBOSE-=1 ))
 }
 
+set_verbose_level_to_error() {
+    VERBOSE=$(name_to_level Error)
+}
+
+set_verbose_level_to_warning() {
+    VERBOSE=$(name_to_level Warning)
+}
+
 set_verbose_level_to_info() {
     VERBOSE=$(name_to_level Info)
 }
@@ -138,6 +150,28 @@ set_quiet_mode() {
 
 is_quiet_mode_on() {
     [[ $QUIET == 1 ]]
+}
+
+is_verbose_level_set_to() {
+    local level_name=$1
+
+    [[ $(current_verbose_level) == $(name_to_level $level_name) ]]
+}
+
+is_verbose_level_set_to_error() {
+    is_verbose_level_set_to Error
+}
+
+is_verbose_level_set_to_warning() {
+    is_verbose_level_set_to Warning
+}
+
+is_verbose_level_set_to_info() {
+    is_verbose_level_set_to Info
+}
+
+is_verbose_level_set_to_debug() {
+    is_verbose_level_set_to Debug
 }
 
 turn_verbose_colors_on
