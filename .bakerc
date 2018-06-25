@@ -40,4 +40,8 @@ PROJECTS_ORDER="
     bashlibs-sysfs
     bashlibs-cmdline
     bashlibs-user
+    bashlibs-versions
+    bashlibs-checks
+    bashlibs-checksum
+    bashlibs-libvirt
 "
