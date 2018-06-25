@@ -21,6 +21,14 @@ tearDown() {
         && rm -f $FILE
 }
 
+test_grub_exe() {
+    which() { true; }
+    returns grub2 grub_exe
+
+    which() { false; }
+    returns grub grub_exe
+}
+
 test_grub_cmdline_linux_default_add() {
     local before='#GRUB_CMDLINE_LINUX_DEFAULT="text"'
     local expected='GRUB_CMDLINE_LINUX_DEFAULT="text myvar=aaa"'

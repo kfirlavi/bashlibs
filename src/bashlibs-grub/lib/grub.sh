@@ -8,6 +8,12 @@ grub_cfg() {
     echo /boot/grub/grub.cfg
 }
 
+grub_exe() {
+    which grub2-mkconfig > /dev/null 2>&1 \
+        && echo grub2 \
+        || echo grub
+}
+
 enable_marked_out_variable() {
     local var_name=$1
     local file=$2
@@ -41,7 +47,7 @@ grub_cmdline_linux_default_delete() {
 }
 
 generate_grub_cfg() {
-    grub-mkconfig > /boot/grub/grub.cfg
+    $(grub_exe)-mkconfig -o $(grub_cfg)
 }
 
 grub_clean_record_fail() {
@@ -85,8 +91,4 @@ disable_grub_serial_console() {
 
     grub_cmdline_linux_default_delete \
         "console=$serial_device,$baud"
-}
-
-regenerate_grub_cfg() {
-    grub2-mkconfig -o $(grub_cfg)
 }
