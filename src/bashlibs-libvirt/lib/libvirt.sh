@@ -52,3 +52,30 @@ vm_ip() {
         | grep ip-address \
         | cut -d '"' -f 4
 }
+
+libvirt_dhcp_leases_file_contain_mac() {
+    local vm_name=$1
+
+    grep -q \
+        "\"mac-address\": \"$(vm_mac $vm_name)\"" \
+        $(libvirt_dhcp_leases_file $vm_name)
+}
+
+wait_for_vm_to_obtain_ip() {
+    local vm_name=$1
+
+    vinfo "Waiting for vm $vm_name to obtain ip address"
+
+    while ! $(libvirt_dhcp_leases_file_contain_mac $vm_name)
+    do
+        is_verbose_level_set_to_info \
+            && echo -n '.' \
+            && local print_line_end=true
+
+        sleep 1
+    done
+
+    is_verbose_level_set_to_info \
+        && [[ $print_line_end ]] \
+            && echo " $(vm_ip $vm_name)"
+}
