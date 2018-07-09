@@ -204,6 +204,21 @@ function_should_be_defined() {
         "function_defined $func_name"
 }
 
+create_temp_file() {
+    local func_name=$1
+    local tmpf=$(mktemp)
+
+    eval "$func_name() { echo $tmpf; }"
+}
+
+delete_temp_file() {
+    local func_name=$1
+    local tmpf=$(eval $func_name)
+
+    [[ -f $tmpf ]] \
+        && rm -f $tmpf
+}
+
 find_shunit2() {
     local i=
 
