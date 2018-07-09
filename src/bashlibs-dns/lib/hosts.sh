@@ -7,6 +7,9 @@ hosts_file() {
 delete_hosts_entries_by_ip() {
     local ip=$1
 
+    [[ -z $ip ]] \
+        && return
+
     delete_line_from_file \
         $(hosts_file) \
         $ip

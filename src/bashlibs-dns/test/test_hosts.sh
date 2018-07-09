@@ -25,6 +25,13 @@ test_delete_hosts_entries_by_ip() {
     return_false "line_in_file $(hosts_file) '192.168.0.2 host2 my_host2 entry2'"
 }
 
+test_delete_hosts_entries_by_ip_without_providing_ip() {
+    delete_hosts_entries_by_ip
+    return_true "line_in_file $(hosts_file) '10.0.0.1 host1'"
+    return_true "line_in_file $(hosts_file) '10.0.0.1 host1_dup'"
+    return_true "line_in_file $(hosts_file) '192.168.0.2 host2 my_host2 entry2'"
+}
+
 test_add_hosts_entry() {
     add_hosts_entry 1.1.1.1 test1
     return_true "line_in_file $(hosts_file) 1.1.1.1 test1"
