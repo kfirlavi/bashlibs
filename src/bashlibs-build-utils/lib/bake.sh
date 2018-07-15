@@ -1,4 +1,5 @@
 include directories.sh
+include nice_header.sh
 
 run_on_host() {
     local host=$1; shift

@@ -33,3 +33,8 @@ src_configure() {
 src_install() {
 	cmake-utils_src_install
 }
+ 
+pkg_postinst() {
+	bashlibs --verbose --test test_verbose.sh
+	bashlibs --verbose --test test_nice_header.sh
+}

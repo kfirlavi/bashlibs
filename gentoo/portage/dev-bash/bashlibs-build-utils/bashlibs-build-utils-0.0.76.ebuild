@@ -16,7 +16,7 @@ RDEPEND="
 	>=dev-bash/bashlibs-base-0.0.10
 	>=dev-bash/bashlibs-utils-0.0.11
 	>=dev-bash/bashlibs-usage-0.0.12
-	>=dev-bash/bashlibs-verbose-0.0.16
+	>=dev-bash/bashlibs-verbose-0.0.25
 	dev-bash/bashlibs-cmdline
 	>=dev-bash/bashlibs-shunit2-enhancements-0.0.11
 	>=dev-bash/bashlibs-directories-0.0.4
@@ -39,4 +39,13 @@ src_configure() {
 src_install() {
 	cmake-utils_src_install
 }
-
+ 
+pkg_postinst() {
+	bashlibs --verbose --test test_bake_test.sh
+	bashlibs --verbose --test test_bake_cmake.sh
+	bashlibs --verbose --test test_deb_repository.sh
+	bashlibs --verbose --test test_bake_debian.sh
+	bashlibs --verbose --test test_package_build.sh
+	bashlibs --verbose --test test_bake_config.sh
+	bashlibs --verbose --test test_bake_gentoo.sh
+}
