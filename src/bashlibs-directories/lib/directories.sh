@@ -24,9 +24,7 @@ create_dir_if_needed() {
 clean_path() {
     local path=$1
 
-    echo $path \
-        | sed 's|/\+|/|g' \
-        | sed 's|/$||'
+    realpath --canonicalize-missing $path
 }
 
 top_dir() {
@@ -50,10 +48,38 @@ directory_is_in_tmp() {
         && [[ $dir != '/tmp/' ]]
 }
 
+is_dir_under_base_dir() {
+    local dir=$(clean_path $1)
+    local base_dir=$(clean_path $2)
+    local path_reminder=$(clean_path $dir | sed "s|^$(clean_path $base_dir)||")
+
+	cat<<-EOF >> /tmp/log
+	dir=$dir
+	base_dir=$base_dir
+	path_reminder=$path_reminder
+
+	EOF
+
+    [[ $dir != $base_dir ]] \
+        || return
+
+    [[ $path_reminder != '/' ]] \
+        || return
+
+    echo $dir \
+        | grep -q "^$base_dir"
+}
+
+directory_can_be_deleted() {
+    local dir=$1
+
+    is_dir_subpath_of_allowd_directories $dir
+}
+
 safe_delete_directory_from_tmp() {
     local dir=$1
 
-    if directory_is_in_tmp $dir
+    if is_dir_under_base_dir $dir /tmp
     then
         if dir_exist $dir
         then

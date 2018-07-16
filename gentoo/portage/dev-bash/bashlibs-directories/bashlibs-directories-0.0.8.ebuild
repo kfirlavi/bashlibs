@@ -34,7 +34,7 @@ src_install() {
 	cmake-utils_src_install
 }
  
-pkg_postinst() {
+pkg_info() {
 	bashlibs \
 		--verbose \
 		--test test_directories.sh

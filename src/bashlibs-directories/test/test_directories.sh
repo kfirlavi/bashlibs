@@ -73,6 +73,18 @@ test_directory_is_in_tmp() {
     return_true "directory_is_in_tmp /////tmp////tmp"
 }
 
+test_is_dir_under_base_dir() {
+    return_false "is_dir_under_base_dir  /tm/abc              /tmp"
+    return_false "is_dir_under_base_dir  /tmp                 /tmp"
+    return_false "is_dir_under_base_dir  /tmp/                /tmp"
+                                                      
+    return_true  "is_dir_under_base_dir  /a/b                 /a"
+    return_true  "is_dir_under_base_dir  /a/b/c               /a/b"
+    return_true  "is_dir_under_base_dir  //tmp///a/b///c////  ////tmp////" 
+    return_true  "is_dir_under_base_dir  ////tmp//a///        /tmp/"               
+    return_true  "is_dir_under_base_dir  /tmp/b/c             /tmp"
+}
+
 test_safe_delete_directory_from_tmp() {
     local dir=$(mktemp -d)
 
