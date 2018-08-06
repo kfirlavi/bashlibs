@@ -10,7 +10,7 @@ emerge_quiet() {
 }
 
 emerge_base_cmd() {
-    echo emerge $(emerge_quiet) --autounmask-write --oneshot
+    echo emerge $(emerge_quiet) --autounmask-write --oneshot --color=y
 }
 
 emerge_build_package() {

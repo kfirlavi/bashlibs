@@ -39,7 +39,7 @@ src_configure() {
 src_install() {
 	cmake-utils_src_install
 }
- 
+
 pkg_info() {
 	if use test
 	then
