@@ -68,6 +68,11 @@ dash_to_spaces() {
         | sed 's/-/ /g'
 }
 
+dash_to_underscore() {
+    cat /dev/stdin \
+        | sed 's/-/_/g'
+}
+
 tabs_to_spaces() {
     cat /dev/stdin \
         | sed 's/[\t]/ /g'

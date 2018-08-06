@@ -77,6 +77,13 @@ test_dash_to_spaces() {
     return_equals " a    b    " "echo ' a   -b   -' | dash_to_spaces"
 }
 
+test_dash_to_underscore() {
+    return_equals "my_test_string" "echo 'my-test-string' | dash_to_underscore"
+    return_equals "___" "echo '---' | dash_to_underscore"
+    return_equals "a_b   _ " "echo 'a-b   - ' | dash_to_underscore"
+    return_equals " a   _b   _" "echo ' a   -b   -' | dash_to_underscore"
+}
+
 test_tabs_to_spaces() {
     return_equals " " "echo -e '\t' | tabs_to_spaces"
     return_equals "    " "echo -e ' \t\t ' | tabs_to_spaces"
