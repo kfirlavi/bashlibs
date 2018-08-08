@@ -42,5 +42,31 @@ test_file_dont_exist() {
     rm -f $f
 }
 
+test_variable_defined() {
+    return_false "variable_defined non_defined"
+    
+    local just_local
+    return_false "variable_defined just_local"
+
+    local empty_string=""
+    return_true "variable_defined empty_string"
+
+    local non_empty=1
+    return_true "variable_defined non_empty"
+}
+
+test_variable_not_defined() {
+    return_true "variable_not_defined non_defined"
+    
+    local just_local
+    return_true "variable_not_defined just_local"
+
+    local empty_string=""
+    return_false "variable_not_defined empty_string"
+
+    local non_empty=1
+    return_false "variable_not_defined non_empty"
+}
+
 # load shunit2
 source /usr/share/shunit2/shunit2

@@ -21,3 +21,15 @@ file_dont_exist() {
 
     [[ ! -f $file ]]
 }
+
+variable_defined() {
+    local var_name=$1
+
+    [[ -v $var_name ]]
+}
+
+variable_not_defined() {
+    local var_name=$1
+
+    [[ ! -v $var_name ]]
+}
