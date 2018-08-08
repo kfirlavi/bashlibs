@@ -10,6 +10,7 @@ include(BashLibs)
 set(CPACK_DEBIAN_PACKAGE_DEPENDS
     "bashlibs-shunit2-enhancements (>= 0.0.16),
     bashlibs-string (>= 0.0.8),
+    bashlibs-checks (>= 0.0.3),
     bashlibs-utils")
 include(PackageCreator)
 

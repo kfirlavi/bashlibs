@@ -116,5 +116,17 @@ test_config_variables_as_functions() {
     returns "The variable value is 222" "string_var"
 }
 
+test_verify_config_varialbes_defined() {
+    load_config $(conf_file)
+    eexit() { echo Error: $@; false; }
+
+    returns "Error: VAR_NOT_DEFINED should be defined in $(conf_file)" \
+        "verify_config_varialbes_defined $(conf_file) VAR_NOT_DEFINED"    
+
+    return_false "verify_config_varialbes_defined $(conf_file) VAR_NOT_DEFINED"
+
+    return_true "verify_config_varialbes_defined $(conf_file) VAR_IN_CONF_FILE STRING_VAR MULTI_LINE_VAR"
+}
+
 # load shunit2
 source /usr/share/shunit2/shunit2

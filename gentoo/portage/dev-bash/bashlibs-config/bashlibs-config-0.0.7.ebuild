@@ -16,6 +16,7 @@ RDEPEND="
 	>=dev-bash/bashlibs-utils-0.0.6
 	>=dev-bash/bashlibs-shunit2-enhancements-0.0.16
 	>=dev-bash/bashlibs-string-0.0.8
+	>=dev-bash/bashlibs-checks-0.0.3
 "
 
 DEPEND="
@@ -34,4 +35,3 @@ src_configure() {
 src_install() {
 	cmake-utils_src_install
 }
- 

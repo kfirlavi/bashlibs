@@ -1,4 +1,5 @@
 include string.sh
+include checks.sh
 
 config_exist() {
     local conf_file=$1
@@ -67,4 +68,16 @@ load_config() {
 
     load_config_if_exist $conf_file \
         || eexit "$conf_file does not exist"
+}
+
+verify_config_varialbes_defined() {
+    local conf_file=$1; shift
+    local var_names=$@
+
+    local i
+    for i in $var_names
+    do
+        variable_defined $i \
+            || eexit "$i should be defined in $conf_file"
+    done
 }
