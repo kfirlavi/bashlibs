@@ -241,13 +241,13 @@ quick_install_on_other_gentoo_hosts() {
 create_tbz_package() {
     local host=$1
 
+    exit_if_ebuild_dont_exist
     gen_changelog
     copy_sources_to_workdir
     tar_sources
     copy_tbz_package_to_host $host
     copy_portage_tree_to_host $host
     change_portage_tree_name_on_host $host
-    exit_if_ebuild_dont_exist
     update_ebuild_manifest $host
     set_local_portage_tree_on_host $host
     copy_portage_tree_manifests_from_host $host
