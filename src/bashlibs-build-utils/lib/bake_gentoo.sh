@@ -22,7 +22,8 @@ emerge_install_binary_package(){
 }
 
 local_distfiles_directory() {
-    create_dir_if_needed $(repositories_dir)/gentoo/distfiles
+    create_dir_if_needed \
+        $(repositories_dir)/gentoo/distfiles/$PORTAGE_TREE_NAME/distfiles
 }
 
 target_distdir() {
