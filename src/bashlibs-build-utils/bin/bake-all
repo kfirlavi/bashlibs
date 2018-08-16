@@ -41,15 +41,6 @@ hosts() {
         | sed 's/--server//g'
 }
 
-projects_to_bake_cmdline() {
-    local i
-
-    for i in $PROJECTS_ORDER
-    do
-        echo -n "-p $i "
-    done
-}
-
 update_repositories() {
     local host
 
@@ -66,9 +57,14 @@ update_repositories() {
 bake_all() {
     update_repositories
 
-    $(progdir)/bake \
-        $(args) \
-        $(projects_to_bake_cmdline)
+    local i
+    for i in $PROJECTS_ORDER
+    do
+        _LIBRARIES_INCLUDED= \
+            $(progdir)/bake \
+                $(args) \
+                -p $i
+    done
 }
 
 run_tests() {
