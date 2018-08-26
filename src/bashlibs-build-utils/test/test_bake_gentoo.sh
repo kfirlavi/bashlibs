@@ -3,6 +3,27 @@ $(bashlibs --load-base)
 include shunit2_enhancements.sh
 include bake_gentoo.sh
 
+oneTimeSetUp() {
+    reponame() { echo my_repo ; }
+}
+
+test_portage_tree_name_on_host() {
+    returns "bake-local-my_repo" \
+        "portage_tree_name_on_host dev-libs/abc"
+}
+
+test_add_portage_repository_to_package_name() {
+    returns "dev-libs/abc::bake-local-my_repo" \
+        "add_portage_repository_to_package_name dev-libs/abc"
+}
+
+test_package_names_with_portage_repository() {
+    local packages="dev-libs/abc sys-apps/pack2"
+
+    returns "dev-libs/abc::bake-local-my_repo sys-apps/pack2::bake-local-my_repo" \
+        "package_names_with_portage_repository $packages"
+}
+
 test_find_ebuild_for_package() {
     local tmpdir=$(mktemp -d)
     

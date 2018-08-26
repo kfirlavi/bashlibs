@@ -21,6 +21,22 @@ emerge_install_binary_package(){
     echo $(emerge_base_cmd) --quiet --usepkg=y
 }
 
+add_portage_repository_to_package_name() {
+    local pacakge_name=$1
+
+    echo $pacakge_name::$(portage_tree_name_on_host)
+}
+
+package_names_with_portage_repository() {
+    local packages=$@
+
+    local i
+    for i in $packages
+    do
+        add_portage_repository_to_package_name $i
+    done
+}
+
 local_distfiles_directory() {
     create_dir_if_needed \
         $(repositories_dir)/gentoo/distfiles/$PORTAGE_TREE_NAME/distfiles
@@ -63,11 +79,15 @@ reponame() {
     cat $(portage_tree)/profiles/repo_name
 }
 
+portage_tree_name_on_host() {
+    echo bake-local-$(reponame)
+}
+
 change_portage_tree_name_on_host() {
     local host=$1
     local f=/tmp/repo_name
 
-    echo Local $(reponame) > $f
+    echo $(portage_tree_name_on_host) > $f
     rsync -aq $f \
         root@$host:$(gentoo_local_portage_path)/profiles/
 }
@@ -190,7 +210,7 @@ update_portage_configurations() {
 
 install_package_on_gentoo() {
     local host=$1; shift
-    local packages=$@
+    local packages=$(package_names_with_portage_repository $@)
 
     vinfo "building packages on $(print_host $host)"
     print_packages_names $packages
@@ -221,7 +241,7 @@ copy_bin_pkg_to_host() {
 }
 
 quick_install_on_other_gentoo_hosts() {
-    local packages=$@
+    local packages=$(package_names_with_portage_repository $@)
     local host
 
     for host in $HOSTS_TO_INSTALL_BIN_PACKAGES
