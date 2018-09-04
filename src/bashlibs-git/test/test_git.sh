@@ -18,12 +18,10 @@ tearDown() {
 }
 
 test_create_new_git() {
-    cd $(git_for_testing)
     return_true "check_if_current_dir_is_in_git_tree" 
 }
 
 test_git_top_dir() {
-    cd $(git_for_testing)
     returns "$(git_for_testing)" "git_top_dir" 
 
     mkdir a
@@ -37,6 +35,18 @@ test_check_if_current_dir_is_in_git_tree() {
 
     cd $(git_for_testing)
     return_true "check_if_current_dir_is_in_git_tree" 
+}
+
+test_git_current_branch() {
+    returns "master" "git_current_branch"
+
+    git checkout -b new_branch
+    returns "new_branch" "git_current_branch"
+}
+
+test_git_create_new_branch() {
+    git_create_new_branch new_branch
+    returns "new_branch" "git_current_branch"
 }
 
 # load shunit2
