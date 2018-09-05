@@ -67,7 +67,28 @@ should_install_pre_compiled_depend() {
     [[ -n $PRE_COMPILE_DEPEND ]]
 }
 
+apt_search_package() {
+    local package=$1
+    
+    run_remote apt-cache search "^$package$"
+}
+
+add_transition_packages_to_pre_compile() {
+    [[ -z $PRE_COMPILE_DEPEND_IN_TRANSITION ]] \
+        && return
+
+    local i
+    for i in $PRE_COMPILE_DEPEND_IN_TRANSITION
+    do
+        [[ $(apt_search_package $i | wc -l) == 1 ]] \
+            && PRE_COMPILE_DEPEND+=" $i"
+    done
+}
+
 install_pre_compile_dependencies() {
+    vinfo "$(apt_search_package realpath)"
+    add_transition_packages_to_pre_compile
+
     should_install_pre_compiled_depend \
         || return
 
