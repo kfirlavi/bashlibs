@@ -9,6 +9,7 @@ setUp() {
     echo "first line" > $FILE
     echo "second line" >> $FILE
     echo "path /a/b/c" >> $FILE
+    echo "abc [xyz=yyy] one two three" >> $FILE
     echo "final line" >> $FILE
 }
 
@@ -26,13 +27,31 @@ test_add_line_to_file() {
         "grep -q '$line' $FILE"
 }
 
-test_delete_line_from_file() {
-    local line="last line in file"
+test_delete_existing_line_from_file() {
+    local line="final line"
 
     delete_line_from_file $FILE $line
 
     it_shouldnt "include the line '$line'" \
         "grep -q '$line' $FILE"
+}
+
+test_delete_non_existing_line_from_file() {
+    local line="this line does not exist"
+
+    delete_line_from_file $FILE $line
+
+    it_shouldnt "include the line '$line'" \
+        "grep -q '$line' $FILE"
+}
+
+test_delete_line_from_file_using_pattern() {
+    local pattern="one two three"
+    local line="abc [xyz=yyy] one two three"
+
+    delete_line_from_file_using_pattern $FILE $pattern
+
+    return_false "line_in_file $FILE $line" 
 }
 
 test_delete_line_from_file_unix_path_handling() {
