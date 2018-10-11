@@ -21,6 +21,7 @@ RDEPEND="
 	>=dev-bash/bashlibs-shunit2-enhancements-0.0.11
 	>=dev-bash/bashlibs-directories-0.0.4
 	app-arch/dpkg
+	app-text/tree
 "
 
 DEPEND="

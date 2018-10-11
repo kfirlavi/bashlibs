@@ -9,8 +9,9 @@ list(APPEND CMAKE_MODULE_PATH
 include(BashLibs)
 set(CPACK_DEBIAN_PACKAGE_DEPENDS 
     "bashlibs-shunit2-enhancements (>= 0.0.11),
-    realpath,
+    realpath | coreutils (>= 8.23),
     dpkg-dev,
+    tree,
     bashlibs-cmdline (>= 0.0.2),
     bashlibs-base (>= 0.0.10),
     bashlibs-usage (>= 0.0.11),

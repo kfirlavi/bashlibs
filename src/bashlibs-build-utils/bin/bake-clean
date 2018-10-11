@@ -91,10 +91,23 @@ dir_exsit() {
     [[ -d $dir ]]
 }
 
+dir_not_empty() {
+    local dir=$1
+
+    [[ -n $(ls $dir) ]]
+}
+
+show_local_repository_content() {
+    local dir=$1
+
+    tree $dir
+}
+
 delete_directory_if_exsits() {
     local dir=$1
 
-    dir_exsit $dir \
+    dir_exsit $dir && dir_not_empty $dir \
+        && show_local_repository_content $dir \
         && vwarning "deleting directory: $dir" \
         && vwarning "press Ctrl-C to stop before deleting, or press any key to continue..." \
         && read \
