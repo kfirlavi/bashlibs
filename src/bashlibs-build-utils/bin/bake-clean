@@ -100,7 +100,7 @@ dir_not_empty() {
 show_local_repository_content() {
     local dir=$1
 
-    tree $dir
+    tree -C $dir
 }
 
 delete_directory_if_exsits() {
