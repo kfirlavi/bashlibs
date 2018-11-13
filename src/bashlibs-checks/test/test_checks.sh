@@ -7,6 +7,7 @@ test_function_defined() {
     function_not_defined my_func
 
     my_func() { echo; }
+    my_func2() { echo; }
 
     function_should_be_defined my_func
 }
@@ -66,6 +67,25 @@ test_variable_not_defined() {
 
     local non_empty=1
     return_false "variable_not_defined non_empty"
+}
+
+test_functions_not_defined() {
+    returns_empty "functions_not_defined"
+    returns_empty "functions_not_defined my_func my_func2"
+
+    returns "func_not_defined" \
+        "functions_not_defined my_func my_func2 func_not_defined"
+
+    returns "func_not_defined" \
+        "functions_not_defined my_func func_not_defined my_func2"
+}
+
+test_eexit_if_functions_not_defined() {
+    eexit() { echo $@; }
+    return_true "eexit_if_functions_not_defined my_func my_func2"
+
+    returns "This functions must be defined: $(color red)func_not_defined$(no_color)" \
+         "eexit_if_functions_not_defined my_func func_not_defined my_func2"
 }
 
 # load shunit2

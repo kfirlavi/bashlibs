@@ -33,3 +33,25 @@ variable_not_defined() {
 
     [[ ! -v $var_name ]]
 }
+
+functions_not_defined() {
+    local function_names=$@
+    local f
+    local i
+    
+    for i in $function_names
+    do
+        function_not_defined $i \
+            && f+="$i "
+    done
+
+    echo $f
+}
+
+eexit_if_functions_not_defined() {
+    local function_names=$@
+    local non_defined=$(functions_not_defined $function_names)
+    
+    [[ -z $non_defined ]] \
+        || eexit "This functions must be defined: $(color red)${non_defined}$(no_color)"
+}
