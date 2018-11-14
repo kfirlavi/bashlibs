@@ -9,6 +9,8 @@ list(APPEND CMAKE_MODULE_PATH
 include(BashLibs)
 set(CPACK_DEBIAN_PACKAGE_DEPENDS
     "bashlibs-utils,
+    libvirt-bin,
+    libvirt-clients | libvirt-bin,
     bashlibs-shunit2-enhancements (>=0.0.12)")
 include(PackageCreator)
 
