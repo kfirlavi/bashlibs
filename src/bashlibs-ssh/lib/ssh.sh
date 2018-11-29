@@ -26,11 +26,11 @@ create_ssh_key_if_not_exist() {
         || create_rsa_ssh_key
 }
 
-verify_ssh_connection_with_keys() {
+is_ssh_connection_with_keys_working() {
     local user=$1
     local host=$2
 
-    ssh -o BatchMode=yes "$user@$host" true
+    run_on_host $user $host true
 }
 
 copy_ssh_keys() {
@@ -46,7 +46,7 @@ set_ssh_connection_with_keys() {
 
     create_ssh_key_if_not_exist
 
-    verify_ssh_connection_with_keys $user $host \
+    is_ssh_connection_with_keys_working $user $host \
         || copy_ssh_keys $user $host
 }
 
@@ -57,7 +57,9 @@ set_and_test_ssh_connection_with_keys() {
     vinfo "setting ssh passwordless connection to $user@$host"
     set_ssh_connection_with_keys $user $host
 
-    verify_ssh_connection_with_keys $user $host \
+    set_ssh_connection_with_socket $user $host
+
+    is_ssh_connection_with_keys_working $user $host \
         && vinfo "ssh passwordless connection works to $user@$host" \
         || eexit "ssh passwordless connection does not work to $user@$host. After setting keys. Please check!"
 }
@@ -76,4 +78,36 @@ wait_for_ssh_connection() {
     done
 
     echo
+}
+
+socket_name() {
+    local user=$1
+    local host=$2
+    
+    echo /tmp/$user@$host.sock
+}
+
+set_ssh_connection_with_socket() {
+    local user=$1
+    local host=$2
+
+    ssh \
+        -M \
+        -o BatchMode=yes \
+        -o ControlPersist=10m \
+        -S $(socket_name $user $host) \
+        "$user@$host" true
+}
+
+run_on_host() {
+    local user=$1; shift
+    local host=$1; shift
+    local cmd=$@
+
+    ssh \
+        -S $(socket_name $user $host) \
+        -o BatchMode=yes \
+        "$user@$host" \
+        -- \
+        $cmd
 }

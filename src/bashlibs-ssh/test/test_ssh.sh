@@ -39,5 +39,9 @@ test_create_ssh_key_if_not_exist() {
     files_should_equal $(rsa_ssh_public_key){,.save}
 }
 
+test_socket_name() {
+    returns /tmp/root@gu64.sock "socket_name root gu64"
+}
+
 # load shunit2
 source /usr/share/shunit2/shunit2
