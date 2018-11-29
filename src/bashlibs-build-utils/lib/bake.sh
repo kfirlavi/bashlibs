@@ -1,19 +1,14 @@
 include directories.sh
 include nice_header.sh
-
-run_on_host() {
-    local host=$1; shift
-    local cmd=$@
-
-    vdebug "$FUNCNAME $host $cmd"
-	ssh root@$host -- $cmd
-}
+include ssh.sh
 
 run_remote() {
     local cmd=$@
 
-    vdebug "$FUNCNAME $host $cmd"
-	ssh root@$(host) -- $cmd
+	run_on_host \
+        root \
+        $(host) \
+        $cmd
 }
 
 if_defined_declare_readonly() {
@@ -256,5 +251,5 @@ foreach_host_do() {
 
 verify_all_hosts() {
     foreach_host_do \
-        verify_target_build_host
+        set_and_test_ssh_connection_with_keys root $(host)
 }

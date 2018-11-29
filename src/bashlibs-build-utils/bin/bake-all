@@ -24,6 +24,7 @@ in_tree_file_exist \
 
 include verbose.sh
 set_verbose_level_to_info
+include ssh.sh
 include bake_config.sh
 include os_detection.sh
 
@@ -49,7 +50,7 @@ update_repositories() {
         host_is_ubuntu $host \
             || return
 
-        ssh root@$host \
+        run_on_host root $host \
             apt-get update
     done
 }
@@ -73,7 +74,7 @@ run_tests() {
 
     for host in $(hosts)
     do
-        ssh root@$host \
+        run_on_host root $host \
             bashlibs -v -v --test all
     done
 }
@@ -90,14 +91,14 @@ all_debs() {
 force_install_of_all_debs() {
     local host=$1
 
-    ssh root@$host \
+    run_on_host root $host \
         dpkg -i $(all_debs)
 }
 
 host_is_ubuntu() {
     local host=$1
 
-     ssh root@$host \
+    run_on_host root $host \
         cat /etc/lsb-release 2>/dev/null \
         | grep -q Ubuntu
 }
@@ -112,12 +113,12 @@ verify_all_installed() {
 
         force_install_of_all_debs $host
 
-        ssh root@$host \
+        run_on_host root $host \
             apt-get install -f -y
 
         force_install_of_all_debs $host
 
-        ssh root@$host \
+        run_on_host root $host \
             apt-get install -f -y
     done
 }

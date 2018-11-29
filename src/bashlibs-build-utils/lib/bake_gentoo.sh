@@ -1,4 +1,5 @@
 include bake_test.sh
+include ssh.sh
 
 make_conf() {
     echo /etc/portage/make.conf
@@ -151,14 +152,14 @@ remote_ebuild_category_path() {
 remote_delete_manifest_file() {
     local host=$1
 
-    run_on_host $host "rm $(remote_ebuild_category_path)/Manifest"
+    run_on_host root $host "rm $(remote_ebuild_category_path)/Manifest"
 }
 
 update_ebuild_manifest() {
     local host=$1
 
     remote_delete_manifest_file $host
-    run_on_host $host "ebuild $(remote_ebuild_path) manifest"
+    run_on_host root $host "ebuild $(remote_ebuild_path) manifest"
 }
 
 portage_overlay_line() {
@@ -174,7 +175,7 @@ set_local_portage_tree_on_host() {
     local host=$1
 
     portage_overlay_line_already_defined \
-        || run_on_host $host "echo '$(portage_overlay_line)' >> /etc/portage/make.conf"
+        || run_on_host root $host "echo '$(portage_overlay_line)' >> /etc/portage/make.conf"
 }
 
 print_host() {
@@ -204,7 +205,7 @@ portage_configurations_have_changed() {
 update_portage_configurations() {
     local host=$1
 
-    run_on_host $host \
+    run_on_host root $host \
         etc-update --automode -5 /etc/portage
 }
 
@@ -214,11 +215,11 @@ install_package_on_gentoo() {
 
     vinfo "building packages on $(print_host $host)"
     print_packages_names $packages
-    run_on_host $host $(emerge_build_package) $packages
+    run_on_host root $host $(emerge_build_package) $packages
     run_tests_of_package
     portage_configurations_have_changed $host \
         && update_portage_configurations $host \
-        && run_on_host $host $(emerge_build_package) $packages
+        && run_on_host root $host $(emerge_build_package) $packages
     copy_bin_pkg_from_server $host
     quick_install_on_other_gentoo_hosts $packages
     safe_delete_directory_from_tmp $(tmp_dir)
@@ -251,10 +252,10 @@ quick_install_on_other_gentoo_hosts() {
         change_portage_tree_name_on_host $host
         copy_bin_pkg_to_host $host
         set_local_portage_tree_on_host $host
-        run_on_host $host $(emerge_install_binary_package) $packages
+        run_on_host root $host $(emerge_install_binary_package) $packages
         portage_configurations_have_changed $host \
             && update_portage_configurations $host \
-            && run_on_host $host $(emerge_install_binary_package) $packages
+            && run_on_host root $host $(emerge_install_binary_package) $packages
     done
 }
 
