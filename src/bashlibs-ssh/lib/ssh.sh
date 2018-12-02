@@ -1,5 +1,9 @@
 include verbose.sh
 
+ssh_cmd() {
+    echo ssh
+}
+
 user_home_dir() {
     cd ~
     pwd
@@ -91,7 +95,7 @@ set_ssh_connection_with_socket() {
     local user=$1
     local host=$2
 
-    ssh \
+    $(ssh_cmd) \
         -M \
         -o BatchMode=yes \
         -o ControlPersist=10m \
@@ -104,7 +108,7 @@ run_on_host() {
     local host=$1; shift
     local cmd=$@
 
-    ssh \
+    $(ssh_cmd) \
         -S $(socket_name $user $host) \
         -o BatchMode=yes \
         "$user@$host" \
@@ -116,5 +120,5 @@ rsync_params_to_use_ssh_socket() {
     local user=$1
     local host=$2
 
-    echo "-e \"ssh -S $(socket_name $user $host)\""
+    echo "-e \"$(ssh_cmd) -S $(socket_name $user $host)\""
 }
