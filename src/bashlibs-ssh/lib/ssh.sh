@@ -111,3 +111,10 @@ run_on_host() {
         -- \
         $cmd
 }
+
+rsync_params_to_use_ssh_socket() {
+    local user=$1
+    local host=$2
+
+    echo "-e \"ssh -S $(socket_name $user $host)\""
+}
