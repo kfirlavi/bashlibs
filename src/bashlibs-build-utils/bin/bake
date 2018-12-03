@@ -46,6 +46,7 @@ main() {
     for host in $TARGET_BUILD_HOSTS
     do
         TARGET_BUILD_HOST=$host
+        set_rsync_ssh_connection_with_socket root $host
 
         for project in $PROJECTS
         do
