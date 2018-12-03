@@ -116,9 +116,9 @@ run_on_host() {
         $cmd
 }
 
-rsync_params_to_use_ssh_socket() {
+set_rsync_ssh_connection_with_socket() {
     local user=$1
     local host=$2
 
-    echo "-e \"$(ssh_cmd) -S $(socket_name $user $host)\""
+    export RSYNC_RSH="ssh -S $(socket_name $user $host)"
 }

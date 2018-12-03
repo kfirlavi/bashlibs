@@ -43,9 +43,10 @@ test_socket_name() {
     returns /tmp/root@gu64.sock "socket_name root gu64"
 }
 
-test_rsync_params_to_use_ssh_socket() {
-    returns '-e "ssh -S /tmp/root@gu64.sock"' \
-        "rsync_params_to_use_ssh_socket root gu64"
+test_set_rsync_ssh_connection_with_socket() {
+    set_rsync_ssh_connection_with_socket root gu64
+    returns "ssh -S /tmp/root@gu64.sock" \
+        "echo $RSYNC_RSH"
 }
 
 # load shunit2
