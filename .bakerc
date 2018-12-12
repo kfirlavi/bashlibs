@@ -46,4 +46,5 @@ PROJECTS_ORDER="
     bashlibs-checksum
     bashlibs-libvirt
     bashlibs-dns
+    bashlibs-git
 "
