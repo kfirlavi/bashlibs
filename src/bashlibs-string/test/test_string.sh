@@ -162,5 +162,62 @@ test_remove_bash_comments() {
     rm -f /tmp/{before,correct,after}
 }
 
+test_str_len() {
+    returns 0 "str_len"
+    returns 1 "str_len a"
+    returns 8 "str_len run wild"
+    returns 9 "str_len run wild\n"
+    returns 10 "str_len 'run wild\n'"
+    returns 2 "str_len '\n'"
+    returns 1 "str_len \n"
+    returns 4 "str_len '$(no_color)'"
+    returns 7 "str_len '$(color red)'"
+    returns 9 "str_len '$(color red)\n'"
+    returns 16 "str_len '$(color red)\n$(color blue)'"
+    returns 22 "str_len '$(color red)\n$(color blue)\n$(no_color)'"
+    returns 49 "str_len '$(color red)with actual\n$(color blue)\nwords and spaces$(no_color)'"
+}
+
+test_str_without_escape_chars() {
+    returns "abc" "str_without_escape_chars abc"
+    returns "abc" "str_without_escape_chars 'abc\n'"
+    returns "abc" "str_without_escape_chars '$(color red)abc'"
+}
+
+test_text_width() {
+    returns 0 "text_width"
+    returns 0 "text_width '\n'"
+    returns 0 "text_width '$(color red)'"
+    returns 0 "text_width '$(color red)\n'"
+    returns 0 "text_width '$(color red)\n$(color blue)'"
+    returns 0 "text_width '$(color red)\n$(color blue)\n$(no_color)'"
+
+    returns 3 "text_width run"
+    returns 8 "text_width run fast"
+    returns 24 "text_width run fast\nthen run again\n"
+    returns 8 "text_width '$(color white)run fast$(no_color)'"
+    returns 8 "text_width '$(color white)run fast$(no_color)\n'"
+    returns 8 "text_width '$(color white)run fast$(no_color)\nrun'"
+    returns 14 "text_width '$(color white)run fast$(no_color)\nthen $(color red)run$(no_color) again\n'"
+    returns 9 "text_width '1234 6789 \n123\n 3 4 5\n   444  \n'"
+}
+
+test_text_hight() {
+    returns 0 "text_hight"
+    returns 2 "text_hight '\n'"
+    returns 2 "text_hight '$(color red)\n'"
+    returns 3 "text_hight '$(color red)\n$(color blue)\n$(no_color)'"
+
+    returns 1 "text_hight run"
+    returns 1 "text_hight run fast"
+    returns 3 "text_hight run 'fast\nthen run again\n'"
+    returns 1 "text_hight '$(color white)run fast$(no_color)'"
+    returns 2 "text_hight '$(color white)run fast$(no_color)\n'"
+    returns 2 "text_hight '$(color white)run fast$(no_color)\nrun'"
+    returns 3 "text_hight '$(color white)run fast$(no_color)\nthen $(color red)run$(no_color) again\n'"
+    returns 5 "text_hight '1234 6789 \n123\n 3 4 5\n   444  \n'"
+}
+
+
 # load shunit2
 source /usr/share/shunit2/shunit2

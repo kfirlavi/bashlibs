@@ -116,3 +116,44 @@ remove_bash_comments() {
     cat /dev/stdin \
         | sed -e 's/#.*$//'
 }
+
+str_len() {
+    local str=$@
+
+    echo ${#str}
+}
+
+str_without_escape_chars() {
+    local str=$@
+
+    echo -e $str \
+        | ansi2txt
+}
+
+text_width() {
+    local str=$@
+    local line
+
+    [[ -z $str ]] \
+        && echo 0 \
+        && return
+
+    str_without_escape_chars $str \
+        | while read line
+          do
+              str_len $line
+          done \
+            | sort --numeric-sort --unique \
+            | tail -1
+}
+
+text_hight() {
+    local str=$@
+    
+    [[ -z $str ]] \
+        && echo 0 \
+        && return
+
+    str_without_escape_chars $str \
+        | wc -l
+}
