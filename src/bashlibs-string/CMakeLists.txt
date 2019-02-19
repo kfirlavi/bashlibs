@@ -10,6 +10,6 @@ include(BashLibs)
 set(CPACK_DEBIAN_PACKAGE_DEPENDS
     "bashlibs-utils,
     bashlibs-colors,
-    colorized-logs")
+    colorized-logs | kbtin")
 include(PackageCreator)
 
