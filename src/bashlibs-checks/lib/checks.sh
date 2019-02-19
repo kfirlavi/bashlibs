@@ -22,6 +22,12 @@ file_dont_exist() {
     [[ ! -f $file ]]
 }
 
+file_is_empty() {
+    local file=$1
+
+    [[ -z $(cat $file) ]]
+}
+
 variable_defined() {
     local var_name=$1
 

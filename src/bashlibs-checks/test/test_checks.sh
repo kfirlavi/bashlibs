@@ -43,6 +43,17 @@ test_file_dont_exist() {
     rm -f $f
 }
 
+test_file_is_empty() {
+    local f=/tmp/a
+
+    touch $f
+    return_true "file_is_empty $f"
+    echo "123" > $f
+    return_false "file_is_empty $f"
+
+    rm -f $f
+}
+
 test_variable_defined() {
     return_false "variable_defined non_defined"
     
