@@ -116,5 +116,21 @@ test_distro_name() {
     returns gentoo "distro_name"
 }
 
+test_ubuntu_distro_number() {
+    returns 19.04 "ubuntu_distro_number disco"
+    returns 18.04 "ubuntu_distro_number bionic"
+    returns 16.04 "ubuntu_distro_number xenial"
+    returns 15.04 "ubuntu_distro_number vivid"
+    returns  4.10 "ubuntu_distro_number warty"
+}
+
+test_ubuntu_distro_name() {
+    returns disco  "ubuntu_distro_name 19.04"
+    returns bionic "ubuntu_distro_name 18.04"
+    returns xenial "ubuntu_distro_name 16.04"
+    returns vivid  "ubuntu_distro_name 15.04"
+    returns warty  "ubuntu_distro_name  4.10"
+}
+
 # load shunit2
 source /usr/share/shunit2/shunit2

@@ -95,3 +95,17 @@ distro_name() {
     is_gentoo \
         && echo gentoo
 }
+
+ubuntu_distro_number() {
+    local distro_name=$1
+
+    grep $distro_name $(libraries_path)/ubuntu_naming.sh \
+        | awk '{print $2}'
+}
+
+ubuntu_distro_name() {
+    local distro_number=$1
+
+    grep " $distro_number" $(libraries_path)/ubuntu_naming.sh \
+        | awk '{print $1}'
+}
