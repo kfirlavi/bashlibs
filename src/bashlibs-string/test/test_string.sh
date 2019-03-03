@@ -116,6 +116,14 @@ test_str_to_camelcase() {
     return_equals "AbcDef" "echo 'abc-_-def--___' | str_to_camelcase"
 }
 
+test_every_word_to_camelcase() {
+    return_equals "Abc"         "echo 'abc'         | every_word_to_camelcase"
+    return_equals "Abc"         "echo 'Abc'         | every_word_to_camelcase"
+    return_equals "Abc Def"     "echo 'abc def'     | every_word_to_camelcase"
+    return_equals "Abc_def Abc" "echo 'abc_def abc' | every_word_to_camelcase"
+    return_equals "Abc-Def"     "echo 'abc-def'     | every_word_to_camelcase"
+}
+
 test_upcase_str() {
     return_equals "ABC"     "echo 'abc'     | upcase_str"
     return_equals "ABC"     "echo 'Abc'     | upcase_str"

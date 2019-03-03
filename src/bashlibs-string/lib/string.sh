@@ -97,6 +97,11 @@ str_to_camelcase() {
         | delete_spaces
 }
 
+every_word_to_camelcase() {
+    cat /dev/stdin \
+        | sed -e 's/\b\(.\)/\u\1/g'
+}
+
 upcase_str() {
     cat /dev/stdin \
         | awk '{print toupper($0)}'
