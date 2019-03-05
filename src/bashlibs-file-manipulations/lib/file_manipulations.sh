@@ -16,13 +16,14 @@ delete_line_from_file_using_pattern() {
     local file=$1; shift
     local pattern=$@
 
-    sed -i "\|pattern|d" $file
+    sed -i "\|$pattern|d" $file
 }
 
 line_in_file() {
     local f=$1; shift
     local line=$@
 
+    line=$(echo $line | sed 's/\[/\\\[/g' | sed 's/\]/\\\]/g')
     grep -q "^$line$" $f
 }
 
