@@ -53,13 +53,6 @@ is_dir_under_base_dir() {
     local base_dir=$(clean_path $2)
     local path_reminder=$(clean_path $dir | sed "s|^$(clean_path $base_dir)||")
 
-	cat<<-EOF >> /tmp/log
-	dir=$dir
-	base_dir=$base_dir
-	path_reminder=$path_reminder
-
-	EOF
-
     [[ $dir != $base_dir ]] \
         || return
 
@@ -93,4 +86,8 @@ safe_delete_directory_from_tmp() {
         verror "$FUNCNAME: can't delete '$dir', because it is not in /tmp" 
         false
     fi
+}
+
+create_progname_tmp_dir() {
+    mktemp -d /tmp/$(progname).XXXXX
 }

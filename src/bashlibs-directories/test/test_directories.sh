@@ -110,5 +110,14 @@ test_safe_delete_directory_from_tmp() {
     cd $saved_dir > /dev/null 2>&1
 }
 
+test_create_progname_tmp_dir() {
+    local dir=$(create_progname_tmp_dir)
+
+    directory_should_exist $dir
+
+    safe_delete_directory_from_tmp $dir
+}
+
+
 # load shunit2
 source /usr/share/shunit2/shunit2
