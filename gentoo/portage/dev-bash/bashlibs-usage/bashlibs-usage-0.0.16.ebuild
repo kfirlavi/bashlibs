@@ -3,7 +3,7 @@ EAPI="5"
 inherit cmake-utils flag-o-matic
 
 MY_P="${P}-Source"
-DESCRIPTION="chroot commands that setup chroot"
+DESCRIPTION="bashlibs usage library to support creation of usage text when using --help flag"
 SRC_URI="${MY_P}.tar.bz2"
 
 
@@ -14,9 +14,7 @@ IUSE=""
 
 RDEPEND="
 	>=dev-bash/bashlibs-utils-0.0.6
-	>=dev-bash/bashlibs-shunit2-enhancements-0.0.2
-	dev-bash/bashlibs-directories
-	>=dev-bash/bashlibs-os-detection-0.0.7
+	>=dev-bash/bashlibs-colors-0.0.7
 "
 
 DEPEND="
@@ -36,3 +34,8 @@ src_install() {
 	cmake-utils_src_install
 }
 
+pkg_postinst() {
+	bashlibs \
+		--verbose \
+		--test test_usage.sh
+}

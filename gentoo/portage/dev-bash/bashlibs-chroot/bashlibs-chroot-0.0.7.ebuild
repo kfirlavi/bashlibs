@@ -3,7 +3,7 @@ EAPI="5"
 inherit cmake-utils flag-o-matic
 
 MY_P="${P}-Source"
-DESCRIPTION="networking functions to create bridges, vlans, taps..."
+DESCRIPTION="chroot commands that setup chroot"
 SRC_URI="${MY_P}.tar.bz2"
 
 
@@ -15,9 +15,8 @@ IUSE=""
 RDEPEND="
 	>=dev-bash/bashlibs-utils-0.0.6
 	>=dev-bash/bashlibs-shunit2-enhancements-0.0.2
-	dev-bash/bashlibs-sysfs
-	sys-apps/iproute2
-	net-misc/bridge-utils
+	dev-bash/bashlibs-directories
+	>=dev-bash/bashlibs-os-detection-0.0.7
 "
 
 DEPEND="
@@ -37,3 +36,8 @@ src_install() {
 	cmake-utils_src_install
 }
 
+pkg_postinst() {
+	bashlibs \
+		--verbose \
+		--test test_chroot.sh
+}

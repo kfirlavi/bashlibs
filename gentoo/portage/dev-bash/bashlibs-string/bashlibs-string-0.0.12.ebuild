@@ -3,7 +3,7 @@ EAPI="5"
 inherit cmake-utils flag-o-matic
 
 MY_P="${P}-Source"
-DESCRIPTION="bashlibs verbose library"
+DESCRIPTION="bashlibs string manipulation library"
 SRC_URI="${MY_P}.tar.bz2"
 
 
@@ -14,9 +14,7 @@ IUSE=""
 
 RDEPEND="
 	>=dev-bash/bashlibs-utils-0.0.6
-	>=dev-bash/bashlibs-verbose-0.0.5
-	dev-bash/bashlibs-file-manipulations
-	app-arch/cpio
+	>=dev-bash/bashlibs-shunit2-enhancements-0.0.2
 "
 
 DEPEND="
@@ -36,3 +34,8 @@ src_install() {
 	cmake-utils_src_install
 }
 
+pkg_postinst() {
+	bashlibs \
+		--verbose \
+		--test test_string.sh
+}

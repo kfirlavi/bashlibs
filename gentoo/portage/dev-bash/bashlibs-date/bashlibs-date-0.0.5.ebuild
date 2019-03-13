@@ -3,7 +3,7 @@ EAPI="5"
 inherit cmake-utils flag-o-matic
 
 MY_P="${P}-Source"
-DESCRIPTION="bashlibs library for os specific stuff like ubuntu version"
+DESCRIPTION="bashlibs date library, provide date string for stamping filenames etc."
 SRC_URI="${MY_P}.tar.bz2"
 
 
@@ -14,13 +14,11 @@ IUSE=""
 
 RDEPEND="
 	>=dev-bash/bashlibs-utils-0.0.6
-	dev-bash/bashlibs-code-clarity
-	dev-bash/bashlibs-directories
 "
 
-DEPEND="
-	dev-bash/bashlibs-cmake-macros
-"
+DEPEND="                                                              
+	dev-bash/bashlibs-cmake-macros                                    
+"                                                                     
 
 S="${WORKDIR}/${MY_P}"
 
@@ -33,4 +31,10 @@ src_configure() {
 
 src_install() {
 	cmake-utils_src_install
+}
+
+pkg_postinst() {
+	bashlibs \
+		--verbose \
+		--test test_date.sh
 }

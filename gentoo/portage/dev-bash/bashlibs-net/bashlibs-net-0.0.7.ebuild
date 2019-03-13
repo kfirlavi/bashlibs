@@ -3,7 +3,7 @@ EAPI="5"
 inherit cmake-utils flag-o-matic
 
 MY_P="${P}-Source"
-DESCRIPTION="kernel cmdline /proc/cmdline"
+DESCRIPTION="networking functions to create bridges, vlans, taps..."
 SRC_URI="${MY_P}.tar.bz2"
 
 
@@ -15,8 +15,9 @@ IUSE=""
 RDEPEND="
 	>=dev-bash/bashlibs-utils-0.0.6
 	>=dev-bash/bashlibs-shunit2-enhancements-0.0.2
-	sys-apps/util-linux
-	sys-block/parted
+	dev-bash/bashlibs-sysfs
+	sys-apps/iproute2
+	net-misc/bridge-utils
 "
 
 DEPEND="
@@ -36,3 +37,8 @@ src_install() {
 	cmake-utils_src_install
 }
 
+pkg_postinst() {
+	bashlibs \
+		--verbose \
+		--test test_net.sh
+}

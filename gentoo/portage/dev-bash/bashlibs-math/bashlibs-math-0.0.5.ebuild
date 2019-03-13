@@ -3,7 +3,7 @@ EAPI="5"
 inherit cmake-utils flag-o-matic
 
 MY_P="${P}-Source"
-DESCRIPTION="kernel cmdline /proc/cmdline"
+DESCRIPTION="bashlibs math library, provide max,min,avg of columns in file"
 SRC_URI="${MY_P}.tar.bz2"
 
 
@@ -14,12 +14,11 @@ IUSE=""
 
 RDEPEND="
 	>=dev-bash/bashlibs-utils-0.0.6
-	>=dev-bash/bashlibs-shunit2-enhancements-0.0.2
 "
 
-DEPEND="
-	dev-bash/bashlibs-cmake-macros
-"
+DEPEND="                                                              
+	dev-bash/bashlibs-cmake-macros                                    
+"                                                                     
 
 S="${WORKDIR}/${MY_P}"
 
@@ -34,3 +33,8 @@ src_install() {
 	cmake-utils_src_install
 }
 
+pkg_postinst() {
+	bashlibs \
+		--verbose \
+		--test test_math.sh
+}

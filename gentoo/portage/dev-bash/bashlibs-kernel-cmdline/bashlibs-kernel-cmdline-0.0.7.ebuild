@@ -3,7 +3,7 @@ EAPI="5"
 inherit cmake-utils flag-o-matic
 
 MY_P="${P}-Source"
-DESCRIPTION="commandline arguments library"
+DESCRIPTION="kernel cmdline /proc/cmdline"
 SRC_URI="${MY_P}.tar.bz2"
 
 
@@ -34,3 +34,8 @@ src_install() {
 	cmake-utils_src_install
 }
 
+pkg_postinst() {
+	bashlibs \
+		--verbose \
+		--test test_kernel_cmdline.sh
+}

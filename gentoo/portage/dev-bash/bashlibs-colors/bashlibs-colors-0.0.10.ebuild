@@ -3,7 +3,7 @@ EAPI="5"
 inherit cmake-utils flag-o-matic
 
 MY_P="${P}-Source"
-DESCRIPTION="bashlibs library for creating cleaner code"
+DESCRIPTION="bashlibs colors library"
 SRC_URI="${MY_P}.tar.bz2"
 
 
@@ -34,9 +34,8 @@ src_install() {
 	cmake-utils_src_install
 }
 
-pkg_postinst()
-{
-	if use test; then
-		blibs --test ${P}.sh
-	fi
+pkg_postinst() {
+	bashlibs \
+		--verbose \
+		--test test_colors.sh
 }

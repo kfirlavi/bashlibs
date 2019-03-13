@@ -3,7 +3,7 @@ EAPI="5"
 inherit cmake-utils flag-o-matic
 
 MY_P="${P}-Source"
-DESCRIPTION="bashlibs colors library"
+DESCRIPTION="bashlibs library for os specific stuff like ubuntu version"
 SRC_URI="${MY_P}.tar.bz2"
 
 
@@ -14,7 +14,8 @@ IUSE=""
 
 RDEPEND="
 	>=dev-bash/bashlibs-utils-0.0.6
-	>=dev-bash/bashlibs-shunit2-enhancements-0.0.2
+	dev-bash/bashlibs-code-clarity
+	dev-bash/bashlibs-directories
 "
 
 DEPEND="
@@ -34,3 +35,8 @@ src_install() {
 	cmake-utils_src_install
 }
 
+pkg_postinst() {
+	bashlibs \
+		--verbose \
+		--test test_os_detection.sh
+}

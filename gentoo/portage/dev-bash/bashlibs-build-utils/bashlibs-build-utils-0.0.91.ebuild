@@ -43,14 +43,11 @@ src_install() {
 }
 
 pkg_info() {
-	if use test
-	then
-		bashlibs --test test_bake_test.sh
-		bashlibs --test test_bake_cmake.sh
-		bashlibs --test test_deb_repository.sh
-		bashlibs --test test_bake_debian.sh
-		bashlibs --test test_package_build.sh
-		bashlibs --test test_bake_config.sh
-		bashlibs --test test_bake_gentoo.sh
-	fi
+	bashlibs --verbose --test test_bake_test.sh
+	bashlibs --verbose --test test_bake_cmake.sh
+	bashlibs --verbose --test test_deb_repository.sh
+	bashlibs --verbose --test test_bake_debian.sh
+	bashlibs --verbose --test test_package_build.sh
+	bashlibs --verbose --test test_bake_config.sh
+	bashlibs --verbose --test test_bake_gentoo.sh
 }
