@@ -38,6 +38,7 @@ main() {
 
     cmdline $(args)
     list_projects_if_needed
+    add_current_directory_project_if_no_projects_supplied
     verify_project_provided
     work_from_source_tree_root
     show_on_which_hosts_we_build

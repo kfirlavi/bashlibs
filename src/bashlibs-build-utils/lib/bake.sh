@@ -229,9 +229,20 @@ list_projects_if_needed() {
         && list_projects
 }
 
+current_directory_project() {
+    is_valid_project_path $(working_directory) \
+        && extract_project_name_from_path $(working_directory)
+}
+
+add_current_directory_project_if_no_projects_supplied() {
+    [[ -z $PROJECTS ]] \
+        && is_valid_project_path $(working_directory) \
+            && PROJECTS="$(current_directory_project)"
+}
+
 verify_project_provided() {
     [[ -z $PROJECTS ]] \
-        && eexit "project name or project path need to be provided. None was given."
+        && eexit "project name or project path need to be provided with --project, or working directory should be of a valid project."
 }
 
 show_on_which_hosts_we_build() {

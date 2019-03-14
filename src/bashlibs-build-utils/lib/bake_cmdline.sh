@@ -14,7 +14,7 @@ usage() {
 
 	$(section_options)
 	$(item s server 'IP or hostname of the target system. This option can be specified multiple times, to compile on different hosts')
-	$(item p project 'project name or project path. Can be specified multiple times')
+	$(item p project 'project name or project path. Can be specified multiple times. If not specified, current working directory project will be selected')
 	$(item i install 'compile on one traget and then deploy the package on another machine (no compilation). For now just Gentoo is supported')
 	$(item C root 'path to sources tree, if current directory is not in the source tree')
 	$(item l list 'list all projects in the tree')
@@ -29,6 +29,9 @@ usage() {
 	$(section_examples)
 	$(example_description 'Build package bashlibs-verbose for host 192.168.1.2')
 	$(example $(progname) --server 192.168.1.2 --project src/bashlibs-verbose)
+
+	$(example_description 'cd into src/bashlibs-verbose and bake will compile bashlibs-verbose, without providing --project')
+	$(example $(progname) --server 192.168.1.2)
 
 	$(example_description 'Build package bashlibs-verbose and bashlibs-colors for multiple hosts: gentoo, ubuntu32 and ubuntu64. For bashlibs-verbose we use path, and for bashlibs-colors we use project name and ask bake to find the project for us')
 	$(example $(progname) -s gentoo -s ubuntu32 -s ubuntu64 -p src/bashlibs-verbose -p bashlibs-colors)
