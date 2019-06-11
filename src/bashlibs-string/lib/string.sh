@@ -89,6 +89,11 @@ string_inside_quotes() {
         | sed 's/.*"\(.*\)".*/\1/'
 }
 
+string_inside_tags() {
+    cat /dev/stdin \
+        | sed "s/.*'\(.*\)'.*/\1/"
+}
+
 str_to_camelcase() {
     cat /dev/stdin \
         | underscores_to_spaces \

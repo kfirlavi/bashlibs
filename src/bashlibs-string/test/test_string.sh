@@ -108,6 +108,12 @@ test_string_inside_quotes() {
     return_equals "a line of" "echo 'this is \"a line of\" example' | string_inside_quotes"
 }
 
+test_string_inside_tags() {
+    return_equals "abc" "echo 'abc' | string_inside_tags"
+    return_equals " abc " "echo ' abc ' | string_inside_tags"
+    return_equals 'this is "a line of" example' "echo 'this is \"a line of\" example' | string_inside_tags"
+}
+
 test_str_to_camelcase() {
     return_equals "Abc"    "echo 'abc'            | str_to_camelcase"
     return_equals "Abc"    "echo 'Abc'            | str_to_camelcase"
