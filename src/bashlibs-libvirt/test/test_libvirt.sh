@@ -2,6 +2,7 @@
 $(bashlibs --load-base)
 include shunit2_enhancements.sh
 include libvirt.sh
+include directories.sh
 
 test_fqdn_to_mac() {
     returns '54:cc:51:15:e6:77' 'fqdn_to_mac vm_name'
@@ -64,6 +65,19 @@ test_vm_ip() {
     returns "192.168.122.34" "vm_ip vm1"
     rm -f /tmp/status
 }
+
+test_enable_nested_kvm() {
+    local workdir=$(mktemp -d)
+
+    mkdir -p $workdir/etc/modprobe.d
+    enable_nested_kvm $workdir
+    file_should_exist $workdir/etc/modprobe.d/kvm_intel.conf
+    return_true "cat $workdir/etc/modprobe.d/kvm_intel.conf | grep -q nested=1"
+
+    directory_is_in_tmp $workdir \
+        && safe_delete_directory_from_tmp $workdir
+}
+
 
 # load shunit2
 source /usr/share/shunit2/shunit2

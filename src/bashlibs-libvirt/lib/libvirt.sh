@@ -79,3 +79,15 @@ wait_for_vm_to_obtain_ip() {
         && [[ $print_line_end ]] \
             && echo " $(vm_ip $vm_name)"
 }
+
+enable_nested_kvm() {
+    local root=$1
+    local modprobe_dir=$root/etc/modprobe.d
+
+    dir_exist $modprobe_dir \
+        || eexit "$modprobe_dir does not exist. Can't configure nested kvm"
+
+	cat <<- EOF > $modprobe_dir/kvm_intel.conf
+	options kvm_intel nested=1
+	EOF
+}
