@@ -91,3 +91,11 @@ enable_nested_kvm() {
 	options kvm_intel nested=1
 	EOF
 }
+
+enable_vmx_in_vm_xml() {
+    local xml_file=$1
+
+    sed -i \
+        "/<\/cpu>/i <feature policy='require' name='vmx'/>" \
+        $xml_file
+}

@@ -12,6 +12,20 @@ test_fqdn_to_mac() {
 
 virsh_dumpxml() {
 	cat<<-EOF
+	<cpu mode='custom' match='exact' check='full'>
+	  <model fallback='forbid'>Nehalem</model>
+	  <vendor>Intel</vendor>
+	  <feature policy='require' name='vme'/>
+	  <feature policy='require' name='ss'/>
+	  <feature policy='require' name='x2apic'/>
+	  <feature policy='require' name='tsc-deadline'/>
+	  <feature policy='require' name='hypervisor'/>
+	  <feature policy='require' name='arat'/>
+	  <feature policy='require' name='tsc_adjust'/>
+	  <feature policy='require' name='umip'/>
+	  <feature policy='require' name='rdtscp'/>
+	</cpu>
+
 	<interface type='network'>
 	  <mac address='54:b1:04:34:50:5c'/>
 	  <source network='default' bridge='virbr0'/>
@@ -78,6 +92,16 @@ test_enable_nested_kvm() {
         && safe_delete_directory_from_tmp $workdir
 }
 
+test_enable_vmx_in_vm_xml() {
+	create_temp_file vm_xml
+
+	virsh_dumpxml > $(vm_xml)
+	return_false "grep -q vmx $(vm_xml)"
+	enable_vmx_in_vm_xml $(vm_xml)
+	return_true "grep -q vmx $(vm_xml)"
+
+	delete_temp_file vm_xml
+}
 
 # load shunit2
 source /usr/share/shunit2/shunit2
