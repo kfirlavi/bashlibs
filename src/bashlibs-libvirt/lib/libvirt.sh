@@ -8,8 +8,11 @@ fqdn_to_mac() {
 
 virsh_dumpxml() {
     local vm_name=$1
+    local xml_file=$2
     
-    virsh dumpxml $vm_name
+    [[ -z $xml_file ]] \
+        && virsh dumpxml $vm_name \
+        || virsh dumpxml $vm_name > $xml_file
 }
 
 virsh_domiflist() {
