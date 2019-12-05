@@ -13,7 +13,7 @@ all_cmake_project_files() {
 
     for i in $(all_cmake_files $path)
     do
-        grep -l "project (" $i
+        grep -l "project[ ]*(" $i
     done
 }
 
