@@ -165,6 +165,8 @@ test_project_exist() {
 }
 
 test_extract_project_name_from_cmake_file() {
+    echo 'temp_project(xyz)' >> $TEST_DIR/proj1/CMakeLists.txt
+
     returns \
         "proj1" \
         "extract_project_name_from_cmake_file \

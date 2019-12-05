@@ -40,7 +40,7 @@ cmake_project_file() {
 
     for i in $(all_cmake_project_files $path)
     do
-        grep -l "project ($project_name)" $i
+        grep -l "project[ ]*($project_name)" $i
     done
 }
 
@@ -72,7 +72,8 @@ exit_if_project_not_found() {
 extract_project_name_from_cmake_file() {
     local cmake_file=$1
 
-    grep project $cmake_file \
+    grep 'project[ ]*(' $cmake_file \
+        | head -1 \
         | cut -d '(' -f 2 \
         | cut -d ')' -f 1
 }
