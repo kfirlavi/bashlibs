@@ -102,3 +102,60 @@ enable_vmx_in_vm_xml() {
         "/<\/cpu>/i <feature policy='require' name='vmx'/>" \
         $xml_file
 }
+
+vm_already_defined() {
+    local vm_name=$1
+
+    virsh list --all \
+        | grep -q $vm_name
+}
+
+shutdown_vm() {
+    local vm_name=$1
+
+    virsh shutdown $vm_name
+}
+
+destroy_vm() {
+    local vm_name=$1
+
+    virsh destroy $vm_name
+}
+
+undefine_vm() {
+    local vm_name=$1
+
+    virsh undefine $vm_name
+}
+
+vm_is_running() {
+    local vm_name=$1
+
+    virsh list --all \
+        | grep $vm_name \
+        | grep -q running
+}
+
+vm_is_shut_off() {
+    local vm_name=$1
+
+    virsh list --all \
+        | grep $vm_name \
+        | grep -q 'shut off'
+}
+
+wait_for_vm_to_shut_off() {
+    local vm_name=$1
+
+    vdebug "waiting for $vm_name to shut off"
+
+    for i in $(seq 1 10)
+    do
+        vm_is_shut_off $vm_name \
+            && break
+        
+        sleep 1
+    done
+
+    destroy_vm $vm_name
+}
