@@ -7,11 +7,17 @@ include directories.sh
 setUp() {
     TEST_DIR=$(mktemp -d)
 
-    mkdir -p $TEST_DIR/{proj1,proj2,common/{proj3,proj4}}
+    mkdir -p $TEST_DIR/{proj1,proj2,common/{proj3,proj4,proj5},ignored/{proj6,proj7,tmp/proj8}}
     echo "project (proj1)" > $TEST_DIR/proj1/CMakeLists.txt
     echo "project (proj2)" > $TEST_DIR/proj2/CMakeLists.txt
     echo "project (proj3)" > $TEST_DIR/common/proj3/CMakeLists.txt
     echo "project (proj4)" > $TEST_DIR/common/proj4/CMakeLists.txt
+    echo "project (proj5)" > $TEST_DIR/common/proj5/CMakeLists.txt
+    touch $TEST_DIR/common/proj5/.bake_ignore_below
+    echo "project (proj6)" > $TEST_DIR/ignored/proj6/CMakeLists.txt
+    echo "project (proj7)" > $TEST_DIR/ignored/proj7/CMakeLists.txt
+    echo "project (proj7)" > $TEST_DIR/ignored/tmp/proj8/CMakeLists.txt
+    touch $TEST_DIR/ignored/.bake_ignore_below
 
     mkdir $TEST_DIR/proj2/src
     touch $TEST_DIR/proj2/src/CMakeLists.txt
@@ -44,6 +50,15 @@ test_all_cmake_files() {
         "all_cmake_files $TEST_DIR"
 }
 
+test_cmakefile_should_be_ignored() {
+    return_false "cmakefile_should_be_ignored $TEST_DIR/common/proj4/CMakeLists.txt"
+
+    return_true  "cmakefile_should_be_ignored $TEST_DIR/common/proj5/CMakeLists.txt"
+    return_true  "cmakefile_should_be_ignored $TEST_DIR/ignored/proj6/CMakeLists.txt"
+    return_true  "cmakefile_should_be_ignored $TEST_DIR/ignored/proj7/CMakeLists.txt"
+    return_true  "cmakefile_should_be_ignored $TEST_DIR/ignored/tmp/proj8/CMakeLists.txt"
+}
+
 test_all_cmake_project_files() {
     return_value_should_include \
         "$TEST_DIR/proj1/CMakeLists.txt" \
@@ -64,6 +79,35 @@ test_all_cmake_project_files() {
     return_value_shouldnt_include \
         "$TEST_DIR/proj2/src/CMakeLists.txt" \
         "all_cmake_project_files $TEST_DIR"
+
+    return_value_shouldnt_include \
+        "$TEST_DIR/common/proj5/CMakeLists.txt" \
+        "all_cmake_project_files $TEST_DIR"
+
+    return_value_shouldnt_include \
+        "$TEST_DIR/ignored/proj6/CMakeLists.txt" \
+        "all_cmake_project_files $TEST_DIR"
+
+    return_value_shouldnt_include \
+        "$TEST_DIR/ignored/proj7/CMakeLists.txt" \
+        "all_cmake_project_files $TEST_DIR"
+
+    return_value_shouldnt_include \
+        "$TEST_DIR/ignored/tmp/proj8/CMakeLists.txt" \
+        "all_cmake_project_files $TEST_DIR"
+
+    cd $TEST_DIR
+    
+    return_value_shouldnt_include \
+        "./ignored/tmp/proj8/CMakeLists.txt" \
+        "all_cmake_project_files ."
+
+    return_value_should_include \
+        "./common/proj4/CMakeLists.txt" \
+        "all_cmake_project_files ."
+
+
+    cd - > /dev/null
 }
 
 test_cmake_project_file() {

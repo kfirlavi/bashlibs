@@ -6,6 +6,21 @@ all_cmake_files() {
         -name CMakeLists.txt
 }
 
+cmakefile_should_be_ignored() {
+    local cmake_file=$1
+    local i=$cmake_file
+    local ret=false
+
+    while [[ $i != ./ && $i != / && $i != . ]]
+    do
+        [[ -f $i/.bake_ignore_below ]] \
+            && ret=true \
+            && break
+        i=$(dirname $i)
+    done
+    $ret
+}
+
 all_cmake_project_files() {
     local path=$1
 
@@ -13,7 +28,8 @@ all_cmake_project_files() {
 
     for i in $(all_cmake_files $path)
     do
-        grep -l "project[ ]*(" $i
+        cmakefile_should_be_ignored $i \
+            || grep -l "project[ ]*(" $i
     done
 }
 
