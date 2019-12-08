@@ -68,6 +68,23 @@ bake_all() {
     done
 }
 
+projects_to_bake_cmdline_for_gentoo() {
+    local i
+
+    for i in $PROJECTS_ORDER
+    do
+        echo -n "-p $i "
+    done
+}
+
+bake_all_gentoo() {
+    update_repositories
+
+    $(progdir)/bake \
+        $(args) \
+        $(projects_to_bake_cmdline_for_gentoo)
+} 
+
 run_tests() {
     [[ $PORTAGE_TREE_NAME == bashlibs ]] \
         || return
@@ -103,6 +120,14 @@ host_is_ubuntu() {
         | grep -q Ubuntu
 }
 
+host_is_gentoo() {
+    local host=$1
+
+    run_on_host root $host \
+        cat $(gentoo_release_file) 2>/dev/null \
+        | grep -q Gentoo
+}
+
 verify_all_installed() {
     local host
 
@@ -125,7 +150,13 @@ verify_all_installed() {
 
 main() {
     load_bakerc
-    bake_all
+
+    host_is_gentoo \
+        && bake_all_gentoo
+
+    host_is_gentoo \
+        || bake_all
+
     verify_all_installed
     run_tests
 }

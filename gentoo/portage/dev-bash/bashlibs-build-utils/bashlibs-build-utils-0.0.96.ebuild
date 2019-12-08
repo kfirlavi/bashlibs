@@ -14,6 +14,7 @@ IUSE=""
 
 RDEPEND="
 	>=dev-bash/bashlibs-base-0.0.10
+	dev-bash/bashlibs-os-detection
 	>=dev-bash/bashlibs-utils-0.0.11
 	>=dev-bash/bashlibs-usage-0.0.12
 	>=dev-bash/bashlibs-verbose-0.0.25
