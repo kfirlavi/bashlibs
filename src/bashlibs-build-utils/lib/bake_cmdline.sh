@@ -162,3 +162,13 @@ cmdline() {
     if_defined_declare_readonly TARGET_BUILD_HOSTS
     if_defined_declare_readonly HOSTS_TO_INSTALL_BIN_PACKAGES
 }
+
+project_names_to_bake_commandline() {
+    local project_names=$@
+    local i
+
+    for i in $project_names
+    do
+        echo -n "-p $i "
+    done
+}

@@ -26,7 +26,7 @@ test_package_names_with_portage_repository() {
 
 test_find_ebuild_for_package() {
     local tmpdir=$(mktemp -d)
-    
+
     mkdir -p $tmpdir/sys-app
     mkdir -p $tmpdir/games
 

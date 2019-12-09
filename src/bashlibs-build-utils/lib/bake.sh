@@ -5,7 +5,7 @@ include ssh.sh
 run_remote() {
     local cmd=$@
 
-	run_on_host \
+    run_on_host \
         root \
         $(host) \
         $cmd

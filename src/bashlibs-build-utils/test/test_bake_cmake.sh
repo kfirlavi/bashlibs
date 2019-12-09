@@ -110,6 +110,18 @@ test_all_cmake_project_files() {
     cd - > /dev/null
 }
 
+test_all_cmake_project_names() {
+    return_value_should_include proj1 "all_cmake_project_names $TEST_DIR"
+    return_value_should_include proj2 "all_cmake_project_names $TEST_DIR"
+    return_value_should_include proj3 "all_cmake_project_names $TEST_DIR"
+    return_value_should_include proj4 "all_cmake_project_names $TEST_DIR"
+
+    return_value_shouldnt_include proj5 "all_cmake_project_names $TEST_DIR"
+    return_value_shouldnt_include proj6 "all_cmake_project_names $TEST_DIR"
+    return_value_shouldnt_include proj7 "all_cmake_project_names $TEST_DIR"
+    return_value_shouldnt_include proj8 "all_cmake_project_names $TEST_DIR"
+}
+
 test_cmake_project_file() {
     returns \
         "$TEST_DIR/proj1/CMakeLists.txt" \

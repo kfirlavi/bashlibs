@@ -33,6 +33,16 @@ all_cmake_project_files() {
     done
 }
 
+all_cmake_project_names() {
+    local path=$1
+    local i
+
+    for i in $(all_cmake_project_files $path)
+    do
+        extract_project_name_from_cmake_file $i
+    done
+}
+
 cmake_project_file() {
     local project_name=$1
     local path=$2
@@ -131,7 +141,7 @@ set_project_name_and_project_path() {
         exit_if_project_not_found \
             $project_name \
             $(top_level_path)
-        
+
         project_path=$(cmake_project_path \
                 $project_name \
                 $(top_level_path))
@@ -139,7 +149,7 @@ set_project_name_and_project_path() {
     else
 
         eexit "'$user_project_input' is not a valid project name or project path"
-        
+
     fi
 
     create_function_to_return_static_string \

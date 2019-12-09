@@ -187,7 +187,7 @@ print_host() {
 print_packages_names() {
     local packages=$@
     local i
-    
+
     for i in $packages
     do
         vinfo "Emerging package: $(color purple)$i$(no_color)"
@@ -273,4 +273,24 @@ create_tbz_package() {
     set_local_portage_tree_on_host $host
     copy_portage_tree_manifests_from_host $host
     safe_delete_directory_from_tmp $(tmp_dir)
+}
+
+gentoo_ebuilds() {
+    find $(portage_tree) \
+        -name '*.ebuild'
+}
+
+gentoo_ebuilds_project_names() {
+    local i
+
+    for i in $(gentoo_ebuilds)
+    do
+        basename $(dirname $i)
+    done
+}
+
+gentoo_projects() {
+    comm -12 \
+        <(gentoo_ebuilds_project_names | sort | uniq) \
+        <(all_cmake_project_names $(top_level_path) | sort | uniq)
 }

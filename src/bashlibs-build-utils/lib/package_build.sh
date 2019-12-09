@@ -4,10 +4,10 @@ include colors.sh
 include directories.sh
 
 cmake_project_name() {
-	grep -i "project" $(project_path)/CMakeLists.txt \
-		| head -1 \
-		| cut -d '(' -f 2 | cut -d ')' -f 1 \
-		| tr ' ' '.'
+    grep -i "project" $(project_path)/CMakeLists.txt \
+        | head -1 \
+        | cut -d '(' -f 2 | cut -d ')' -f 1 \
+        | tr ' ' '.'
 }
 
 tmp_dir() {
@@ -15,13 +15,13 @@ tmp_dir() {
 }
 
 app_version() {
-	cat $(project_path)/version
+    cat $(project_path)/version
 }
 
 gen_changelog() {
-	cd $(project_path)
-	git --no-pager log . > ChangeLog
-	cd - > /dev/null 2>&1
+    cd $(project_path)
+    git --no-pager log . > ChangeLog
+    cd - > /dev/null 2>&1
 }
 
 run_cmake() {
@@ -42,7 +42,7 @@ copy_deb_to_apt_archives() {
 remote_apt_installation_fix() {
     vinfo "fixing apt installation"
 
-	run_remote \
+    run_remote \
         DEBIAN_FRONTEND=noninteractive \
         apt-get \
             --assume-yes \
@@ -58,7 +58,7 @@ remote_dist_upgrade() {
 
     vinfo "issuing dist-upgrade to solve dependencies"
 
-	run_remote \
+    run_remote \
         DEBIAN_FRONTEND=noninteractive \
         apt-get \
             --assume-yes \
@@ -70,7 +70,7 @@ remote_dist_upgrade() {
 
 install_deb() {
     vinfo "Installing $(cmake_deb_filename) on $(host)"
-	run_remote \
+    run_remote \
         dpkg -i --force-depends \
         /var/cache/apt/archives/$(cmake_deb_filename)
 
@@ -78,32 +78,32 @@ install_deb() {
 }
 
 get_target_cmp_dir() {
-	remote_mkdir $(tmp_dir)/$(cmake_project_name)/cmp
+    remote_mkdir $(tmp_dir)/$(cmake_project_name)/cmp
 }
 
 get_target_src_dir() {
-	remote_mkdir $(tmp_dir)/$(cmake_project_name)/src
+    remote_mkdir $(tmp_dir)/$(cmake_project_name)/src
 }
 
 copy_sources_to_target() {
-	cd $(project_path)
+    cd $(project_path)
 
-	rsync \
-		-a \
-		--exclude='*swp' \
-		--delete-excluded \
-		--delete \
-		* root@$(host):$(get_target_src_dir)
+    rsync \
+        -a \
+        --exclude='*swp' \
+        --delete-excluded \
+        --delete \
+        * root@$(host):$(get_target_src_dir)
 
-	cd - > /dev/null 2>&1
+    cd - > /dev/null 2>&1
 }
 
 clean_remote_dirs() {
-	run_remote "rm -Rf $(tmp_dir)"
+    run_remote "rm -Rf $(tmp_dir)"
 }
 
 archive_deb() {
-	local remote_deb_file=$1
+    local remote_deb_file=$1
     local repository_path=$2
 
     vinfo "Saving $(cmake_deb_filename) to $repository_path"
@@ -111,14 +111,14 @@ archive_deb() {
 }
 
 cmake_deb_filename() {
-	echo $(cmake_project_name)-$(app_version)-Linux.deb
+    echo $(cmake_project_name)-$(app_version)-Linux.deb
 }
 
 remote_mkdir() {
-	local dir=$1
+    local dir=$1
 
-	run_remote "mkdir -p $dir"
-	echo $dir
+    run_remote "mkdir -p $dir"
+    echo $dir
 }
 
 host() {
@@ -136,15 +136,15 @@ valid_package_type() {
 }
 
 dir_project_name() {
-	basename $(project_path)
+    basename $(project_path)
 }
 
 tbz_filename_prefix() {
-	echo $(cmake_project_name)-$(app_version)-Source
+    echo $(cmake_project_name)-$(app_version)-Source
 }
 
 tbz_filename() {
-	echo $(tbz_filename_prefix).tar.bz2
+    echo $(tbz_filename_prefix).tar.bz2
 }
 
 workdir() {
@@ -167,8 +167,8 @@ tar_sources() {
     local f=$(local_distfiles_directory)/$(tbz_filename)
 
     cd $(tmp_dir)
-	tar cjf $f * \
-	    && vinfo "File $f created."
+    tar cjf $f * \
+        && vinfo "File $f created."
     cd - > /dev/null 2>&1
 }
 

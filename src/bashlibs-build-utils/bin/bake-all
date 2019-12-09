@@ -26,6 +26,9 @@ include verbose.sh
 set_verbose_level_to_info
 include ssh.sh
 include bake_config.sh
+include bake_cmake.sh
+include bake_gentoo.sh
+include bake_cmdline.sh
 include os_detection.sh
 
 load_bakerc() {
@@ -68,22 +71,20 @@ bake_all() {
     done
 }
 
-projects_to_bake_cmdline_for_gentoo() {
-    local i
-
-    for i in $PROJECTS_ORDER
-    do
-        echo -n "-p $i "
-    done
+bake_all_gentoo_cmd() {
+    echo $(progdir)/bake \
+            $(args) \
+            $(project_names_to_bake_commandline $(gentoo_projects))
 }
 
 bake_all_gentoo() {
     update_repositories
 
-    $(progdir)/bake \
-        $(args) \
-        $(projects_to_bake_cmdline_for_gentoo)
-} 
+    vinfo "running: $(color white)$(bake_all_gentoo_cmd)$(no_color)"
+
+    _LIBRARIES_INCLUDED= \
+        $(bake_all_gentoo_cmd)
+}
 
 run_tests() {
     [[ $PORTAGE_TREE_NAME == bashlibs ]] \
@@ -151,11 +152,15 @@ verify_all_installed() {
 main() {
     load_bakerc
 
-    host_is_gentoo \
-        && bake_all_gentoo
+    local host
+    for host in $(hosts)
+    do
+        host_is_gentoo $host \
+            && bake_all_gentoo
 
-    host_is_gentoo \
-        || bake_all
+        host_is_gentoo $host \
+            || bake_all
+    done
 
     verify_all_installed
     run_tests
