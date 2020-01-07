@@ -1,6 +1,6 @@
 EAPI="5"
 
-inherit cmake-utils flag-o-matic
+inherit cmake-utils flag-o-matic linux-info
 
 MY_P="${P}-Source"
 DESCRIPTION="networking functions to create bridges, vlans, taps..."
@@ -25,6 +25,11 @@ DEPEND="
 "
 
 S="${WORKDIR}/${MY_P}"
+
+pkg_pretend() {
+	CONFIG_CHECK="VLAN_8021Q BRIDGE TUN"
+	check_extra_config
+}
 
 src_configure() {
 	local mycmakeargs="
