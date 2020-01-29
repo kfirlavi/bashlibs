@@ -45,28 +45,31 @@ var_to_false_function() {
 
 config_variables_as_functions() {
     local conf_file=$1
+    local function_name_prefix=$2
     local i
 
     for i in $(all_variables_in_config $conf_file)
     do
         var_to_function \
-            $(echo $i | downcase_str) \
+            $(echo $function_name_prefix$i | downcase_str) \
             $(config_value $i)
     done
 }
 
 load_config_if_exist() {
     local conf_file=$1
+    local function_name_prefix=$2
 
     config_exist $conf_file \
         && source $conf_file \
-        && config_variables_as_functions $conf_file
+        && config_variables_as_functions $conf_file $function_name_prefix
 }
 
 load_config() {
     local conf_file=$1
+    local function_name_prefix=$2
 
-    load_config_if_exist $conf_file \
+    load_config_if_exist $conf_file $function_name_prefix \
         || eexit "$conf_file does not exist"
 }
 

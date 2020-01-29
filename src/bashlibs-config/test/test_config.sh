@@ -116,6 +116,18 @@ test_config_variables_as_functions() {
     returns "The variable value is 222" "string_var"
 }
 
+test_config_variables_as_functions_with_prefix() {
+    function_not_defined prefix_var_in_conf_file
+    function_not_defined prefix_string_var
+    function_not_defined prefix_comment_var
+    load_config $(conf_file) prefix_
+    function_should_be_defined prefix_var_in_conf_file
+    function_should_be_defined prefix_string_var
+    function_not_defined prefix_comment_var
+    returns 123 "prefix_var_in_conf_file"
+    returns "The variable value is 222" "prefix_string_var"
+}
+
 test_verify_config_varialbes_defined() {
     load_config $(conf_file)
     eexit() { echo Error: $@; false; }
