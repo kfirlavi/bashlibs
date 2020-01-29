@@ -125,5 +125,7 @@ compress_qcow2_image() {
 
     qemu-img convert -c -f qcow2 -O qcow2 \
         $input_qcow2 \
-        $output_qcow2
+        $output_qcow2.compressed
+
+    mv $output_qcow2{.compressed,}
 }
