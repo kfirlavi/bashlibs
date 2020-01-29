@@ -1,6 +1,7 @@
 include directories.sh
 include nice_header.sh
 include ssh.sh
+include bake_gentoo.sh
 
 run_remote() {
     local cmd=$@
@@ -27,25 +28,23 @@ repository_color() {
 
 repositories_names_of_project() {
     local project_path=$1
+    local i
 
-    PROJECT_PATH=$project_path
-    load_configuration_files > /dev/null 2>&1
-
-    local i=
+    load_configuration_files $project_path > /dev/null 2>&1
 
     for i in $REPOSITORIES_NAMES
     do
         echo -n "$(color $(repository_color $i))"
         echo -n "$i"
-        echo -n "$(no_color) "
+        echo "$(no_color) "
     done \
         | sort \
+        | uniq \
         | sed 's/ /,/g' \
+        | tr -d '\n' \
         | sed 's/,$//'
 
     echo
-
-    PROJECT_PATH=
 }
 
 package_version() {
@@ -55,15 +54,22 @@ package_version() {
 }
 
 list_projects() {
-    local i=
+    local i path name version ebuild root
+
+    load_configuration_files > /dev/null 2>&1
+    root=$(find_root_sources_path .)
 
     for i in $(all_cmake_project_files)
     do
-        local project_path=$(dirname $i)
-        echo -n "$(extract_project_name_from_cmake_file $i)-"
-        echo -n "$(package_version $project_path) "
-        echo -n "$project_path "
-        echo "$(repositories_names_of_project $project_path)"
+        path=$(dirname $i)
+        name=$(extract_project_name_from_cmake_file $i)
+        version=$(package_version $path)
+        ebuild=$(find_ebuild_for_package $name $version $root/$(portage_tree))
+
+        echo -n "${name}-$version "
+        echo -n "$path "
+        echo -n "$(repositories_names_of_project $path) "
+        echo "$ebuild"
     done \
         | sort \
         | column -t

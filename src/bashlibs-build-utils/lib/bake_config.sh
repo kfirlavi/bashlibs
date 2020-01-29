@@ -32,7 +32,7 @@ top_level_path() {
 }
 
 load_configuration_files() {
-    local path=$1
+    local path=${1:-$(pwd)}
     TOP_RC=
 
     while [[ -z $TOP_RC && $path != '/' ]] 

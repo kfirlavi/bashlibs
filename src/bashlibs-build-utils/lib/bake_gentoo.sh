@@ -105,12 +105,21 @@ copy_portage_tree_manifests_from_host() {
 }
 
 find_ebuild_for_package() {
-    find $(portage_tree) \
-        -path "*/$(cmake_project_name)-$(app_version).ebuild"
+    local project_name=$1
+    local version=$2
+    local portage_tree=$3
+    local current_path=$(pwd)
+
+    find $portage_tree \
+        -path "*/${project_name}-${version}.ebuild" \
+        -exec realpath --relative-to $current_path {} \;
 }
 
 package_category() {
     find_ebuild_for_package \
+        $(cmake_project_name) \
+        $(app_version) \
+        $(portage_tree) \
         | rev \
         | cut -d '/' -f 3 \
         | rev
@@ -118,6 +127,9 @@ package_category() {
 
 package_name_with_version() {
     find_ebuild_for_package \
+        $(cmake_project_name) \
+        $(app_version) \
+        $(portage_tree) \
         | rev \
         | cut -d '/' -f 1 \
         | cut -d '.' -f 2- \
@@ -129,7 +141,7 @@ package_full_name_with_version() {
 }
 
 ebuild_exist() {
-    [[ -n $(find_ebuild_for_package) ]]
+    [[ -n $(find_ebuild_for_package $(cmake_project_name) $(app_version) $(portage_tree)) ]]
 }
 
 exit_if_ebuild_dont_exist() {
