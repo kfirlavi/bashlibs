@@ -174,4 +174,11 @@ is_verbose_level_set_to_debug() {
     is_verbose_level_set_to Debug
 }
 
+verbose_command() {
+    local command_to_run=$@
+
+    vinfo "Command: $(color white)$command_to_run$(no_color)"
+    $command_to_run
+}
+
 turn_verbose_colors_on
