@@ -1,3 +1,8 @@
+ii        21.10
+hh        21.04
+groovy    20.10
+focal     20.04
+eoan      19.10
 disco     19.04
 cosmic    18.10
 bionic    18.04
