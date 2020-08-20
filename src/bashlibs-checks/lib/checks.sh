@@ -61,3 +61,27 @@ eexit_if_functions_not_defined() {
     [[ -z $non_defined ]] \
         || eexit "This functions must be defined: $(color red)${non_defined}$(no_color)"
 }
+
+function_returns_empty_string() {
+    local func_name=$1
+
+    [[ -z $($func_name) ]]
+}
+
+function_returns_non_empty_string() {
+    local func_name=$1
+
+    [[ -n $($func_name) ]]
+}
+
+function_returns_true() {
+    local func_name=$1
+
+    $func_name > /dev/null 2>&1
+}
+
+function_returns_false() {
+    local func_name=$1
+
+    ! function_returns_true $func_name
+}

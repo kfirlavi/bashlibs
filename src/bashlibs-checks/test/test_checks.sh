@@ -99,5 +99,49 @@ test_eexit_if_functions_not_defined() {
          "eexit_if_functions_not_defined my_func func_not_defined my_func2"
 }
 
+test_function_returns_empty_string() {
+    f1() { echo -n; }        
+    f2() { echo; }        
+    f3() { echo abc; }        
+
+    return_true "function_returns_empty_string f1"
+    return_true "function_returns_empty_string f2"
+    return_false "function_returns_empty_string f3"
+}
+
+test_function_returns_non_empty_string() {
+    f1() { echo -n; }        
+    f2() { echo; }        
+    f3() { echo abc; }        
+
+    return_false "function_returns_non_empty_string f1"
+    return_false "function_returns_non_empty_string f2"
+    return_true "function_returns_non_empty_string f3"
+}
+
+test_function_returns_true() {
+    f1() { true; }        
+    f2() { false; }        
+    f3() { echo -n; }        
+    f4() { ls /none/existing/file; }        
+
+    return_true "function_returns_true f1"
+    return_false "function_returns_true f2"
+    return_true "function_returns_true f3"
+    return_false "function_returns_true f4"
+}
+
+test_function_returns_false() {
+    f1() { true; }        
+    f2() { false; }        
+    f3() { echo -n; }        
+    f4() { ls /none/existing/file; }        
+
+    return_false "function_returns_false f1"
+    return_true "function_returns_false f2"
+    return_false "function_returns_false f3"
+    return_true "function_returns_false f4"
+}
+
 # load shunit2
 source /usr/share/shunit2/shunit2
