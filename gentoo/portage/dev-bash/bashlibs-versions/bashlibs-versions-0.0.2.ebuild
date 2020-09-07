@@ -1,15 +1,18 @@
-EAPI="5"
+# Copyright 1999-2020 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+EAPI="7"
 
 inherit cmake-utils flag-o-matic
 
 MY_P="${P}-Source"
 DESCRIPTION="bashlib to handle versions"
+HOMEPAGE="https://github.com/kfirlavi/bashlibs"
 SRC_URI="${MY_P}.tar.bz2"
-
 
 LICENSE="BSD"
 SLOT="0"
-KEYWORDS="x86 amd64"
+KEYWORDS="amd64 x86"
 IUSE=""
 
 RDEPEND="
@@ -27,7 +30,6 @@ S="${WORKDIR}/${MY_P}"
 src_configure() {
 	local mycmakeargs="
 		-DCMAKE_INSTALL_PREFIX=/"
-	append-ldflags $(no-as-needed)
 	cmake-utils_src_configure
 }
 
