@@ -54,17 +54,16 @@ package_version() {
 }
 
 list_projects() {
-    local i path name version ebuild root
+    local i path name version ebuild
 
     load_configuration_files > /dev/null 2>&1
-    root=$(find_root_sources_path .)
 
     for i in $(all_cmake_project_files)
     do
         path=$(dirname $i)
         name=$(extract_project_name_from_cmake_file $i)
         version=$(package_version $path)
-        ebuild=$(find_ebuild_for_package $name $version $root/$(portage_tree))
+        ebuild=$(find_ebuild_for_package $name $version $(sources_root_path)/$(portage_tree))
 
         echo -n "${name}-$version "
         echo -n "$path "
@@ -201,10 +200,6 @@ show_build_info() {
     vinfo "Building $(color blue)$(package_type)$(no_color) package for $(target_os_with_color)"
 }
 
-sources_root_dir() {
-    pwd
-}
-
 create_function_to_return_static_string() {
     local function_name=$1;shift
     local string=$@
@@ -213,21 +208,10 @@ create_function_to_return_static_string() {
 }
 
 work_from_source_tree_root() {
-    local path=$(pwd)
-    local root_path
+    local root=$(sources_root_path)
 
-    [[ -n $SOURCES_TREE_ROOT ]] \
-        && path=$SOURCES_TREE_ROOT
-
-    root_path=$(find_root_sources_path $path)
-
-    if [[ -z $root_path ]]
-    then
-        eexit "Can't find the sources root dir, maybe you need to use --root or run $(progname) from the sources root dir"
-    else
-        cd $root_path
-        set_top_level_path $root_path
-    fi
+    cd $root
+    set_top_level_path $root
 }
 
 list_projects_if_needed() {

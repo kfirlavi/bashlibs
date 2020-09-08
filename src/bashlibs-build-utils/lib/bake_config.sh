@@ -53,8 +53,9 @@ is_top_level_path() {
         $rc
 }
 
-find_root_sources_path() {
-    local path=$(realpath $1)
+sources_root_path() {
+    local path=${1:-$SOURCES_TREE_PATH}
+    path=$(realpath $path)
 
     [[ $path == '/' ]] \
         && return
@@ -63,6 +64,19 @@ find_root_sources_path() {
     then
         echo $path
     else
-        find_root_sources_path $path/..
+        sources_root_path $path/..
     fi
+}
+
+path_is_in_source_tree() {
+    local path=$1
+
+    [[ -n $(sources_root_path $path) ]]
+}
+
+exit_if_path_is_not_in_source_tree() {
+    local path=$1
+
+    path_is_in_source_tree $path \
+        || eexit "$(color white)$(realpath $path)$(no_color) is not in a source tree! Use option --root or run $(progname) from sources tree."
 }

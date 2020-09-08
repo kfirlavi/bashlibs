@@ -60,46 +60,90 @@ test_is_top_level_path() {
     return_false "is_top_level_path $TEST_DIR/proj2/src"
 }
 
-test_find_root_sources_path() {
+test_sources_root_path() {
     echo "TOP_RC=1" > $TEST_DIR/.bakerc
 
     returns "$TEST_DIR" \
-        "find_root_sources_path $TEST_DIR/proj1"
+        "sources_root_path $TEST_DIR/proj1"
 
     returns "$TEST_DIR" \
-        "find_root_sources_path $TEST_DIR/proj2"
+        "sources_root_path $TEST_DIR/proj2"
 
     returns "$TEST_DIR" \
-        "find_root_sources_path $TEST_DIR/common/proj3"
+        "sources_root_path $TEST_DIR/common/proj3"
 
     returns "$TEST_DIR" \
-        "find_root_sources_path $TEST_DIR/common/proj4"
+        "sources_root_path $TEST_DIR/common/proj4"
+
+    local SOURCES_TREE_PATH=$TEST_DIR
+    returns $TEST_DIR "sources_root_path"
+
+    SOURCES_TREE_PATH=$TEST_DIR/proj1
+    returns $TEST_DIR "sources_root_path"
+
+    SOURCES_TREE_PATH=$TEST_DIR/..
+    returns_empty "sources_root_path"
 
     cd $TEST_DIR
     returns "$TEST_DIR" \
-        "find_root_sources_path proj1"
+        "sources_root_path proj1"
 
     cd $TEST_DIR/common
     returns "$TEST_DIR" \
-        "find_root_sources_path proj3"
+        "sources_root_path proj3"
 
 
     rm $TEST_DIR/.bakerc
 
     returns_empty \
-        "find_root_sources_path $TEST_DIR/common/proj4"
+        "sources_root_path $TEST_DIR/common/proj4"
 
     returns_empty \
-        "find_root_sources_path $TEST_DIR/proj2"
+        "sources_root_path $TEST_DIR/proj2"
 
 
     touch $TEST_DIR/.bakerc
 
     returns_empty \
-        "find_root_sources_path $TEST_DIR/common/proj4"
+        "sources_root_path $TEST_DIR/common/proj4"
 
     returns_empty \
-        "find_root_sources_path $TEST_DIR/proj2"
+        "sources_root_path $TEST_DIR/proj2"
+}
+
+test_path_is_in_source_tree() {
+    echo "TOP_RC=1" > $TEST_DIR/.bakerc
+
+    return_true "path_is_in_source_tree $TEST_DIR/proj1"
+    return_true "path_is_in_source_tree $TEST_DIR/common/proj3"
+
+    return_false "path_is_in_source_tree $TEST_DIR/.."
+
+    return_false "path_is_in_source_tree $TEST_DIR/non_existing_path"
+
+    cd $TEST_DIR
+    return_true "path_is_in_source_tree proj1"
+
+    cd $TEST_DIR/common
+    return_true "path_is_in_source_tree proj3"
+
+
+    rm $TEST_DIR/.bakerc
+
+    return_false \
+        "path_is_in_source_tree $TEST_DIR/common/proj4"
+
+    return_false \
+        "path_is_in_source_tree $TEST_DIR/proj2"
+
+
+    touch $TEST_DIR/.bakerc
+
+    return_false \
+        "path_is_in_source_tree $TEST_DIR/common/proj4"
+
+    return_false \
+        "path_is_in_source_tree $TEST_DIR/proj2"
 }
 
 # load shunit2

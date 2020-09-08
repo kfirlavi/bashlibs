@@ -64,6 +64,7 @@ usage() {
 
 cmdline() {
     exit_if_args_are_empty $@
+    SOURCES_TREE_PATH=$(pwd)
 
     # got this idea from here:
     # http://kirk.webfinish.com/2009/10/bash-shell-script-to-use-getopts-with-gnu-style-long-positional-parameters/
@@ -121,7 +122,7 @@ cmdline() {
             TARGET_BUILD_HOSTS="$TARGET_BUILD_HOSTS $OPTARG"
             ;;
         C)
-            SOURCES_TREE_ROOT=$OPTARG
+            SOURCES_TREE_PATH=$OPTARG
             ;;
         p)
             PROJECTS="$PROJECTS $OPTARG"

@@ -37,6 +37,8 @@ main() {
     local projects=
 
     cmdline $(args)
+    exit_if_path_is_not_in_source_tree $SOURCES_TREE_PATH
+    cd $SOURCES_TREE_PATH
     list_projects_if_needed
     add_current_directory_project_if_no_projects_supplied
     verify_project_provided
