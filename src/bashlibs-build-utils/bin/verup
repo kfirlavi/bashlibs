@@ -119,9 +119,7 @@ modify_gentoo_ebuild_version() {
 }
 
 main() {
-    local current_dir=$(pwd)
-    work_from_source_tree_root
-    cd $current_dir
+    set_top_level_path $(sources_root_path $(pwd))
     set_project_name_and_project_path $(user_project_input)
     load_configuration_files $(project_path)
     local last_version=$(current_version)

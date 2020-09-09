@@ -208,7 +208,8 @@ create_function_to_return_static_string() {
 }
 
 work_from_source_tree_root() {
-    local root=$(sources_root_path)
+    local path=${1:-$SOURCES_TREE_PATH}
+    local root=$(sources_root_path $path)
 
     cd $root
     set_top_level_path $root
