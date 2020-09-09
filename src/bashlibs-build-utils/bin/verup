@@ -75,7 +75,7 @@ next_version() {
 modify_version_file() {
     local last_version=$1
 
-    vinfo "modifying version file: $(version_file)"
+    vdebug "modifying version file: $(version_file)"
     echo $(next_version $last_version) > $(version_file)
 }
 
@@ -89,43 +89,77 @@ ebuild_name() {
     echo "$(cmake_project_name)-$version.ebuild"
 }
 
-find_project_ebuild() {
+project_ebuild() {
     local version=$1
 
     find $(gentoo_portage_tree) \
         -name "$(ebuild_name $version)"
 }
 
-check_ebuild_exist() {
+project_ebuild_dir() {
+    find $(gentoo_portage_tree) \
+        -type d \
+        -name $(cmake_project_name)
+}
+
+ebuilds_in_project_ebuild_dir() {
     local version=$1
 
-    [[ -z $(find_project_ebuild $version) ]] \
-        && eexit "Can't find ebuild: $(ebuild_name $version)"
+    find \
+        $(project_ebuild_dir $version) \
+        -type f \
+        -name '*.ebuild'
+}
+
+gentoo_ebuild_exist() {
+    local version=$1
+
+    [[ -f $(project_ebuild $version) ]] \
+        && return
+
+    if [[ -d $(project_ebuild_dir $version) ]] 
+    then
+        verror "found ebuild directory: $(project_ebuild_dir $version)" 
+        verror "but not ebuild: $(project_ebuild $version)" 
+        verror "ebuilds found: "
+        local i
+        for i in $(ebuilds_in_project_ebuild_dir $version)
+        do
+            verror "    $i"
+        done
+        exit
+    else
+        vwarning "no gentoo support found"
+    fi
+
+    false
 }
 
 modify_gentoo_ebuild_version() {
     local version=$1
 
-    vinfo "Gentoo portage tree is in: $(gentoo_portage_tree)"
-    check_ebuild_exist $version
-    vinfo "Found project ebuild: $(find_project_ebuild $version)"
+    gentoo_ebuild_exist $version \
+        || return
 
-    local ebuild=$(find_project_ebuild $version)
+    local ebuild=$(project_ebuild $version)
     local ebuild_dir=$(dirname $ebuild)
     local next_ebuild=$ebuild_dir/$(ebuild_name $(next_version $version))
 
     git mv $ebuild $next_ebuild
 
+    vinfo "new ebuild: $(color white)$next_ebuild$(no_color)"
 }
 
 main() {
     set_top_level_path $(sources_root_path $(pwd))
     set_project_name_and_project_path $(user_project_input)
     load_configuration_files $(project_path)
-    local last_version=$(current_version)
-    local next_version=$(next_version $last_version)
-    vinfo "changing version: $last_version -> $next_version"
-    modify_version_file $last_version $next_version
-    modify_gentoo_ebuild_version $last_version
+
+    local old=$(current_version)
+
+    vinfo "$old -> $(color yellow)$(next_version $old)$(no_color)"
+
+    modify_gentoo_ebuild_version $old
+    modify_version_file $old
 }
 main

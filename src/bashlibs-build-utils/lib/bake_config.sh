@@ -14,10 +14,10 @@ load_config_file() {
     local conf_file=$path/$(config_file_name)
 
     config_file_exist $path \
-        || vinfo "Config file '$conf_file' not found"
+        || vdebug "Config file '$conf_file' not found"
 
     config_file_exist $path \
-        && vinfo "Loading configuration file: '$conf_file'" \
+        && vdebug "Loading configuration file: '$conf_file'" \
         && eval $(cat $conf_file)
 }
 
