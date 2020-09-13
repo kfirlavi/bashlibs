@@ -7,7 +7,7 @@ set(BASH_LIBS_DIR
     "usr/lib/bashlibs")
 
 set(BASH_LIBS_TESTS_DIR 
-    "usr/share/bashlibs/test")
+    "usr/share/bashlibs/test/${CMAKE_PROJECT_NAME}")
 
 set(BASH_LIBS_BIN_DIR 
     "usr/bin")
