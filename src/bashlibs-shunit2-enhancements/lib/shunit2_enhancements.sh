@@ -230,35 +230,72 @@ find_shunit2() {
     done
 }
 
-run_test() {
-    local test_file=$1
-    local debug=$2 # gets -x for debugging
+test_files() {
+    local tests_dir=$1
+    local pattern=${2:-'test_*'}
 
-    vinfo "Running tests for: $(color purple)$(basename $test_file)$(no_color)"
-    clean_library_included
-    bash $debug $test_file
+    find $tests_dir \
+        -type f \
+        -name "*$pattern*"
 }
 
-run_all_tests() {
-    local tests_dir=$1
-    local debug=$2 # gets -x for debugging
-    local test_file
+test_debugging() {
+    echo -n
+}
 
-    for test_file in $tests_dir/test_*
+set_test_debugging() {
+    local debug=$1
+
+    [[ -z $debug ]] \
+        && return
+
+    test_debugging() { echo -x; }
+}
+
+test_name() {
+    local test_file=$1
+    
+    basename $test_file \
+        | sed 's/test_//' \
+        | sed 's/.sh$//'    
+}
+
+run_test() {
+    local test_file=$1
+
+    vinfo "Running tests for: $(color purple)$(test_name $test_file)$(no_color)"
+
+    clean_library_included
+    bash $(test_debugging) $test_file
+}
+
+run_tests_by_pattern() {
+    local tests_dir=$1
+    local pattern=$2
+    local i
+
+    [[ -d $tests_dir/$pattern ]] \
+        && tests_dir=$tests_dir/$pattern \
+        && pattern=
+
+    for i in $(test_files $tests_dir $pattern)
     do
-        run_test $debug $test_file
+        run_test $i $debug
     done
 }
 
 run_tests() {
     local tests_dir=$1
     local debug=$2 # gets -x for debugging
-    local test_file
+
+    set_test_debugging $debug
 
     export RUN_TESTS
     find_shunit2
 
+    set_verbose_level_to_info
+
     [[ $RUN_TESTS == all ]] \
-        && run_all_tests $tests_dir $debug \
-        || run_test $tests_dir/$RUN_TESTS $debug
+        && run_tests_by_pattern $tests_dir \
+        || run_tests_by_pattern $tests_dir $RUN_TESTS
 }
