@@ -98,8 +98,14 @@ example_test() {
 	$(example $progname -t all)
 	$(example $progname --test all)
 	    
-	$(example_description 'Run one unit test file (good for development stage):')
-	$(example $progname --test test_vm_ip.sh)
+	$(example_description 'run tests in test_apt.sh')
+	$(example $progname --test test_apt.sh)
+	    
+	$(example_description 'run tests using pattern - will test test_apt.sh and test_apt_cmd.sh')
+	$(example $progname --test apt)
+	    
+	$(example_description 'run tests of the package bashlibs-apt - will test test_apt.sh and test_apt_cmd.sh')
+	$(example $progname --test bashlibs-apt)
 	EOF
 }
 
