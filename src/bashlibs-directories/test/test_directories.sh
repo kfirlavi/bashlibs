@@ -86,7 +86,7 @@ test_is_dir_under_base_dir() {
 }
 
 test_safe_delete_directory_from_tmp() {
-    local dir=$(mktemp -d)
+    local dir=$(create_progname_tmp_dir)
 
     return_true "dir_exist $dir"
     return_true "safe_delete_directory_from_tmp $dir"
