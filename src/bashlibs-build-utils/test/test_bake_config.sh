@@ -5,7 +5,7 @@ include bake_config.sh
 include directories.sh
 
 oneTimeSetUp() {
-    TEST_DIR=$(mktemp -d)
+    TEST_DIR=$(create_progname_tmp_dir)
 
     mkdir -p $TEST_DIR/{proj1,proj2,common/{proj3,proj4}}
     touch $TEST_DIR/proj1/.bakerc

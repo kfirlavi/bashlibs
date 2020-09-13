@@ -23,7 +23,7 @@ RDEPEND="
 	>=dev-bash/bashlibs-verbose-0.0.25
 	>=dev-bash/bashlibs-ssh-0.0.13
 	dev-bash/bashlibs-cmdline
-	>=dev-bash/bashlibs-shunit2-enhancements-0.0.11
+	>=dev-bash/bashlibs-shunit2-enhancements-0.0.20
 	>=dev-bash/bashlibs-directories-0.0.4
 	app-arch/dpkg
 	app-text/tree
@@ -44,12 +44,6 @@ src_install() {
 	cmake-utils_src_install
 }
 
-pkg_info() {
-	bashlibs --verbose --test test_bake_test.sh
-	bashlibs --verbose --test test_bake_cmake.sh
-	bashlibs --verbose --test test_deb_repository.sh
-	bashlibs --verbose --test test_bake_debian.sh
-	bashlibs --verbose --test test_package_build.sh
-	bashlibs --verbose --test test_bake_config.sh
-	bashlibs --verbose --test test_bake_gentoo.sh
+pkg_postinst() {
+	bashlibs --test ${PN}
 }

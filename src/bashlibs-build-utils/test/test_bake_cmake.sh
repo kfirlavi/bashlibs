@@ -5,7 +5,7 @@ include bake_cmake.sh
 include directories.sh
 
 setUp() {
-    TEST_DIR=$(mktemp -d)
+    TEST_DIR=$(create_progname_tmp_dir)
 
     mkdir -p $TEST_DIR/{proj1,proj2,common/{proj3,proj4,proj5},ignored/{proj6,proj7,tmp/proj8}}
     echo "project (proj1)" > $TEST_DIR/proj1/CMakeLists.txt
