@@ -1,43 +1,63 @@
-apt_get_quiet_flags() {
-    echo "--quiet=2"
+include verbose.sh
+include config.sh
+include apt_cmd.sh
+
+setup_apt() {
+    [[ -n $(which apt) ]] \
+        && var_to_function apt_bin apt \
+        && return
+
+    [[ -n $(which apt-get) ]] \
+        && var_to_function apt_bin apt-get \
+        && return
+
+    eexit "Can not find apt or apt-get support in the system"
 }
 
-apt_get_force() {
-    echo "apt-get -y --force-yes $(apt_get_quiet_flags)"
+apt_bin() {
+    echo you need to run setup_apt, before using any of the apt functions
+}
+
+vinfo_apt() {
+    echo str=$@
+
+    vinfo "$(apt_bin): $str"
 }
 
 apt_fix_install() {
-    $(apt_get_force) install
+    vinfo_apt "fixing installation"
+    $(apt_cmd_fix_install)
 }
 
 apt_install_package() {
     local package=$1
 
-    vinfo "installing pacakge: $(color white)$package$(no_color)"
-    $(apt_get_force) install $package
+    vinfo_apt "installing $(color white)$package$(no_color)"
+    $(apt_cmd_install_package $package)
     apt_fix_install
 }
 
 apt_update() {
-    vinfo "updating apt database"
-    $(apt_get_force) update
+    vinfo_apt "updating"
+    $(apt_cmd_update)
 }
 
 apt_upgrade() {
-    vinfo "upgrading packages"
-    $(apt_get_force) upgrade
+    vinfo_apt "upgrading packages"
+    $(apt_cmd_upgrade)
 }
 
 apt_dist_upgrade() {
-    vinfo "dist-upgrade packages"
-    $(apt_get_force) dist-upgrade
+    vinfo_apt "dist-upgrade packages"
+    $(apt_cmd_dist_upgrade)
 }
 
 apt_autoremove() {
-    vinfo "autoremove unneeded packages"
-    $(apt_get_force) autoremove
+    vinfo_apt "autoremove unneeded packages"
+    $(apt_cmd_autoremove)
 }
 
 apt_clean() {
-    apt-get clean
+    vinfo_apt "cleaning"
+    $(apt_cmd_clean)
 }

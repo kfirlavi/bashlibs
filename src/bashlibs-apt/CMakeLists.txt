@@ -9,6 +9,8 @@ list(APPEND CMAKE_MODULE_PATH
 include(BashLibs)
 set(CPACK_DEBIAN_PACKAGE_DEPENDS
     "apt,
+    bashlibs-verbose,
+    bashlibs-config,
     bashlibs-utils")
 include(PackageCreator)
 

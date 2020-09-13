@@ -36,7 +36,9 @@ src_install() {
 }
 
 pkg_postinst() {
-	bashlibs \
-		--verbose \
+	bashlibs -v -v \
 		--test test_apt.sh
+
+	bashlibs -v -v \
+		--test test_apt_cmd.sh
 }
