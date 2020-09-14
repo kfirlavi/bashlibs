@@ -4,7 +4,7 @@ include shunit2_enhancements.sh
 include portage.sh
 
 emerge_info() {
-    cat $(libraries_tests_dir)/files/emerge_info.txt
+    cat __BASHLIBS_PROJECT_TESTS_DIR__/files/emerge_info.txt
 }
 
 test_emerge_info_vars() {

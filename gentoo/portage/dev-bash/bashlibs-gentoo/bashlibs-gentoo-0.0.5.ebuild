@@ -20,5 +20,5 @@ RDEPEND="
 "
 
 DEPEND="
-	dev-bash/bashlibs-cmake-macros
+	>=dev-bash/bashlibs-cmake-macros-0.0.17
 "
