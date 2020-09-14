@@ -1,0 +1,7 @@
+set(CPACK_PACKAGING_INSTALL_PREFIX "/")
+
+set(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA 
+	"${CMAKE_CURRENT_SOURCE_DIR}/CMake/debian/preinst;"
+	"${CMAKE_CURRENT_SOURCE_DIR}/CMake/debian/prerm;"
+	"${CMAKE_CURRENT_SOURCE_DIR}/CMake/debian/postinst;"
+	"${CMAKE_CURRENT_SOURCE_DIR}/CMake/debian/postrm;")
