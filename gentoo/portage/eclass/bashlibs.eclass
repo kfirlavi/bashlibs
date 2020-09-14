@@ -1,7 +1,7 @@
 # @ECLASS: bashlibs.eclass
 # @MAINTAINER:
 # lavi.kfir@gmail.com
-# @SUPPORTED_EAPIS: 7
+# @SUPPORTED_EAPIS: 5
 # @BLURB: Support eclass for bashlibs
 # @DESCRIPTION:
 # library routins for simple ebuilds
