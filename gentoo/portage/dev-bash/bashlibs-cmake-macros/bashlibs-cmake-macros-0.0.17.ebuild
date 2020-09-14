@@ -15,6 +15,6 @@ IUSE=""
 
 DEPEND="
 	dev-util/cmake
-	>=dev-util/cmake-macros-0.0.2
+	>=dev-util/cmake-macros-0.0.12
 "
 RDEPEND=""

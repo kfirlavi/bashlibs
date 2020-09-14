@@ -14,4 +14,4 @@ include(PackageCreator)
 
 install(
     DIRECTORY "Modules"
-    DESTINATION "usr/share/bashlibs/cmake-macros")
+    DESTINATION "${BASHLIBS_SHARE_DIR}/cmake-macros")

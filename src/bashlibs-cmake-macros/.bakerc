@@ -1,1 +1,1 @@
-PRE_COMPILE_DEPEND="cmake-macros"
+PRE_COMPILE_DEPEND="cmake-macros>=0.0.12"
