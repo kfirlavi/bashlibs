@@ -19,7 +19,7 @@ apt_bin() {
 }
 
 vinfo_apt() {
-    echo str=$@
+    local str=$@
 
     vinfo "$(apt_bin): $str"
 }
