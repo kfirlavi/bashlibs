@@ -26,38 +26,38 @@ vinfo_apt() {
 
 apt_fix_install() {
     vinfo_apt "fixing installation"
-    $(apt_cmd_fix_install)
+    eval $(apt_cmd_fix_install)
 }
 
 apt_install_package() {
     local package=$1
 
     vinfo_apt "installing $(color white)$package$(no_color)"
-    $(apt_cmd_install_package $package)
+    eval $(apt_cmd_install_package $package)
     apt_fix_install
 }
 
 apt_update() {
     vinfo_apt "updating"
-    $(apt_cmd_update)
+    eval $(apt_cmd_update)
 }
 
 apt_upgrade() {
     vinfo_apt "upgrading packages"
-    $(apt_cmd_upgrade)
+    eval $(apt_cmd_upgrade)
 }
 
 apt_dist_upgrade() {
     vinfo_apt "dist-upgrade packages"
-    $(apt_cmd_dist_upgrade)
+    eval $(apt_cmd_dist_upgrade)
 }
 
 apt_autoremove() {
     vinfo_apt "autoremove unneeded packages"
-    $(apt_cmd_autoremove)
+    eval $(apt_cmd_autoremove)
 }
 
 apt_clean() {
     vinfo_apt "cleaning"
-    $(apt_cmd_clean)
+    eval $(apt_cmd_clean)
 }
