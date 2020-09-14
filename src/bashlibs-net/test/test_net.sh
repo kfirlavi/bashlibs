@@ -2,7 +2,7 @@
 $(bashlibs --load-base)
 include shunit2_enhancements.sh
 include net.sh
-source /usr/share/bashlibs/test/support_net.sh
+source __BASHLIBS_PROJECT_TESTS_DIR__/support_net.sh
 
 tmp_bridge() {
     echo test_bridge

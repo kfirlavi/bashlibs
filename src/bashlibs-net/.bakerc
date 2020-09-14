@@ -1,1 +1,1 @@
-PRE_COMPILE_DEPEND="bashlibs-cmake-macros"
+PRE_COMPILE_DEPEND="bashlibs-cmake-macros>=0.0.17"
