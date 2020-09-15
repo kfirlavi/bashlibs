@@ -1,3 +1,5 @@
+include checks.sh
+
 create_new_bare_git() {
     local name=$1
 
@@ -69,4 +71,37 @@ git_config_username() {
 
 git_config_push_new_behavior() {
     git config push.default simple
+}
+
+git_bare_config_file() {
+    local git_dir=$1
+
+    echo $git_dir/config
+}
+
+git_config_file() {
+    local git_dir=$1
+
+    echo $git_dir/.git/config
+}
+
+is_bare_git() {
+    local git_dir=$1
+
+    file_exist $(git_bare_config_file $git_dir) \
+        && grep -q 'bare = true' $git_dir/config
+}
+
+is_regular_git() {
+    local git_dir=$1
+
+    file_exist $(git_config_file $git_dir) \
+        && grep -q 'bare = false' $git_dir/.git/config
+}
+
+is_git() {
+    local git_dir=$1
+
+    is_bare_git $git_dir \
+        || is_regular_git $git_dir
 }

@@ -10,6 +10,7 @@ include(BashLibs)
 set(CPACK_DEBIAN_PACKAGE_DEPENDS
     "bashlibs-utils,
     bashlibs-directories,
+    bashlibs-checks,
     git,
     bashlibs-shunit2-enhancements (>=0.0.17)")
 include(PackageCreator)

@@ -12,6 +12,10 @@ remote_git_for_testing() {
     echo /tmp/test_remote.git
 }
 
+none_git_directory() {
+    echo /tmp/none_git.git
+}
+
 config_git_for_testing() {
     git_config_username myuser
     git_config_email myuser@gmail.com
@@ -31,12 +35,14 @@ setUp() {
     config_git_for_testing
     add_first_commit > /dev/null 2>&1
     git push > /dev/null 2>&1
+    mkdir -p $(none_git_directory)
 }
 
 tearDown() {
     cd /tmp
     safe_delete_directory_from_tmp $(git_for_testing)
     safe_delete_directory_from_tmp $(remote_git_for_testing)
+    safe_delete_directory_from_tmp $(none_git_directory)
 }
 
 test_create_new_git() {
@@ -97,6 +103,34 @@ test_git_is_up_to_date() {
     return_false "git_is_up_to_date"
     git push > /dev/null 2>&1
     return_true "git_is_up_to_date"
+}
+
+test_git_bare_config_file() {
+    returns "$(remote_git_for_testing)/config" \
+        "git_bare_config_file $(remote_git_for_testing)"
+}
+
+test_git_config_file() {
+    returns "$(git_for_testing)/.git/config" \
+        "git_config_file $(git_for_testing)"
+}
+
+test_is_bare_git() {
+    return_true "is_bare_git $(remote_git_for_testing)"
+    return_false "is_bare_git $(git_for_testing)"
+    return_false "is_bare_git $(none_git_directory)"
+}
+
+test_is_regular_git() {
+    return_false "is_regular_git $(remote_git_for_testing)"
+    return_true "is_regular_git $(git_for_testing)"
+    return_false "is_regular_git $(none_git_directory)"
+}
+
+test_is_git() {
+    return_true "is_git $(remote_git_for_testing)"
+    return_true "is_git $(git_for_testing)"
+    return_false "is_git $(none_git_directory)"
 }
 
 # load shunit2
