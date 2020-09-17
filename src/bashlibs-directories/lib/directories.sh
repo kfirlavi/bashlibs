@@ -1,4 +1,4 @@
-#!/bin/bash
+include config.sh
 
 dir_exist() {
     local dir=$1
@@ -90,4 +90,14 @@ safe_delete_directory_from_tmp() {
 
 create_progname_tmp_dir() {
     mktemp -d /tmp/$(progname).XXXXX
+}
+
+create_workdir() {
+    local d=$(create_progname_tmp_dir)
+    
+    var_to_function workdir $d
+}
+
+remove_workdir() {
+    safe_delete_directory_from_tmp $(workdir)
 }

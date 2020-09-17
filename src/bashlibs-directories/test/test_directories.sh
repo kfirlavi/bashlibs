@@ -118,6 +118,17 @@ test_create_progname_tmp_dir() {
     safe_delete_directory_from_tmp $dir
 }
 
+test_create_workdir() {
+    create_workdir
+    
+    directory_should_exist $(workdir)
+}
+
+test_remove_workdir() {
+    remove_workdir
+
+    directory_shouldnt_exist $(workdir)
+}
 
 # load shunit2
 source /usr/share/shunit2/shunit2
