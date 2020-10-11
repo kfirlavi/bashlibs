@@ -88,9 +88,8 @@ change_portage_tree_name_on_host() {
     local host=$1
     local f=/tmp/repo_name
 
-    echo $(portage_tree_name_on_host) > $f
-    rsync -aq $f \
-        root@$host:$(gentoo_local_portage_path)/profiles/
+    run_on_host root $host \
+        "echo $(portage_tree_name_on_host) > $(gentoo_local_portage_path)/profiles/repo_name"
 }
 
 copy_portage_tree_manifests_from_host() {
