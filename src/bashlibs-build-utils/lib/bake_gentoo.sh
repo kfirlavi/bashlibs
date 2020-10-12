@@ -1,10 +1,6 @@
 include bake_test.sh
 include ssh.sh
 
-make_conf() {
-    echo /etc/portage/make.conf
-}
-
 emerge_quiet() {
     [[ -n $QUIET ]] \
         && echo '--quiet'
@@ -43,16 +39,33 @@ local_distfiles_directory() {
         $(repositories_dir)/gentoo/distfiles/$PORTAGE_TREE_NAME/distfiles
 }
 
-target_distdir() {
-    run_remote grep DISTDIR $(make_conf) \
-        | tail -1 \
+get_emerge_info() {
+    local host=$1
+    EMERGE_INFO=$(run_remote emerge --info)
+
+    emerge_info() {
+        echo $EMERGE_INFO
+    }
+}
+
+emerge_variable() {
+    local var_name=$1
+
+    emerge_info \
+        | grep -o "$var_name=.*" \
         | cut -d '"' -f 2
 }
 
-target_pkgdir() {
-    run_remote grep PKGDIR $(make_conf) \
-        | tail -1 \
-        | cut -d '"' -f 2
+get_emerge_variables() {
+    local host=$1
+
+    get_emerge_info $host
+
+    target_distdir() { emerge_variable DISTDIR; }
+    vdebug "$(print_host $host) distfiles dir: $(target_distdir)"
+
+    target_pkgdir()  { emerge_variable PKGDIR;  }
+    vdebug "$(print_host $host) pkg dir: $(target_pkgdir)"
 }
 
 copy_tbz_package_to_host() {
@@ -274,6 +287,7 @@ create_tbz_package() {
     gen_changelog
     copy_sources_to_workdir
     tar_sources
+    get_emerge_variables $host
     copy_tbz_package_to_host $host
     copy_portage_tree_to_host $host
     change_portage_tree_name_on_host $host
