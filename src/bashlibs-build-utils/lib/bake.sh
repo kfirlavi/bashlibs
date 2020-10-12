@@ -124,7 +124,7 @@ portage_tree_name() {
 }
 
 gentoo_local_portage_path() {
-    echo /usr/local/portage-$(portage_tree_name)
+    echo /var/cache/bake/overlays/$(portage_tree_name)
 }
 
 building_for_gentoo() {

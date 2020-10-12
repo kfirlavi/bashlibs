@@ -55,15 +55,11 @@ target_pkgdir() {
         | cut -d '"' -f 2
 }
 
-create_target_distdir_if_needed() {
-    run_remote mkdir -p $(target_distdir)
-}
-
 copy_tbz_package_to_host() {
     local host=$1
 
-    create_target_distdir_if_needed
     rsync \
+        --rsync-path="mkdir -p $(target_distdir) && rsync" \
         $(local_distfiles_directory)/$(tbz_filename) \
         root@$host:$(target_distdir)/
 }
@@ -72,6 +68,7 @@ copy_portage_tree_to_host() {
     local host=$1
 
     rsync -r --delete \
+        --rsync-path="mkdir -p $(gentoo_local_portage_path) && rsync" \
         $(portage_tree)/ \
         root@$host:$(gentoo_local_portage_path)
 }
