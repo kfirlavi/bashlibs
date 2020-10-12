@@ -96,7 +96,6 @@ portage_tree_name_on_host() {
 
 change_portage_tree_name_on_host() {
     local host=$1
-    local f=/tmp/repo_name
 
     run_on_host root $host \
         "echo $(portage_tree_name_on_host) > $(gentoo_local_portage_path)/profiles/repo_name"
