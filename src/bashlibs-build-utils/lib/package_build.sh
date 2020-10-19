@@ -27,15 +27,15 @@ gen_changelog() {
 run_cmake() {
     vinfo "Making package"
     run_remote \
-        "cd $(get_target_cmp_dir) \
-        && cmake $(get_target_src_dir) $(cmake_options) \
+        "cd $(target_cmp_dir) \
+        && cmake $(target_src_dir) $(cmake_options) \
         && make package"
 }
 
 copy_deb_to_apt_archives() {
     run_remote \
         cp \
-        $(get_target_cmp_dir)/*deb \
+        $(target_cmp_dir)/*deb \
         /var/cache/apt/archives/
 }
 
@@ -77,11 +77,11 @@ install_deb() {
     remote_dist_upgrade
 }
 
-get_target_cmp_dir() {
+target_cmp_dir() {
     remote_mkdir $(tmp_dir)/$(cmake_project_name)/cmp
 }
 
-get_target_src_dir() {
+target_src_dir() {
     remote_mkdir $(tmp_dir)/$(cmake_project_name)/src
 }
 
@@ -93,7 +93,7 @@ copy_sources_to_target() {
         --exclude='*swp' \
         --delete-excluded \
         --delete \
-        * root@$(host):$(get_target_src_dir)
+        * root@$(host):$(target_src_dir)
 
     cd - > /dev/null 2>&1
 }
