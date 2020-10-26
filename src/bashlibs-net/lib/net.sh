@@ -285,3 +285,26 @@ iface_mac_octate() {
     iface_mac $iface \
         | cut -d ':' -f $n
 }
+
+enable_vlan_filtering_on_bridge() {
+    local bridge=$1
+
+    net_debug bridge $bridge "enable vlan filtering on bridge"
+    ip link set dev $bridge type bridge vlan_filtering 1
+}
+
+add_vlan_filter_to_bridge() {
+    local iface=$1
+    local vlan=$2
+
+    net_debug vlan $vlan "adding bridge vlan filter for iface $(colorize_iface none $iface)"
+    bridge vlan add vid $vlan dev $iface
+}
+
+del_vlan_filter_from_bridge() {
+    local iface=$1
+    local vlan=$2
+
+    net_debug vlan $vlan "removing bridge vlan filter for iface $(colorize_iface none $iface)"
+    bridge vlan del vid $vlan dev $iface
+}

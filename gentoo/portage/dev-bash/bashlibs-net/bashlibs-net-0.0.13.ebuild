@@ -19,6 +19,7 @@ RDEPEND="
 	dev-bash/bashlibs-sysfs
 	sys-apps/iproute2
 	net-misc/bridge-utils
+	sys-fs/mtools
 "
 
 DEPEND="
@@ -26,6 +27,6 @@ DEPEND="
 "
 
 pkg_pretend() {
-	CONFIG_CHECK="VLAN_8021Q BRIDGE TUN"
+	CONFIG_CHECK="VLAN_8021Q BRIDGE TUN BRIDGE_NETFILTER"
 	check_extra_config
 }
