@@ -27,6 +27,10 @@ loop_bios_boot_partition() {
     device_bios_boot_partition $(loop_device)
 }
 
+loop_efi_partition() {
+    device_efi_partition $(loop_device)
+}
+
 loop_first_partition() {
     device_first_partition $(loop_device)
 }
@@ -34,10 +38,13 @@ loop_first_partition() {
 test_create_one_big_partition() {
     create_one_big_partition $(loop_device) > /dev/null 2>&1
 
-    returns "$(loop_bios_boot_partition)       2048   18431   16384   8M BIOS boot" \
+    returns "$(loop_bios_boot_partition)   2048    6143    4096    2M BIOS boot" \
         "fdisk -l $(loop_device) | grep $(loop_bios_boot_partition)"
 
-    returns "$(loop_first_partition)       18432 8386559 8368128   4G Linux filesystem" \
+    returns "$(loop_efi_partition)   6144  268287  262144  128M EFI System" \
+        "fdisk -l $(loop_device) | grep $(loop_efi_partition)"
+
+    returns "$(loop_first_partition) 268288 8386559 8118272  3.9G Linux filesystem" \
         "fdisk -l $(loop_device) | grep $(loop_first_partition)"
 }
 
@@ -46,9 +53,19 @@ test_device_bios_boot_partition() {
         "device_bios_boot_partition $(loop_device)"
 }
 
-test_device_first_partition() {
+test_device_efi_partition() {
     returns $(loop_device)p2 \
+        "device_efi_partition $(loop_device)"
+}
+
+test_device_first_partition() {
+    returns $(loop_device)p3 \
         "device_first_partition $(loop_device)"
+}
+
+test_create_efi_filesystem() {
+    return_true "create_efi_filesystem $(loop_device)"
+    return_true "minfo -i $(loop_efi_partition) | grep 'disk type' | grep -q FAT32"
 }
 
 test_create_ext4_filesystem() {
@@ -56,16 +73,17 @@ test_create_ext4_filesystem() {
     return_true "create_ext4_filesystem $(loop_first_partition)"
 
     return_true "create_ext4_filesystem $(loop_first_partition) -T small"
-    returns "1046528" "inode_count $(loop_first_partition)"
+    local i=$(inode_count $(loop_first_partition))
+    return_true "(( $i < 10210000 || $i > 10200000 ))"
 
     return_true "create_ext4_filesystem $(loop_first_partition) -T huge"
-    returns "65536" "inode_count $(loop_first_partition)"
+    returns "63488" "inode_count $(loop_first_partition)"
 }
 
 test_inode_count() {
     return_true "create_ext4_filesystem $(loop_first_partition)"
 
-    returns "261632" "inode_count $(loop_first_partition)"
+    returns "253952" "inode_count $(loop_first_partition)"
 }
 
 test_filesystem_uuid() {

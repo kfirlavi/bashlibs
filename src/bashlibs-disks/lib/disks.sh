@@ -8,7 +8,7 @@ device_bios_boot_partition() {
         | grep 1
 }
 
-device_first_partition() {
+device_efi_partition() {
     local hd_device=$1
 
     echo -n $(dirname $hd_device)/
@@ -16,6 +16,16 @@ device_first_partition() {
     lsblk --list $hd_device \
         | cut -d ' ' -f 1 \
         | grep 2
+}
+
+device_first_partition() {
+    local hd_device=$1
+
+    echo -n $(dirname $hd_device)/
+
+    lsblk --list $hd_device \
+        | cut -d ' ' -f 1 \
+        | grep 3
 }
 
 refresh_partition_table() {
@@ -28,13 +38,25 @@ refresh_partition_table() {
 create_one_big_partition() {
     local hd_device=$1
 
-    parted --script $hd_device \
+    parted --align optimal --script $hd_device \
         mklabel gpt \
-        mkpart primary 1MiB 9MiB \
-        mkpart primary 9MiB 100% \
-        set 1 bios_grub on
+        unit mib \
+        mkpart primary 1 3 \
+        name 1 grub \
+        set 1 bios_grub on \
+        mkpart primary 3 131 \
+        name 2 efi \
+        set 2 boot on \
+        mkpart primary 131 100% \
+        name 3 rootfs
 
     refresh_partition_table $hd_device
+}
+
+create_efi_filesystem() {
+    local hd_device=$1
+
+    mkfs.fat -F 32 $(device_efi_partition $hd_device)
 }
 
 create_ext4_filesystem() {
