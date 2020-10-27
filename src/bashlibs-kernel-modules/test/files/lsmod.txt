@@ -1,0 +1,58 @@
+Module                  Size  Used by
+nbd                    45056  3
+nls_iso8859_1          16384  1
+intel_rapl_msr         20480  0
+intel_rapl_common      24576  1 intel_rapl_msr
+kvm_intel             282624  0
+virtio_gpu             57344  1
+kvm                   663552  1 kvm_intel
+bridge                176128  0
+stp                    16384  1 bridge
+llc                    16384  2 bridge,stp
+ttm                   106496  1 virtio_gpu
+crct10dif_pclmul       16384  1
+ghash_clmulni_intel    16384  0
+drm_kms_helper        184320  3 virtio_gpu
+aesni_intel           372736  0
+fb_sys_fops            16384  1 drm_kms_helper
+crypto_simd            16384  1 aesni_intel
+cryptd                 24576  2 crypto_simd,ghash_clmulni_intel
+syscopyarea            16384  1 drm_kms_helper
+glue_helper            16384  1 aesni_intel
+sysfillrect            16384  1 drm_kms_helper
+sysimgblt              16384  1 drm_kms_helper
+joydev                 24576  0
+input_leds             16384  0
+mac_hid                16384  0
+serio_raw              20480  0
+qemu_fw_cfg            20480  0
+sch_fq_codel           20480  2
+parport_pc             40960  0
+ppdev                  24576  0
+lp                     20480  0
+parport                53248  3 parport_pc,lp,ppdev
+drm                   491520  5 drm_kms_helper,virtio_gpu,ttm
+sunrpc                393216  1
+ip_tables              32768  0
+x_tables               40960  1 ip_tables
+autofs4                45056  5
+raid10                 57344  0
+raid456               155648  0
+async_raid6_recov      24576  1 raid456
+async_memcpy           20480  2 raid456,async_raid6_recov
+async_pq               24576  2 raid456,async_raid6_recov
+async_xor              20480  3 async_pq,raid456,async_raid6_recov
+async_tx               20480  5 async_pq,async_memcpy,async_xor,raid456,async_raid6_recov
+xor                    24576  1 async_xor
+raid6_pq              114688  3 async_pq,raid456,async_raid6_recov
+libcrc32c              16384  1 raid456
+raid1                  45056  0
+raid0                  24576  0
+multipath              20480  0
+linear                 20480  0
+crc32_pclmul           16384  0
+psmouse               155648  0
+e1000                 147456  0
+i2c_piix4              28672  0
+pata_acpi              16384  0
+floppy                 81920  0

@@ -47,4 +47,5 @@ PROJECTS_ORDER="
     bashlibs-libvirt
     bashlibs-dns
     bashlibs-git
+    bashlibs-kernel-modules
 "
