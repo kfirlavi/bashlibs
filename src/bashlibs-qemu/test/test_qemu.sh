@@ -6,26 +6,34 @@ include disks.sh
 include directories.sh
 
 qfile() {
-    echo /tmp/test.qcow2
+    echo $(workdir)/test.qcow2
+}
+
+qfile_bakup() {
+    echo $(qfile).bak
 }
 
 rfile() {
-    echo /tmp/test.raw
+    echo $(workdir)/test.raw
 }
 
 cfile() {
-    echo /tmp/test-compressed.qcow2
+    echo $(workdir)/test-compressed.qcow2
+}
+
+oneTimeSetUp() {
+    create_workdir
+    create_test_qcow2_with_filesystem
+    cp $(qfile) $(qfile_bakup)
+}
+
+oneTimeTearDown() {
+    remove_workdir
 }
 
 setUp() {
-    create_qcow2_image $(qfile) 1G
     touch $(rfile)
-}
-
-tearDown() {
-    rm -f $(cfile)
-    rm -f $(qfile)
-    rm -f $(rfile)
+    cp $(qfile_bakup) $(qfile)
 }
 
 test_create_qcow2_image() {
@@ -55,6 +63,7 @@ test_nbd_connected() {
 }
 
 create_test_qcow2_with_filesystem() {
+    create_qcow2_image $(qfile) 1G
     nbd_connect $(qfile)
 
     create_one_big_partition $(nbd_first_device) > /dev/null 2>&1
@@ -64,7 +73,7 @@ create_test_qcow2_with_filesystem() {
 }
 
 tmp_mount_point() {
-    echo /tmp/testdir
+    echo $(workdir)/testdir
 }
 
 tmp_testfile() {
@@ -97,9 +106,7 @@ verify_mount_point_was_released() {
 }
 
 test_mount_qcow2_image() {
-    create_test_qcow2_with_filesystem
-
-    mount_qcow2_image $(qfile) 2 $(tmp_mount_point) > /dev/null 2>&1
+    mount_qcow2_image $(qfile) 3 $(tmp_mount_point) > /dev/null 2>&1
 
     verify_filesystem_created
     verify_filesystem_is_read_write
@@ -111,9 +118,7 @@ test_mount_qcow2_image() {
 }
 
 test_mount_qcow2_image_readonly() {
-    create_test_qcow2_with_filesystem
-
-    mount_qcow2_image_readonly $(qfile) 2 $(tmp_mount_point) > /dev/null 2>&1
+    mount_qcow2_image_readonly $(qfile) 3 $(tmp_mount_point) > /dev/null 2>&1
 
     verify_filesystem_created
     verify_filesystem_is_read_only
@@ -139,9 +144,7 @@ file_size() {
 }
 
 test_compress_qcow2_image() {
-    create_test_qcow2_with_filesystem
-
-    mount_qcow2_image $(qfile) 2 $(tmp_mount_point) > /dev/null 2>&1
+    mount_qcow2_image $(qfile) 3 $(tmp_mount_point) > /dev/null 2>&1
 
     verify_filesystem_created
     verify_filesystem_is_read_write
@@ -157,6 +160,38 @@ test_compress_qcow2_image() {
         $(cfile)
 
     return_true "(( $(file_size $(qfile)) > $(file_size $(cfile)) ))"
+}
+
+test_create_qcow2_backing_file() {
+    local new=$(workdir)/a/b/c/new.qcow2
+    create_qcow2_backing_file $(qfile) $new
+
+    return_true "verify_image_is_qcow2 $new"
+    returns "../../../test.qcow2" "backing_file $new"
+}
+
+test_image_has_backing_file() {
+    local new=$(workdir)/d/e/f/new.qcow2
+
+    return_false "image_has_backing_file $(qfile)"
+    return_false "image_has_backing_file $new"
+
+    create_qcow2_backing_file $(qfile) $new
+
+    return_false "image_has_backing_file $(qfile)"
+    return_true "image_has_backing_file $new"
+}
+
+test_backing_file() {
+    local new=$(workdir)/x/y/z/new.qcow2
+
+    returns_empty "backing_file $(qfile)"
+    returns_empty "backing_file $new"
+
+    create_qcow2_backing_file $(qfile) $new
+
+    returns_empty "backing_file $(qfile)"
+    returns "../../../test.qcow2" "backing_file $new"
 }
 
 # load shunit2

@@ -1,6 +1,7 @@
 include verbose.sh
 include directories.sh
 include disks.sh
+include kernel_modules.sh
 
 nbd_device() {
     echo /dev/nbd
@@ -36,8 +37,8 @@ verify_image_is_qcow2() {
         | grep -q 'file format: qcow2'
 }
 
-load_nbd_module() {
-    modprobe nbd max_part=8
+enable_nbd() {
+    load_kernel_module nbd max_part=8
 }
 
 create_mount_point() {
@@ -51,10 +52,10 @@ nbd_connect() {
     local readonly_flag=$2
     local extra_params=
 
+    enable_nbd
+
     [[ -n $readonly_flag ]] \
         && extra_params="--read-only"
-
-    load_nbd_module
 
     qemu-nbd $extra_params \
         --connect=$(nbd_first_device) \
@@ -128,4 +129,43 @@ compress_qcow2_image() {
         $output_qcow2.compressed
 
     mv $output_qcow2{.compressed,}
+}
+
+create_qcow2_backing_file() {
+    local master_image=$(realpath $1)
+    local target_image=$(realpath -m $2)
+    local target_dir=$(dirname $target_image)
+
+    create_dir_if_needed $target_dir > /dev/null 2>&1
+    cd $target_dir
+
+    qemu-img create \
+        -b $(realpath -m --relative-to=. $master_image) \
+        -F qcow2 \
+        -f qcow2 $target_image \
+         > /dev/null 2>&1
+
+    cd - > /dev/null 2>&1
+}
+
+image_has_backing_file() {
+    local image=$1
+
+    file $image \
+        | grep -q 'has backing file '
+}
+
+backing_file() {
+    local image=$1
+
+    image_has_backing_file $image \
+        || return
+
+    file $image \
+        | sed 's/.*(path //' \
+        | sed 's/).*//'
+}
+
+enable_kvm() {
+    load_kernel_module intel_kvm
 }
