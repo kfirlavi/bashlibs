@@ -85,6 +85,12 @@ test_git_is_clean() {
     return_true "git_is_clean"
 }
 
+test_git_is_clean_with_untracked_files() {
+    return_false "git_is_clean_with_untracked_files"
+    touch b
+    return_true "git_is_clean_with_untracked_files"
+}
+
 test_git_needs_push() {
     return_false "git_needs_push"
     touch b

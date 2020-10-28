@@ -57,6 +57,11 @@ git_is_clean() {
         | grep -q '^nothing to commit, working .* clean'
 }
 
+git_is_clean_with_untracked_files() {
+    git_status \
+        | grep -q '^nothing added to commit but untracked files present'
+}
+
 git_config_email() {
     local email=$1
 
