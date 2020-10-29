@@ -9,3 +9,51 @@ replace_version() {
     echo $str \
         | sed --regexp-extended "s/(.*)$(version_regex)(.*)/\1$new_version\2/"
 }
+
+versions_sorted() {
+    local versions=$@
+
+    printf '%s\n' $versions \
+        | sort -V
+}
+
+newest_version() {
+    local versions=$@
+
+    versions_sorted $versions \
+        | tail -1
+}
+
+oldest_version() {
+    local versions=$@
+
+    versions_sorted $versions \
+        | head -1
+}
+
+versions_are_equal() {
+    local version=$1
+    local reference=$2
+
+    [[ $version == $reference ]]
+}
+
+version_less_then() {
+    local version=$1
+    local reference=$2
+
+    versions_are_equal $version $reference \
+        && return false
+
+    [[ $(oldest_version $version $reference) == $version ]]
+}
+
+version_greater_then() {
+    local version=$1
+    local reference=$2
+
+    versions_are_equal $version $reference \
+        && return false
+
+    [[ $(oldest_version $version $reference) == $reference ]]
+}
