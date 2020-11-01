@@ -167,5 +167,5 @@ backing_file() {
 }
 
 enable_kvm() {
-    load_kernel_module intel_kvm
+    load_kernel_module kvm_intel
 }
