@@ -7,6 +7,8 @@ list(APPEND CMAKE_MODULE_PATH
     "/usr/share/bashlibs/cmake-macros/Modules")
 
 include(BashLibs)
-set(CPACK_DEBIAN_PACKAGE_DEPENDS "bashlibs-utils")
+set(CPACK_DEBIAN_PACKAGE_DEPENDS
+    "bashlibs-utils,
+    bashlibs-checks")
 include(PackageCreator)
 
