@@ -61,3 +61,13 @@ apt_clean() {
     vinfo_apt "cleaning"
     eval $(apt_cmd_clean)
 }
+
+apt_locked() {
+    eval $(apt_cmd_locked)
+}
+
+apt_package_installed() {
+    local package=$1
+    
+    eval $(apt_cmd_package_installed $package)
+}

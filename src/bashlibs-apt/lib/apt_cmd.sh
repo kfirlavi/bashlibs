@@ -39,3 +39,13 @@ apt_cmd_autoremove() {
 apt_cmd_clean() {
     echo $(apt_force) clean
 }
+
+apt_cmd_locked() {
+    echo 'dpkg -i /dev/zero > /dev/null 2>&1'
+}
+
+apt_cmd_package_installed() {
+    local package=$1
+
+    echo "dpkg -l | cut -d ' ' -f 3 | egrep '^$package$'"
+}
