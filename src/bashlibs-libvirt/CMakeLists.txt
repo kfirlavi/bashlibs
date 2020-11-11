@@ -10,8 +10,7 @@ include(BashLibs)
 set(CPACK_DEBIAN_PACKAGE_DEPENDS
     "bashlibs-utils,
     bashlibs-directories,
-    libvirt-clients | libvirt-bin,
-    libvirt-daemon | libvirt-bin,
+    libvirt-daemon-system | libvirt-bin,
     bashlibs-shunit2-enhancements (>=0.0.12)")
 include(PackageCreator)
 

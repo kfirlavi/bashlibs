@@ -28,7 +28,7 @@ virsh_dumpxml() {
 
 	<interface type='network'>
 	  <mac address='54:b1:04:34:50:5c'/>
-	  <source network='default' bridge='virbr0'/>
+	  <source network='default' portid='7399f49b-ec1e-4478-a0fb-f809a6f28730' bridge='virbr0'/>
 	  <target dev='vnet2'/>
 	  <model type='rtl8139'/>
 	  <alias name='net0'/>

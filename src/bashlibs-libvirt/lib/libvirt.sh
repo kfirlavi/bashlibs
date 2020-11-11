@@ -27,7 +27,7 @@ vm_bridge() {
     virsh_dumpxml $vm_name \
         | grep network \
         | grep bridge \
-        | cut -d "'" -f 4
+        | sed "s/.* bridge='\(.*\)'.*/\1/g"
 }
 
 vm_mac() {
