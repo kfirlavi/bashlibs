@@ -270,5 +270,53 @@ test_iface_mac_octate() {
     del_tap $(tmp_tap)
 }
 
+test_enable_vlan_filtering_on_bridge() {
+    enable_vlan_filtering_on_bridge $(tmp_bridge)
+    returns "1" "cat /sys/class/net/$(tmp_bridge)/bridge/vlan_filtering"
+}
+
+test_add_vlan_filter_to_bridge() {
+    enable_vlan_filtering_on_bridge $(tmp_bridge)
+    add_tap $(tmp_tap)
+    add_iface_to_bridge $(tmp_tap) $(tmp_bridge)
+    add_vlan_filter_to_bridge $(tmp_tap) 45
+    return_true "bridge vlan show | grep -A 2 $(tmp_tap) | grep -q 45"
+
+    del_tap $(tmp_tap)
+}
+
+test_add_vlan_filter_to_bridge_as_pvid() {
+    enable_vlan_filtering_on_bridge $(tmp_bridge)
+    add_tap $(tmp_tap)
+    add_iface_to_bridge $(tmp_tap) $(tmp_bridge)
+
+    add_vlan_filter_to_bridge $(tmp_tap) 45
+    return_false "bridge vlan show | grep -A 2 $(tmp_tap) | grep 45 | grep -q PVID"
+
+    add_vlan_filter_to_bridge $(tmp_tap) 45 pvid
+    return_true "bridge vlan show | grep -A 2 $(tmp_tap) | grep 45 | grep -q PVID"
+
+    add_vlan_filter_to_bridge $(tmp_tap) 45 untagged
+    return_true "bridge vlan show | grep -A 2 $(tmp_tap) | grep 45 | grep -q 'Egress Untagged'"
+
+    add_vlan_filter_to_bridge $(tmp_tap) 45 pvid untagged
+    return_true "bridge vlan show | grep -A 2 $(tmp_tap) | grep 45 | grep -q 'PVID Egress Untagged'"
+
+    del_tap $(tmp_tap)
+}
+
+test_del_vlan_filter_from_bridge() {
+    enable_vlan_filtering_on_bridge $(tmp_bridge)
+    add_tap $(tmp_tap)
+    add_iface_to_bridge $(tmp_tap) $(tmp_bridge)
+    add_vlan_filter_to_bridge $(tmp_tap) 45
+    return_true "bridge vlan show | grep -A 2 $(tmp_tap) | grep -q 45"
+
+    del_vlan_filter_from_bridge $(tmp_tap) 45
+    return_false "bridge vlan show | grep -A 2 $(tmp_tap) | grep -q 45"
+
+    del_tap $(tmp_tap)
+}
+
 # load shunit2
 source /usr/share/shunit2/shunit2

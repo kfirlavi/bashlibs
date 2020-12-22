@@ -294,11 +294,12 @@ enable_vlan_filtering_on_bridge() {
 }
 
 add_vlan_filter_to_bridge() {
-    local iface=$1
-    local vlan=$2
+    local iface=$1; shift
+    local vlan=$1; shift
+    local extra_params=$@
 
     net_debug vlan $vlan "adding bridge vlan filter for iface $(colorize_iface none $iface)"
-    bridge vlan add vid $vlan dev $iface
+    bridge vlan add vid $vlan dev $iface $extra_params
 }
 
 del_vlan_filter_from_bridge() {
