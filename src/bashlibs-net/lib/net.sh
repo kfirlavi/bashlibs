@@ -45,8 +45,9 @@ iface_is_part_of_bridge() {
     local iface=$1
     local bridge=$2
 
-    brctl show $bridge \
-        | grep -q -e "$iface\$"
+    bridge link \
+        | grep $bridge \
+        | grep -q -e "$iface"
 }
 
 set_interface_state() {
@@ -87,9 +88,8 @@ is_interface_down() {
 bridge_exist() {
     local bridge=$1
 
-    brctl show \
-        | awk '{print $1}' \
-        | grep -q $bridge
+    ip link \
+        | grep -q ${bridge}:
 }
 
 add_bridge() {
