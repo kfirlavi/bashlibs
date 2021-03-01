@@ -54,6 +54,14 @@ test_file_is_empty() {
     rm -f $f
 }
 
+test_file_is_empty() {
+    local block_device=$(find /dev -type b | head -1)
+    local char_device=$(find /dev -type c | head -1)
+
+    return_true "file_is_block_device $block_device"
+    return_false "file_is_block_device $char_device"
+}
+
 test_variable_defined() {
     return_false "variable_defined non_defined"
     

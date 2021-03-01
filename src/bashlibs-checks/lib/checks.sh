@@ -34,6 +34,12 @@ variable_defined() {
     [[ -v $var_name ]]
 }
 
+file_is_block_device() {
+    local file=$1
+
+    [[ -b $file ]]
+}
+
 variable_not_defined() {
     local var_name=$1
 
