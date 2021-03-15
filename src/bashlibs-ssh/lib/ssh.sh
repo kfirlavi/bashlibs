@@ -91,9 +91,19 @@ socket_name() {
     echo /tmp/$user@$host.sock
 }
 
+ssh_socket_exist() {
+    local user=$1
+    local host=$2
+    
+    [[ -S $(socket_name $user $host) ]]
+}
+
 set_ssh_connection_with_socket() {
     local user=$1
     local host=$2
+
+    ssh_socket_exist $user $host \
+        && return
 
     $(ssh_cmd) \
         -M \
