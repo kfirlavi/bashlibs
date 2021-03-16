@@ -125,7 +125,10 @@ destroy_vm() {
 undefine_vm() {
     local vm_name=$1
 
-    virsh undefine $vm_name
+    virsh undefine $vm_name \
+        --snapshots-metadata \
+        --managed-save \
+        --nvram
 }
 
 vm_is_running() {
