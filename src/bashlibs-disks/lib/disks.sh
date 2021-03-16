@@ -28,11 +28,29 @@ device_first_partition() {
         | grep 3
 }
 
-refresh_partition_table() {
+last_partition_uuid() {
     local hd_device=$1
 
     partx --update $hd_device \
         > /dev/null 2>&1
+
+    partx --show $hd_device \
+        | tail -1 \
+        | rev \
+        | cut -d ' ' -f 1 \
+        | rev
+}
+
+refresh_partition_table() {
+    local hd_device=$1
+
+    until [[ -b /dev/disk/by-partuuid/$(last_partition_uuid $hd_device) ]]
+    do
+        partx --update $hd_device \
+            > /dev/null 2>&1
+
+        sleep 0.5
+    done
 }
 
 create_one_big_partition() {
