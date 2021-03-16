@@ -91,3 +91,7 @@ function_returns_false() {
 
     ! function_returns_true $func_name
 }
+
+im_root() {
+    [[ $(whoami) == root ]]
+}

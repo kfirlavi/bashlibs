@@ -1,6 +1,7 @@
 include directories.sh
 include nice_header.sh
 include ssh.sh
+include checks.sh
 include bake_gentoo.sh
 
 run_remote() {
@@ -147,10 +148,6 @@ repositories_names() {
     do
         echo -n "${i}-repository "
     done
-}
-
-im_root() {
-    [[ $(whoami) == root ]]
 }
 
 repository_dir_name() {

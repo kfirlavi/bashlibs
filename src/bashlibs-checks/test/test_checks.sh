@@ -151,5 +151,13 @@ test_function_returns_false() {
     return_true "function_returns_false f4"
 }
 
+test_im_root() {
+    whoami() { echo root;}
+    return_true "im_root"
+
+    whoami() { echo user;}
+    return_false "im_root"
+}
+
 # load shunit2
 source /usr/share/shunit2/shunit2

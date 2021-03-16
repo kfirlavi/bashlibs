@@ -23,6 +23,7 @@ in_tree_file_exist \
 include verbose.sh
 include bake.sh
 include usage.sh
+include checks.sh
 set_verbose_level_to_info
 
 usage() {
