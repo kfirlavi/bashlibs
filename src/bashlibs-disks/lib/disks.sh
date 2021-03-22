@@ -31,9 +31,6 @@ device_first_partition() {
 last_partition_uuid() {
     local hd_device=$1
 
-    partx --update $hd_device \
-        > /dev/null 2>&1
-
     partx --show $hd_device \
         | tail -1 \
         | rev \
@@ -43,13 +40,19 @@ last_partition_uuid() {
 
 refresh_partition_table() {
     local hd_device=$1
+    local i=0
+    local timeout=1
+    local exit_after=60
+
+    partx --update $hd_device \
+        > /dev/null 2>&1
 
     until [[ -b /dev/disk/by-partuuid/$(last_partition_uuid $hd_device) ]]
     do
-        partx --update $hd_device \
-            > /dev/null 2>&1
+        sleep $timeout
 
-        sleep 0.5
+        (( ++i > exit_after/timeout )) \
+            && eexit "partition table of $hd_device is not updating/refreshing correctly"
     done
 }
 
