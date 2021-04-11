@@ -12,3 +12,8 @@ must_run_as_root() {
     runnin_as_root \
         || eexit "'$(progname)' must be run as root"
 }
+
+must_run_as_user() {
+    runnin_as_root \
+        && eexit "'$(progname)' must be run as user"
+}
