@@ -17,7 +17,6 @@ RDEPEND="
 	>=dev-bash/bashlibs-utils-0.0.6
 	>=dev-bash/bashlibs-shunit2-enhancements-0.0.2
 	dev-bash/bashlibs-directories
-	>=dev-bash/bashlibs-os-detection-0.0.7
 "
 
 DEPEND="

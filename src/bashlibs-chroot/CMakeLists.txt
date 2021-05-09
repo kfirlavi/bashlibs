@@ -9,7 +9,6 @@ list(APPEND CMAKE_MODULE_PATH
 include(BashLibs)
 set(CPACK_DEBIAN_PACKAGE_DEPENDS
     "bashlibs-utils,
-    bashlibs-os-detection (>= 0.0.7),
     bashlibs-directories")
 include(PackageCreator)
 

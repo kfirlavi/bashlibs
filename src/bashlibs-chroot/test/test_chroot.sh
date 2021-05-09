@@ -8,6 +8,33 @@ chroot_dir() {
     create_dir_if_needed /tmp/test_chroot
 }
 
+libraries() {
+    local command=$1
+    ldd $command \
+        | grep '/' \
+        | cut -d '/' -f 2- \
+        | cut -d ' ' -f 1
+}
+
+copy_exe_and_libraries() {
+    local command=$1
+    local i
+
+    rsync -aRL $command $(chroot_dir)
+
+    for i in $(libraries $command)
+    do
+        rsync -aRL /$i $(chroot_dir)
+    done
+
+    chmod +x $(chroot_dir)/bin/*
+}
+
+oneTimeSetUp() {
+    touch $(chroot_dir)/test_file
+    copy_exe_and_libraries /bin/ls
+}
+
 oneTimeTearDown() {
     local no_delete=
 
@@ -83,16 +110,23 @@ test_mount_var_run_on_chroot() {
 }
 
 test_chroot_to() {
-    touch $(chroot_dir)/test_file
-    rsync -a /bin $(chroot_dir)/
     returns "/test_file" \
-        "chroot_to $(chroot_dir) /bin/busybox ls /test_file"
+        "chroot_to $(chroot_dir) /bin/ls /test_file"
 
     local i
     for i in proc dev var_run sys
     do
         return_false "is_mounted $(chroot_${i}_mount_point $(chroot_dir))"
     done
+}
+
+test_execute_in_chroot() {
+    chroot_prepare $(chroot_dir)
+
+    returns "/test_file" \
+        "execute_in_chroot $(chroot_dir) /bin/ls /test_file"
+
+    chroot_finish $(chroot_dir)
 }
 
 # load shunit2
