@@ -107,7 +107,6 @@ set_ssh_connection_with_socket() {
 
     $(ssh_cmd) \
         -M \
-        -o BatchMode=yes \
         -o ControlPersist=10m \
         -S $(socket_name $user $host) \
         "$user@$host" true
