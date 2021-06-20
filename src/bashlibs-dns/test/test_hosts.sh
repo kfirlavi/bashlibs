@@ -2,6 +2,7 @@
 $(bashlibs --load-base)
 include shunit2_enhancements.sh
 include hosts.sh
+include checks.sh
 
 setUp() {
     create_temp_file hosts_file
@@ -9,6 +10,8 @@ setUp() {
 	10.0.0.1 host1
 	10.0.0.1 host1_dup
 	192.168.0.2 host2 my_host2 entry2
+	192.168.0.2 192.168.0.3 host2 my_host2 entry2
+	192.168.0.2 192.168.0.3 host2 entry2 my_host2
 	EOF
 }
 
@@ -30,6 +33,12 @@ test_delete_hosts_entries_by_ip_without_providing_ip() {
     return_true "line_in_file $(hosts_file) '10.0.0.1 host1'"
     return_true "line_in_file $(hosts_file) '10.0.0.1 host1_dup'"
     return_true "line_in_file $(hosts_file) '192.168.0.2 host2 my_host2 entry2'"
+}
+
+test_delete_hosts_entries_by_names() {
+    delete_hosts_entries_by_names host1 entry2 my_host2
+
+    return_true "file_is_empty $(hosts_file)" 
 }
 
 test_add_hosts_entry() {

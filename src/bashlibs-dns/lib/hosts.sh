@@ -15,6 +15,18 @@ delete_hosts_entries_by_ip() {
         $ip
 }
 
+delete_hosts_entries_by_names() {
+    local names=$@
+    local i
+
+    for i in $names
+    do
+        delete_line_from_file_using_pattern \
+            $(hosts_file) \
+            $i
+    done
+}
+
 add_hosts_entry() {
     local ip=$1; shift
     local names=$@
