@@ -53,7 +53,8 @@ vm_ip() {
 
     grep -B 1 "\"mac-address\": \"$(vm_mac $vm_name)\"" $(libvirt_dhcp_leases_file $vm_name) \
         | grep ip-address \
-        | cut -d '"' -f 4
+        | cut -d '"' -f 4 \
+        | tail -1
 }
 
 libvirt_dhcp_leases_file_contain_mac() {

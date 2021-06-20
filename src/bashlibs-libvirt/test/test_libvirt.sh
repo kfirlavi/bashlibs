@@ -55,6 +55,20 @@ virbr0_status() {
 	        "hostname": "vm1",
 	        "client-id": "01:54:c1:e4:35:52:8d",
 	        "expiry-time": 1531063375
+	    },
+	    {
+	        "ip-address": "192.168.122.35",
+	        "mac-address": "54:c1:e4:35:52:8d",
+	        "hostname": "vm1",
+	        "client-id": "01:54:c1:e4:35:52:8d",
+	        "expiry-time": 1531063375
+	    },
+	    {
+	        "ip-address": "192.168.122.36",
+	        "mac-address": "54:c1:e4:35:52:8d",
+	        "hostname": "vm1",
+	        "client-id": "01:54:c1:e4:35:52:8d",
+	        "expiry-time": 1531063375
 	    }
 	]
 	EOF
@@ -76,7 +90,7 @@ test_libvirt_dhcp_leases_file() {
 test_vm_ip() {
     virbr0_status > /tmp/status
     libvirt_dhcp_leases_file() { echo /tmp/status; }
-    returns "192.168.122.34" "vm_ip vm1"
+    returns "192.168.122.36" "vm_ip vm1"
     rm -f /tmp/status
 }
 
