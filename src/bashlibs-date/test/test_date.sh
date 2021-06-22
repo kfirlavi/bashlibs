@@ -34,5 +34,20 @@ test_date_time_with_seconds_str() {
         "date_time_with_seconds_str '_' '_'"
 }
 
+test_date_year() {
+    returns "$(date +%Y)" \
+        "date_year"
+}
+
+test_date_month() {
+    returns "$(date +%m)" \
+        "date_month"
+}
+
+test_date_day() {
+    returns "$(date +%d)" \
+        "date_day"
+}
+
 # load shunit2
 source /usr/share/shunit2/shunit2

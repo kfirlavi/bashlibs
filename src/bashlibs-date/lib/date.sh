@@ -35,3 +35,15 @@ date_time_with_seconds_str() {
 
     echo $(date_str $delimiter)${hour_delimiter}$(time_with_seconds_str $delimiter)
 }
+
+date_year() {
+    date +%Y
+}
+
+date_month() {
+    date +%m
+}
+
+date_day() {
+    date +%d
+}
