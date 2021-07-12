@@ -178,7 +178,13 @@ verbose_command() {
     local command_to_run=$@
 
     vinfo "Command: $(color white)$command_to_run$(no_color)"
-    $command_to_run
+    
+    if is_verbose_level_set_to_error
+    then
+        $command_to_run > /dev/null 2>&1
+    else
+        $command_to_run
+    fi
 }
 
 turn_verbose_colors_on
