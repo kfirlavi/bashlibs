@@ -48,4 +48,5 @@ PROJECTS_ORDER="
     bashlibs-dns
     bashlibs-git
     bashlibs-kernel-modules
+    bashlibs-gentoo
 "
