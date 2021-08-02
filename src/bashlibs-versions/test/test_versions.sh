@@ -32,6 +32,23 @@ test_newest_version() {
     returns 5.18.5 "newest_version 4.4.25 5.18.5 4.4.38"
 }
 
+test_previous_version() {
+    returns 7.3 "previous_version 8.9 1.9 2.3 4.5 7.3 1.6 8.9"
+    returns 4.5 "previous_version 7.3 1.9 2.3 4.5 7.3 1.6 8.9"
+    returns 3.4.14 "previous_version 3.18.5 3.4.14 3.4.12 3.3.12 2.4.5 3.18.5"
+    returns 3.4.12 "previous_version 3.4.14 3.4.14 3.4.12 3.3.12 2.4.5 3.18.5"
+    returns 3.3.12 "previous_version 3.4.12 3.4.14 3.4.12 3.3.12 2.4.5 3.18.5"
+    returns 2.4.5 "previous_version 3.3.12 3.4.14 3.4.12 3.3.12 2.4.5 3.18.5"
+    returns 2.4.5 "previous_version 3.3.11 3.4.14 3.4.12 3.3.12 2.4.5 3.18.5"
+    returns 3.3.12 "previous_version 3.4.11 3.4.14 3.4.12 3.3.12 2.4.5 3.18.5"
+    returns_empty "previous_version 2.4.5 3.4.14 3.4.12 3.3.12 2.4.5 3.18.5"
+}
+
+test_previous_version_avaliable() {
+    return_true "previous_version_avaliable 8.9 1.9 2.3 4.5 7.3 1.6 8.9"
+    return_false "previous_version_avaliable 2.4.5 3.4.14 3.4.12 3.3.12 2.4.5 3.18.5"
+}
+
 test_versions_are_equal() {
     return_true "versions_are_equal 4.3.7 4.3.7"
     return_false "versions_are_equal 4.3.4 4.3.7"

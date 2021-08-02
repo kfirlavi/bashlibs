@@ -31,6 +31,23 @@ oldest_version() {
         | head -1
 }
 
+previous_version() {
+    local reference_version=$1
+    local versions=$@
+
+    versions_sorted $versions \
+        | uniq \
+        | sed "/^$reference_version$/Q" \
+        | tail -1
+}
+
+previous_version_avaliable() {
+    local reference_version=$1
+    local versions=$@
+
+    [[ -n $(previous_version $reference_version $versions) ]]
+}
+
 versions_are_equal() {
     local version=$1
     local reference=$2
