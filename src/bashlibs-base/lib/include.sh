@@ -9,7 +9,7 @@ clean_library_included() {
 is_library_included() {
     local library_name=$1
 
-    [[ "$_LIBRARIES_INCLUDED" =~ $library_name ]]
+    [[ " $_LIBRARIES_INCLUDED " =~ " $library_name " ]]
 }
 
 save_library_as_included() {
