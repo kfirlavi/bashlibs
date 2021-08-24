@@ -1,4 +1,5 @@
 include usage.sh
+include config.sh
 
 usage() {
 	set_column_indentation_gap 18
@@ -24,6 +25,7 @@ usage() {
 	$(item r repository "repository name. Default is 'archive'. Will be created in $(repositories_dir). This option can be specified multiple times.")
 	$(item m portage-tree-name "uniqeue name for the remote portage tree. It will be coppied to $(gentoo_local_portage_path)<name> on the server") 
 	$(item e portage-tree "local portage tree. Will be copied to the server to $(gentoo_local_portage_path)<name>. Name is provided with -n")
+	$(item none manifest "generate manifest, but do not install (gentoo only)")
 	$(items_test_help_verbose_debug)
 	
 	$(section_examples)
@@ -58,6 +60,9 @@ usage() {
 	$(example_description "Same as before but the package will reside in 'aaa' and 'bbb' repositories")
 	$(example $(progname) --server 192.168.1.2 --project bashlibs-verbose --repository aaa --repository bbb)
 
+	$(example_description "generate only the manifest of bashlibs-verbose")
+	$(example $(progname) --server 192.168.1.2 --project bashlibs-verbose --manifest)
+
 	$(example_test $(progname))
 	EOF
 }
@@ -65,6 +70,7 @@ usage() {
 cmdline() {
     exit_if_args_are_empty $@
     SOURCES_TREE_PATH=$(pwd)
+    var_to_true_function do_install_gentoo_package
 
     # got this idea from here:
     # http://kirk.webfinish.com/2009/10/bash-shell-script-to-use-getopts-with-gnu-style-long-positional-parameters/
@@ -85,6 +91,7 @@ cmdline() {
            --repository) args="${args}-r ";;
     --portage-tree-name) args="${args}-m ";;
          --portage-tree) args="${args}-e ";;
+             --manifest) var_to_false_function do_install_gentoo_package ;;
                  --test) args="${args}-t ";;
                  --help) args="${args}-h ";;
               --verbose) args="${args}-v ";;

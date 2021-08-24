@@ -71,7 +71,8 @@ main() {
         done
 
         target_os_is_gentoo \
-            && install_package_on_gentoo $host $projects
+            && do_install_gentoo_package \
+                && install_package_on_gentoo $host $projects
     done
 }
 main
