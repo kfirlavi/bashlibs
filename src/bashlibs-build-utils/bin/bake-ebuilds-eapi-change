@@ -1,0 +1,176 @@
+#!/bin/bash
+$(bashlibs --load-base)
+include verbose.sh
+include usage.sh
+include git.sh
+include checks.sh
+include config.sh
+include bake.sh
+include bake_gentoo.sh
+set_verbose_level_to_info
+
+usage() {
+    set_column_indentation_gap 10
+	cat <<- EOF
+	$(section_usage) $(progname) options
+	
+	    $(progname) - update ebuilds eapi
+
+	$(section_options)
+	$(item e eapi     'new EAPI')
+	$(item s server   'gentoo machine ip to work on')
+	
+	$(section_examples)
+	$(example_description 'upgrade all ebuilds to EAPI 7')
+	$(example $(progname) --eapi 7 --server gentoo-host)
+
+	EOF
+}
+
+cmdline() {
+	# got this idea from here:
+	# http://kirk.webfinish.com/2009/10/bash-shell-script-to-use-getopts-with-gnu-style-long-positional-parameters/
+	local arg=
+	for arg
+	do
+		local delim=""
+		case "$arg" in
+			#translate --gnu-long-options to -g (short options)
+		         --eapi) args="${args}-e ";;
+		       --server) args="${args}-s ";;
+		         --test) args="${args}-t ";;
+			     --help) args="${args}-h ";;
+		      --verbose) args="${args}-v ";;
+			    --debug) args="${args}-x ";;
+                      #pass through anything else
+                      *) [[ "${arg:0:1}" == "-" ]] || delim="\""
+                          args="${args}${delim}${arg}${delim} ";;
+		esac
+	done
+	 
+	#Reset the positional parameters to the short options
+	eval set -- $args
+
+	while getopts "vhxe:s:" OPTION
+	do
+	     case $OPTION in
+		 v)
+             increase_verbose_level
+		     ;;
+		 h)
+		     usage
+		     exit
+		     ;;
+		 x)
+		     set -x
+		     ;;
+         t)
+             RUN_TESTS=$OPTARG
+             vinfo "Running tests"
+             ;;
+         e)
+             var_to_function new_eapi $OPTARG
+             ;;
+         s)
+             var_to_function server $OPTARG
+             ;;
+	     esac
+	done
+}
+
+all_ebuilds() {
+    find -type f -name '*.ebuild'
+}
+
+change_eapi_for_every_ebuild() {
+    local i
+
+    for i in $(all_ebuilds)
+    do
+        grep -q EAPI= $i \
+            || sed -e "/^inherit .*/i EAPI=$(new_eapi)\n" -i $i
+
+        sed "s/EAPI=.*/EAPI=$(new_eapi)/" -i $i
+    done
+}
+
+all_modified_ebuilds() {
+    git status \
+        | grep ebuild \
+        | awk '{print $2}' \
+        | xargs dirname \
+        | rev \
+        | cut -d '/' -f 1 \
+        | rev
+}
+
+is_manifest_updated() {
+    local project_name=$1
+
+    git status \
+        | grep -q "/$project_name/Manifest"
+}
+
+ebuild_without_project() {
+    local project_name=$1
+
+    git status \
+        | grep "/$project_name/" \
+        | awk '{print $2}' \
+        | sort -n \
+        | tail -1
+}
+
+update_manifest_for_ebuild_without_project() {
+    local project_name=$1
+
+    [[ -z $(ebuild_without_project $project_name) ]] \
+        && return
+
+    var_to_function \
+        ebuild_filename \
+        $(basename $(ebuild_without_project $project_name))
+
+    update_ebuild_manifest $(server)
+set -x
+    copy_portage_tree_manifests_from_host $(server)
+set +x
+}
+
+create_package_for_each_ebuild_modified() {
+    local i
+
+    for i in $(all_modified_ebuilds)
+    do
+        _LIBRARIES_INCLUDED= \
+            bake \
+                --server $(server) \
+                --project $i \
+                --manifest
+
+        is_manifest_updated $i \
+            || update_manifest_for_ebuild_without_project $i
+    done
+}
+
+verify_params() {
+    eexit_if_functions_not_defined \
+        new_eapi \
+        server
+
+    var_to_function host $(server)
+    target_os_is_gentoo \
+        || eexit "$(color white)$(server)$(no_color) is not gentoo. --server should provide a gentoo machine"
+}
+
+main() {
+    cmdline $(args)
+    verify_params
+    exit_if_not_in_git_tree
+    cd $(git_top_dir)
+    load_config .bakerc
+    change_eapi_for_every_ebuild
+    git diff
+    create_package_for_each_ebuild_modified
+}
+main
