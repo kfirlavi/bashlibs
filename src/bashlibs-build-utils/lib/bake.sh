@@ -72,7 +72,7 @@ list_projects() {
         echo "$ebuild"
     done \
         | sort \
-        | column -t
+        | $(which column) -t
 
     exit
 }
