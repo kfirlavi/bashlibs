@@ -27,5 +27,6 @@ bashlibs_binary_exist() {
 
 pkg_postinst() {
 	bashlibs_binary_exist \
-		&& bashlibs --test ${PN}
+		&& _LIBRARIES_INCLUDED= \
+            bashlibs --test ${PN}
 }
