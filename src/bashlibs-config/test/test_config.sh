@@ -24,6 +24,8 @@ setUp() {
 		  	 STRING_VAR="The variable value is 222" # and a comment
 
 	   # another comment with COMMMENT_VAR=444
+	TRUE_VAR=true
+	FALSE_VAR=false
 	EOF
 }
 
@@ -38,7 +40,7 @@ test_config_exist() {
 }
 
 test_all_variables_in_config() {
-    returns "VAR_IN_CONF_FILE MULTI_LINE_VAR STRING_VAR" \
+    returns "VAR_IN_CONF_FILE MULTI_LINE_VAR STRING_VAR TRUE_VAR FALSE_VAR" \
         "all_variables_in_config $(conf_file)"
 }
 
@@ -138,6 +140,13 @@ test_verify_config_varialbes_defined() {
     return_false "verify_config_varialbes_defined $(conf_file) VAR_NOT_DEFINED"
 
     return_true "verify_config_varialbes_defined $(conf_file) VAR_IN_CONF_FILE STRING_VAR MULTI_LINE_VAR"
+}
+
+test_true_false_variables() {
+    load_config $(conf_file)
+
+    return_true true_var
+    return_false false_var
 }
 
 # load shunit2

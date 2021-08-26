@@ -28,7 +28,11 @@ var_to_function() {
     local func_name=$1; shift
     local return_value=$@
 
-    eval "$func_name() { echo \"$return_value\"; }"
+    case $return_value in
+        true) var_to_true_function $func_name ;;
+       false) var_to_false_function $func_name ;;
+           *) eval "$func_name() { echo \"$return_value\"; }" ;;
+    esac
 }
 
 var_to_true_function() {
