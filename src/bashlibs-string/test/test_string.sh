@@ -98,6 +98,12 @@ test_dot_to_underscore() {
     return_equals " a   _b   _" "echo ' a   .b   .' | dot_to_underscore"
 }
 
+test_spaces_to_underscore() {
+    return_equals "abc_efg" "echo 'abc efg' | spaces_to_underscore"
+    return_equals "_abc_efg_" "echo ' abc efg ' | spaces_to_underscore"
+    return_equals "__" "echo '  ' | spaces_to_underscore"
+}
+
 test_tabs_to_spaces() {
     return_equals " " "echo -e '\t' | tabs_to_spaces"
     return_equals "    " "echo -e ' \t\t ' | tabs_to_spaces"
@@ -161,25 +167,29 @@ test_remove_bash_comments() {
 	# just a comment
 	VAR_IN_CONF_FILE=123
 
-		  	 STRING_VAR="The variable value is 222" # and a comment
+	    STRING_VAR="The variable value is 222" # and a comment
+		   STRING_VAR="The variable value is 333" 	   # and a comment
+	    STRING_VAR="The variable value is 555"# and a comment
+	    STRING_VAR="The variable value is 666"#and a comment
 
 	   # another comment with COMMMENT_VAR=444
 	EOF
 
 	cat<<-EOF > /tmp/correct
-	
 	VAR_IN_CONF_FILE=123
 
-		  	 STRING_VAR="The variable value is 222" 
+	    STRING_VAR="The variable value is 222"
+		   STRING_VAR="The variable value is 333"
+	    STRING_VAR="The variable value is 555"
+	    STRING_VAR="The variable value is 666"
 
-	   
 	EOF
 
     cat /tmp/before | remove_bash_comments > /tmp/after
 
     files_should_equal /tmp/correct /tmp/after
 
-    rm -f /tmp/{before,correct,after}
+#    rm -f /tmp/{before,correct,after}
 }
 
 test_str_len() {
@@ -236,6 +246,11 @@ test_text_hight() {
     returns 2 "text_hight '$(color white)run fast$(no_color)\nrun'"
     returns 3 "text_hight '$(color white)run fast$(no_color)\nthen $(color red)run$(no_color) again\n'"
     returns 5 "text_hight '1234 6789 \n123\n 3 4 5\n   444  \n'"
+}
+
+test_multiline_to_single_line() {
+    returns "single line" "echo 'single line' | multiline_to_single_line"
+    returns "line1  line2 line 3" "echo -e ' line1\n line2\nline 3\n' | multiline_to_single_line"
 }
 
 

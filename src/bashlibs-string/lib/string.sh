@@ -83,6 +83,11 @@ dot_to_underscore() {
         | sed 's/\./_/g'
 }
 
+spaces_to_underscore() {
+    cat /dev/stdin \
+        | sed 's/ /_/g'
+}
+
 tabs_to_spaces() {
     cat /dev/stdin \
         | sed 's/[\t]/ /g'
@@ -129,6 +134,9 @@ downcase_str() {
 
 remove_bash_comments() {
     cat /dev/stdin \
+        | sed -e '/^#/d' \
+        | sed -e '/^[[:blank:]]\+#/d' \
+        | sed -e 's/[[:blank:]]\+#.*$//' \
         | sed -e 's/#.*$//'
 }
 
@@ -164,11 +172,17 @@ text_width() {
 
 text_hight() {
     local str=$@
-    
+
     [[ -z $str ]] \
         && echo 0 \
         && return
 
     str_without_escape_chars $str \
         | wc -l
+}
+
+multiline_to_single_line() {
+    cat /dev/stdin \
+        | tr '\n' ' ' \
+        | delete_edge_spaces
 }
