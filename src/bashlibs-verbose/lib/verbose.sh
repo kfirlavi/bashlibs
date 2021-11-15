@@ -24,11 +24,11 @@ eexit() {
     exit 1
 }
 
-eerror() { 
+eerror() {
     verror $@
 }
 
-einfo() { 
+einfo() {
     vinfo $@
 }
 
@@ -47,7 +47,7 @@ colors_are_on() {
 name_to_level() {
     local level_name=$1
 
-    case $level_name in 
+    case $level_name in
         Error)   echo 0;;
         Warning) echo 1;;
         Info)    echo 2;;
@@ -61,7 +61,7 @@ level_is_off() {
 
     [[ -z $VERBOSE ]] \
         && return
-    
+
     (( $VERBOSE < $(name_to_level $level_name) ))
 }
 
@@ -72,7 +72,7 @@ vout() {
 
     level_is_off $level \
         && return
-    
+
     local color_str="$(color $color)$level: $(no_color)$str"
     local non_color_str="$level: $str"
 
@@ -174,11 +174,27 @@ is_verbose_level_set_to_debug() {
     is_verbose_level_set_to Debug
 }
 
+is_verbose_level_is_error_or_above() {
+    (( $(current_verbose_level) >= $(name_to_level 'Error') ))
+}
+
+is_verbose_level_is_warning_or_above() {
+    (( $(current_verbose_level) >= $(name_to_level 'Warning') ))
+}
+
+is_verbose_level_is_info_or_above() {
+    (( $(current_verbose_level) >= $(name_to_level 'Info') ))
+}
+
+is_verbose_level_is_debug_or_above() {
+    (( $(current_verbose_level) >= $(name_to_level 'Debug') ))
+}
+
 verbose_command() {
     local command_to_run=$@
 
     vinfo "Command: $(color white)$command_to_run$(no_color)"
-    
+
     if is_verbose_level_set_to_error
     then
         $command_to_run > /dev/null 2>&1

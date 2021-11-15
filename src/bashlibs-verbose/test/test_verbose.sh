@@ -129,5 +129,61 @@ test_is_verbose_level_set_to_debug() {
     return_true is_verbose_level_set_to_debug
 }
 
+test_is_verbose_level_is_error_or_above() {
+    set_verbose_level_to_error
+    return_true is_verbose_level_is_error_or_above
+
+    set_verbose_level_to_warning
+    return_true is_verbose_level_is_error_or_above
+
+    set_verbose_level_to_info
+    return_true is_verbose_level_is_error_or_above
+
+    set_verbose_level_to_debug
+    return_true is_verbose_level_is_error_or_above
+}
+
+test_is_verbose_level_is_warning_or_above() {
+    set_verbose_level_to_error
+    return_false is_verbose_level_is_warning_or_above
+
+    set_verbose_level_to_warning
+    return_true is_verbose_level_is_warning_or_above
+
+    set_verbose_level_to_info
+    return_true is_verbose_level_is_warning_or_above
+
+    set_verbose_level_to_debug
+    return_true is_verbose_level_is_warning_or_above
+}
+
+test_is_verbose_level_is_info_or_above() {
+    set_verbose_level_to_error
+    return_false is_verbose_level_is_info_or_above
+
+    set_verbose_level_to_warning
+    return_false is_verbose_level_is_info_or_above
+
+    set_verbose_level_to_info
+    return_true is_verbose_level_is_info_or_above
+
+    set_verbose_level_to_debug
+    return_true is_verbose_level_is_info_or_above
+}
+
+test_is_verbose_level_is_debug_or_above() {
+    set_verbose_level_to_error
+    return_false is_verbose_level_is_debug_or_above
+
+    set_verbose_level_to_warning
+    return_false is_verbose_level_is_debug_or_above
+
+    set_verbose_level_to_info
+    return_false is_verbose_level_is_debug_or_above
+
+    set_verbose_level_to_debug
+    return_true is_verbose_level_is_debug_or_above
+}
+
 # load shunit2
 source /usr/share/shunit2/shunit2
