@@ -68,17 +68,41 @@ set_and_test_ssh_connection_with_keys() {
         || eexit "ssh passwordless connection does not work to $user@$host. After setting keys. Please check!"
 }
 
-wait_for_ssh_connection() {
+ssh_port_is_open() {
     local host=$1
+
+    nmap $host -PN -p ssh \
+        | grep ssh \
+        | grep -q open
+}
+
+ssh_port_is_closed() {
+    local host=$1
+
+    ! ssh_port_is_open $host
+}
+
+wait_for_ssh_connection() {
+    local host=$1; shift
+    local total_seconds_to_wait=${1:-180}
+    local interval=1
+    local seconds_elapsed=0
 
     vinfo "waiting for ssh connection to host '$host'"
 
-    while ! (nmap $host -PN -p ssh  | grep -q open )
+    while ssh_port_is_closed $host
     do
-        is_verbose_level_set_to_info \
+        is_verbose_level_is_info_or_above \
             && echo -n '.'
 
-        sleep 1
+        sleep $interval
+        (( seconds_elapsed+=interval ))
+
+        if (( $total_seconds_to_wait == $seconds_elapsed ))
+        then
+            verror "cannot establish ssh connection to host '$host'"
+            return
+        fi
     done
 
     echo
@@ -87,14 +111,14 @@ wait_for_ssh_connection() {
 socket_name() {
     local user=$1
     local host=$2
-    
+
     echo /tmp/$user@$host.sock
 }
 
 ssh_socket_exist() {
     local user=$1
     local host=$2
-    
+
     [[ -S $(socket_name $user $host) ]]
 }
 

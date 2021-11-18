@@ -39,6 +39,58 @@ test_create_ssh_key_if_not_exist() {
     files_should_equal $(rsa_ssh_public_key){,.save}
 }
 
+nmap_open() {
+	cat<<-EOF
+	Starting Nmap 7.80 ( https://nmap.org ) at 2021-11-18 16:56 IST
+	Nmap scan report for localhost (127.0.0.1)
+	Host is up (0.00013s latency).
+
+	PORT   STATE SERVICE
+	22/tcp open  ssh
+
+	Nmap done: 1 IP address (1 host up) scanned in 0.15 seconds
+	EOF
+}
+
+nmap_closed() {
+	cat<<-EOF
+	Starting Nmap 7.80 ( https://nmap.org ) at 2021-11-18 16:56 IST
+	Nmap scan report for localhost (127.0.0.1)
+	Host is up (0.00013s latency).
+
+	PORT   STATE SERVICE
+	22/tcp closed  ssh
+
+	Nmap done: 1 IP address (1 host up) scanned in 0.15 seconds
+	EOF
+}
+
+test_ssh_port_is_open() {
+    nmap() {
+        nmap_open
+    }
+
+    return_true "ssh_port_is_open dummy_host"
+}
+
+test_ssh_port_is_closed() {
+    nmap() {
+        nmap_closed
+    }
+
+    return_true "ssh_port_is_closed dummy_host"
+}
+
+test_wait_for_ssh_connection() {
+    nmap() {
+        nmap_closed
+    }
+
+    set_verbose_level_to_info
+    return_true "wait_for_ssh_connection dummy_host 2 | grep -q Error"
+    set_verbose_level_to_error
+}
+
 test_socket_name() {
     returns /tmp/root@gu64.sock "socket_name root gu64"
 }
