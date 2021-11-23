@@ -56,7 +56,7 @@ test_iface_is_part_of_bridge() {
 }
 
 test_interface_up() {
-    # very hard to test with tap device as it needs 
+    # very hard to test with tap device as it needs
     # a program that will bind to it
     # bridge will change state to UNKNOWN but not UP
     interface_down $(tmp_bridge)
@@ -244,12 +244,22 @@ test_set_ip_forward() {
 
     set_ip_forward off
     returns "0" "cat /proc/sys/net/ipv4/ip_forward"
+
+    add_tap $(tmp_tap)
+
+    set_ip_forward on $(tmp_tap)
+    returns "1" "cat /proc/sys/net/ipv4/conf/$(tmp_tap)/forwarding"
+
+    set_ip_forward off $(tmp_tap)
+    returns "0" "cat /proc/sys/net/ipv4/conf/$(tmp_tap)/forwarding"
+
+    del_tap $(tmp_tap)
 }
 
 test_iface_mac() {
     add_tap $(tmp_tap)
     set_iface_mac $(tmp_tap) $(tmp_mac)
-    
+
     returns "$(tmp_mac)" \
         "iface_mac $(tmp_tap)"
 
@@ -259,7 +269,7 @@ test_iface_mac() {
 test_iface_mac_octate() {
     add_tap $(tmp_tap)
     set_iface_mac $(tmp_tap) $(tmp_mac)
-    
+
     returns aa "iface_mac_octate $(tmp_tap) 1"
     returns bb "iface_mac_octate $(tmp_tap) 2"
     returns cc "iface_mac_octate $(tmp_tap) 3"

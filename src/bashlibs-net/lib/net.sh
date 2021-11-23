@@ -7,6 +7,8 @@ iface_color() {
         bridge) echo green ;;
            tap) echo cyan ;;
           vlan) echo purple ;;
+           mac) echo red ;;
+            ip) echo white ;;
              *) echo yellow ;;
     esac
 }
@@ -201,7 +203,7 @@ set_ip_to_interface() {
     local iface=$1
     local ip=$2 # should be ip/mask 3.3.3.3/24
 
-    vdebug "setting ip $ip to interface $(colorize_iface none $iface)"
+    vdebug "setting ip $(colorize_iface ip $ip) to interface $(colorize_iface none $iface)"
     ip addr add $ip dev $iface
     interface_up $iface
 }
@@ -248,9 +250,17 @@ set_arp_proxy_for_interface() {
 
 set_ip_forward() {
     local on_or_off=$1
+    local iface=$2
+    local path=/proc/sys/net/ipv4/ip_forward
 
-    sysfs_option_$on_or_off \
-        /proc/sys/net/ipv4/ip_forward
+    [[ $iface ]] \
+        && path=/proc/sys/net/ipv4/conf/$iface/forwarding
+
+    [[ $iface ]] \
+        && vdebug "setting ip forward on $iface to $on_or_off" \
+        || vdebug "setting ip forward globally to $on_or_off"
+
+    sysfs_option_$on_or_off $path
 }
 
 dissable_ipv6() {
@@ -267,6 +277,7 @@ set_iface_mac() {
     local iface=$1
     local mac=$2
 
+    vdebug "setting mac address $(colorize_iface mac $mac) to interface $(colorize_iface none $iface)"
     ip link set dev $iface address $mac
 }
 
