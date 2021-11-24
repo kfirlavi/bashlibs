@@ -50,7 +50,7 @@ functions_not_defined() {
     local function_names=$@
     local f
     local i
-    
+
     for i in $function_names
     do
         function_not_defined $i \
@@ -63,7 +63,7 @@ functions_not_defined() {
 eexit_if_functions_not_defined() {
     local function_names=$@
     local non_defined=$(functions_not_defined $function_names)
-    
+
     [[ -z $non_defined ]] \
         || eexit "This functions must be defined: $(color red)${non_defined}$(no_color)"
 }
@@ -94,4 +94,10 @@ function_returns_false() {
 
 im_root() {
     [[ $(whoami) == root ]]
+}
+
+is_symbolic_link() {
+    local f=$1
+
+    [[ -L $f ]]
 }

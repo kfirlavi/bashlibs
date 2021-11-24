@@ -1,7 +1,20 @@
 #!/bin/bash
 $(bashlibs --load-base)
 include shunit2_enhancements.sh
+include directories.sh
 include checks.sh
+
+oneTimeSetUp() {
+    create_workdir
+}
+
+oneTimeTearDown() {
+    remove_workdir
+}
+
+tearDown() {
+    rm -f $(workdir)/*
+}
 
 test_function_defined() {
     function_not_defined my_func
@@ -24,34 +37,28 @@ test_function_not_defined() {
 }
 
 test_file_exist() {
-    local f=/tmp/a
+    local f=$(workdir)/a
 
     return_false "file_exist $f"
     touch $f
     return_true "file_exist $f"
-
-    rm -f $f
 }
 
 test_file_dont_exist() {
-    local f=/tmp/a
+    local f=$(workdir)/a
 
     return_true "file_dont_exist $f"
     touch $f
     return_false "file_dont_exist $f"
-
-    rm -f $f
 }
 
 test_file_is_empty() {
-    local f=/tmp/a
+    local f=$(workdir)/a
 
     touch $f
     return_true "file_is_empty $f"
     echo "123" > $f
     return_false "file_is_empty $f"
-
-    rm -f $f
 }
 
 test_file_is_empty() {
@@ -64,7 +71,7 @@ test_file_is_empty() {
 
 test_variable_defined() {
     return_false "variable_defined non_defined"
-    
+
     local just_local
     return_false "variable_defined just_local"
 
@@ -77,7 +84,7 @@ test_variable_defined() {
 
 test_variable_not_defined() {
     return_true "variable_not_defined non_defined"
-    
+
     local just_local
     return_true "variable_not_defined just_local"
 
@@ -108,9 +115,9 @@ test_eexit_if_functions_not_defined() {
 }
 
 test_function_returns_empty_string() {
-    f1() { echo -n; }        
-    f2() { echo; }        
-    f3() { echo abc; }        
+    f1() { echo -n; }
+    f2() { echo; }
+    f3() { echo abc; }
 
     return_true "function_returns_empty_string f1"
     return_true "function_returns_empty_string f2"
@@ -118,9 +125,9 @@ test_function_returns_empty_string() {
 }
 
 test_function_returns_non_empty_string() {
-    f1() { echo -n; }        
-    f2() { echo; }        
-    f3() { echo abc; }        
+    f1() { echo -n; }
+    f2() { echo; }
+    f3() { echo abc; }
 
     return_false "function_returns_non_empty_string f1"
     return_false "function_returns_non_empty_string f2"
@@ -128,10 +135,10 @@ test_function_returns_non_empty_string() {
 }
 
 test_function_returns_true() {
-    f1() { true; }        
-    f2() { false; }        
-    f3() { echo -n; }        
-    f4() { ls /none/existing/file; }        
+    f1() { true; }
+    f2() { false; }
+    f3() { echo -n; }
+    f4() { ls /none/existing/file; }
 
     return_true "function_returns_true f1"
     return_false "function_returns_true f2"
@@ -140,10 +147,10 @@ test_function_returns_true() {
 }
 
 test_function_returns_false() {
-    f1() { true; }        
-    f2() { false; }        
-    f3() { echo -n; }        
-    f4() { ls /none/existing/file; }        
+    f1() { true; }
+    f2() { false; }
+    f3() { echo -n; }
+    f4() { ls /none/existing/file; }
 
     return_false "function_returns_false f1"
     return_true "function_returns_false f2"
@@ -157,6 +164,13 @@ test_im_root() {
 
     whoami() { echo user;}
     return_false "im_root"
+}
+
+test_is_symbolic_link() {
+    touch $(workdir)/a
+    ln -sf $(workdir)/a $(workdir)/symlink
+    return_true "is_symbolic_link $(workdir)/symlink"
+    return_false "is_symbolic_link $(workdir)/a"
 }
 
 # load shunit2
