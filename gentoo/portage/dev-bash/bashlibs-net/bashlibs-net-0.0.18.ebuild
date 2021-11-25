@@ -16,7 +16,9 @@ IUSE=""
 RDEPEND="
 	>=dev-bash/bashlibs-utils-0.0.6
 	>=dev-bash/bashlibs-shunit2-enhancements-0.0.2
-	dev-bash/bashlibs-sysfs
+	>=dev-bash/bashlibs-sysfs-0.0.11
+	dev-bash/bashlibs-config
+	dev-bash/bashlibs-directories
 	sys-apps/iproute2
 	net-misc/bridge-utils
 	sys-fs/mtools
