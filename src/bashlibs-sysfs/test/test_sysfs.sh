@@ -1,18 +1,32 @@
 #!/bin/bash
 $(bashlibs --load-base)
 include shunit2_enhancements.sh
+include directories.sh
+include config.sh
 include sysfs.sh
 
-tempfile() {
-    echo /tmp/sysfs_test_tmpfile
-}
-
 setUp() {
+    create_workdir
+    var_to_function tempfile $(workdir)/proc/sys/test_file
+    mkdir -p $(dirname $(tempfile))
     echo -n > $(tempfile)
 }
 
 tearDown() {
-    rm -f $(tempfile)
+    remove_workdir
+}
+
+test_sysfs_root_path() {
+    returns "/proc/sys" "sysfs_root_path"
+    returns "/tmp/proc/sys" "sysfs_root_path /tmp"
+}
+
+test_sysfs_set_value() {
+    sysfs_set_value $(tempfile) abc
+    returns "abc" "cat $(tempfile)"
+
+    sysfs_set_value $(tempfile) abc efg 123
+    returns "abc efg 123" "cat $(tempfile)"
 }
 
 test_sysfs_option_on() {

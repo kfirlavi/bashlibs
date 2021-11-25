@@ -16,6 +16,8 @@ IUSE=""
 RDEPEND="
 	>=dev-bash/bashlibs-utils-0.0.6
 	dev-bash/bashlibs-checks
+	dev-bash/bashlibs-config
+	dev-bash/bashlibs-directories
 	>=dev-bash/bashlibs-shunit2-enhancements-0.0.2
 "
 
