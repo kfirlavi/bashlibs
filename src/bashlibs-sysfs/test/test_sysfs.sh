@@ -27,6 +27,8 @@ test_sysfs_set_value() {
 
     sysfs_set_value $(tempfile) abc efg 123
     returns "abc efg 123" "cat $(tempfile)"
+
+    return_true "sysfs_set_value /none/exist/path abc | grep -q Error:"
 }
 
 test_sysfs_option_on() {

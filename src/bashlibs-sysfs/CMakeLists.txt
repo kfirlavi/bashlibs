@@ -10,6 +10,7 @@ include(BashLibs)
 set(CPACK_DEBIAN_PACKAGE_DEPENDS
     "bashlibs-utils,
     bashlibs-directories,
+    bashlibs-verbose,
     bashlibs-config,
     bashlibs-checks")
 include(PackageCreator)
