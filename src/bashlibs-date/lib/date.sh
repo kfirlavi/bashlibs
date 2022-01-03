@@ -47,3 +47,29 @@ date_month() {
 date_day() {
     date +%d
 }
+
+date_to_int() {
+    local date_str=$@
+    local str=$(echo $date_str | sed 's/\./-/g')
+
+    date -d "$str" +%s
+}
+
+date_is_in_the_future() {
+    local date_str=$1
+
+    (( $(date_to_int $date_str) > $(date_to_int $(date_str)) ))
+}
+
+date_is_in_the_past() {
+    local date_str=$1
+
+    (( $(date_to_int $date_str) < $(date_to_int $(date_str)) ))
+}
+
+date_is_current() {
+    local date_str=$1
+    local current_date=$(date_to_int "$(date_str) 00:00:00")
+
+    (( $(date_to_int $date_str) == $current_date ))
+}
