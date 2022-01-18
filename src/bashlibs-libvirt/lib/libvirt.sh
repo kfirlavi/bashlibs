@@ -1,3 +1,5 @@
+include string.sh
+
 fqdn_to_mac() {
     local domain=$1
 
@@ -9,7 +11,7 @@ fqdn_to_mac() {
 virsh_dumpxml() {
     local vm_name=$1
     local xml_file=$2
-    
+
     [[ -z $xml_file ]] \
         && virsh dumpxml $vm_name \
         || virsh dumpxml $vm_name > $xml_file
@@ -17,13 +19,13 @@ virsh_dumpxml() {
 
 virsh_domiflist() {
     local vm_name=$1
-    
+
     virsh domiflist $vm_name
 }
 
 vm_bridge() {
     local vm_name=$1
-    
+
     virsh_dumpxml $vm_name \
         | grep network \
         | grep bridge \
@@ -54,7 +56,15 @@ vm_ip() {
     grep -B 1 "\"mac-address\": \"$(vm_mac $vm_name)\"" $(libvirt_dhcp_leases_file $vm_name) \
         | grep ip-address \
         | cut -d '"' -f 4 \
-        | tail -1
+        | eol_to_spaces
+}
+
+clean_all_dhcp_leases_by_mac() {
+    local vm_name=$1
+    local mac=$2
+
+    sed "/{/ { :loop; N; /}/!b loop; /$mac/d; }" \
+        -i $(libvirt_dhcp_leases_file $vm_name)
 }
 
 libvirt_dhcp_leases_file_contain_mac() {
@@ -157,7 +167,7 @@ wait_for_vm_to_shut_off() {
     do
         vm_is_shut_off $vm_name \
             && break
-        
+
         sleep 1
     done
 

@@ -3,11 +3,14 @@ $(bashlibs --load-base)
 include shunit2_enhancements.sh
 include libvirt.sh
 include directories.sh
+include config.sh
 
-test_fqdn_to_mac() {
-    returns '54:cc:51:15:e6:77' 'fqdn_to_mac vm_name'
-    returns '54:cc:51:15:e6:77' 'fqdn_to_mac vm_name'
-    returns '54:cc:51:15:e6:77' 'fqdn_to_mac vm_name'
+oneTimeSetUp() {
+    create_workdir
+}
+
+oneTimeTearDown() {
+    remove_workdir
 }
 
 virsh_dumpxml() {
@@ -42,7 +45,7 @@ virsh_domiflist() {
 	Interface  Type       Source     Model       MAC
 	-------------------------------------------------------
 	vnet2      network    default    rtl8139     54:c1:e4:35:52:8d
-	
+
 	EOF
 }
 
@@ -64,6 +67,13 @@ virbr0_status() {
 	        "expiry-time": 1531063375
 	    },
 	    {
+	        "ip-address": "192.168.122.37",
+	        "mac-address": "54:c1:e4:35:52:11",
+	        "hostname": "vm2",
+	        "client-id": "01:54:c1:e4:35:52:11",
+	        "expiry-time": 1531063375
+	    },
+	    {
 	        "ip-address": "192.168.122.36",
 	        "mac-address": "54:c1:e4:35:52:8d",
 	        "hostname": "vm1",
@@ -72,6 +82,12 @@ virbr0_status() {
 	    }
 	]
 	EOF
+}
+
+test_fqdn_to_mac() {
+    returns '54:cc:51:15:e6:77' 'fqdn_to_mac vm_name'
+    returns '54:cc:51:15:e6:77' 'fqdn_to_mac vm_name'
+    returns '54:cc:51:15:e6:77' 'fqdn_to_mac vm_name'
 }
 
 test_vm_bridge() {
@@ -87,34 +103,51 @@ test_libvirt_dhcp_leases_file() {
         "libvirt_dhcp_leases_file vm1"
 }
 
+mock_dhcp_lease_file() {
+    var_to_function \
+        libvirt_dhcp_leases_file \
+        $(workdir)/status
+
+    virbr0_status > $(workdir)/status
+}
+
 test_vm_ip() {
-    virbr0_status > /tmp/status
-    libvirt_dhcp_leases_file() { echo /tmp/status; }
-    returns "192.168.122.36" "vm_ip vm1"
-    rm -f /tmp/status
+    mock_dhcp_lease_file
+
+    returns \
+        "192.168.122.34 192.168.122.35 192.168.122.36" \
+        "vm_ip vm1"
+
+    var_to_function vm_mac 54:c1:e4:35:52:11
+    returns "192.168.122.37" "vm_ip vm2"
+}
+
+test_clean_all_dhcp_leases_by_mac() {
+    mock_dhcp_lease_file
+
+    clean_all_dhcp_leases_by_mac vm1 54:c1:e4:35:52:8d
+
+    var_to_function vm_mac 54:c1:e4:35:52:8d
+    returns_empty "vm_ip vm1"
+
+    var_to_function vm_mac 54:c1:e4:35:52:11
+    returns "192.168.122.37" "vm_ip vm2"
 }
 
 test_enable_nested_kvm() {
-    local workdir=$(mktemp -d)
-
-    mkdir -p $workdir/etc/modprobe.d
-    enable_nested_kvm $workdir
-    file_should_exist $workdir/etc/modprobe.d/kvm_intel.conf
-    return_true "cat $workdir/etc/modprobe.d/kvm_intel.conf | grep -q nested=1"
-
-    directory_is_in_tmp $workdir \
-        && safe_delete_directory_from_tmp $workdir
+    mkdir -p $(workdir)/etc/modprobe.d
+    enable_nested_kvm $(workdir)
+    file_should_exist $(workdir)/etc/modprobe.d/kvm_intel.conf
+    return_true "cat $(workdir)/etc/modprobe.d/kvm_intel.conf | grep -q nested=1"
 }
 
 test_enable_vmx_in_vm_xml() {
-	create_temp_file vm_xml
+	var_to_function vm_xml $(workdir)/vm.xml
 
 	virsh_dumpxml > $(vm_xml)
 	return_false "grep -q vmx $(vm_xml)"
 	enable_vmx_in_vm_xml $(vm_xml)
 	return_true "grep -q vmx $(vm_xml)"
-
-	delete_temp_file vm_xml
 }
 
 # load shunit2
