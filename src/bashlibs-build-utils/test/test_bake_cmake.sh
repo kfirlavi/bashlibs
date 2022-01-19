@@ -97,7 +97,7 @@ test_all_cmake_project_files() {
         "all_cmake_project_files $TEST_DIR"
 
     cd $TEST_DIR
-    
+
     return_value_shouldnt_include \
         "./ignored/tmp/proj8/CMakeLists.txt" \
         "all_cmake_project_files ."

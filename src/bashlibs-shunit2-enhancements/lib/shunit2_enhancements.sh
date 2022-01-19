@@ -254,10 +254,10 @@ set_test_debugging() {
 
 test_name() {
     local test_file=$1
-    
+
     basename $test_file \
         | sed 's/test_//' \
-        | sed 's/.sh$//'    
+        | sed 's/.sh$//'
 }
 
 run_test() {

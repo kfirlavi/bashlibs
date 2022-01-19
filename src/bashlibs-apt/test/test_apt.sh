@@ -18,7 +18,7 @@ test_setup_apt_set_new_apt() {
 test_setup_apt_set_apt_get() {
     which() {
         local bin=$1
-        
+
         [[ $bin == apt ]] \
             && echo -n
 

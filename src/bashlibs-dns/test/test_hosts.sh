@@ -38,7 +38,7 @@ test_delete_hosts_entries_by_ip_without_providing_ip() {
 test_delete_hosts_entries_by_names() {
     delete_hosts_entries_by_names host1 entry2 my_host2
 
-    return_true "file_is_empty $(hosts_file)" 
+    return_true "file_is_empty $(hosts_file)"
 }
 
 test_add_hosts_entry() {

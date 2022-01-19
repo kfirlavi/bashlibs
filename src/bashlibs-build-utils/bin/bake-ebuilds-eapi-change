@@ -13,13 +13,13 @@ usage() {
     set_column_indentation_gap 10
 	cat <<- EOF
 	$(section_usage) $(progname) options
-	
+
 	    $(progname) - update ebuilds eapi
 
 	$(section_options)
 	$(item e eapi     'new EAPI')
 	$(item s server   'gentoo machine ip to work on')
-	
+
 	$(section_examples)
 	$(example_description 'upgrade all ebuilds to EAPI 7')
 	$(example $(progname) --eapi 7 --server gentoo-host)
@@ -47,7 +47,7 @@ cmdline() {
                           args="${args}${delim}${arg}${delim} ";;
 		esac
 	done
-	 
+
 	#Reset the positional parameters to the short options
 	eval set -- $args
 

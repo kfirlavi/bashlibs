@@ -20,7 +20,7 @@ emerge_info_var_value() {
     local var_name=$1
 
     emerge_info_var_line $var_name \
-        | cut -d '"' -f 2    
+        | cut -d '"' -f 2
 }
 
 emerge_info_vars_to_functions() {
@@ -28,6 +28,6 @@ emerge_info_vars_to_functions() {
 
     emerge_info_vars > $tmp_file
     load_config $tmp_file emerge_env_
-    
+
     rm -f $tmp_file
 }

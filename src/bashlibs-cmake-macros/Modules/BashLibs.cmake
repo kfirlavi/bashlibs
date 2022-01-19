@@ -64,7 +64,7 @@ function(search_and_replace_sources)
     set(NEW_STRING ${ARGV1})
     message(STATUS "replacing '${ORIGINAL_STRING}' with '${NEW_STRING}'")
 
-    execute_process(COMMAND find ${CMAKE_CURRENT_SOURCE_DIR} -type f -not -name "CMake*" -and -not -name "BashLibs.cmake" -print0 
+    execute_process(COMMAND find ${CMAKE_CURRENT_SOURCE_DIR} -type f -not -name "CMake*" -and -not -name "BashLibs.cmake" -print0
                     COMMAND xargs -0 sed -i "s@${ORIGINAL_STRING}@${NEW_STRING}@g")
 
 endfunction(search_and_replace_sources)

@@ -117,10 +117,10 @@ gentoo_ebuild_exist() {
     [[ -f $(project_ebuild $version) ]] \
         && return
 
-    if [[ -d $(project_ebuild_dir $version) ]] 
+    if [[ -d $(project_ebuild_dir $version) ]]
     then
-        verror "found ebuild directory: $(project_ebuild_dir $version)" 
-        verror "but not ebuild: $(project_ebuild $version)" 
+        verror "found ebuild directory: $(project_ebuild_dir $version)"
+        verror "but not ebuild: $(project_ebuild $version)"
         verror "ebuilds found: "
         local i
         for i in $(ebuilds_in_project_ebuild_dir $version)

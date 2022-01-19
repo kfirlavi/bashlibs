@@ -30,7 +30,7 @@ usage() {
     set_column_indentation_gap 13
 	cat <<- EOF
 	$(section_usage) $(progname) options
-	
+
 	    clean old deb files and preserve the most recent
 
 	$(section_options)
@@ -38,7 +38,7 @@ usage() {
 	$(item n no-delete 'do not delete files and just print what you will do')
 	$(items_test_help_verbose_debug)
 
-	
+
 	$(section_examples)
 	$(example_description 'clean all old deb files and keep the most recent ones')
 	$(example $(progname) --dir /home/user/repositories/bashlibs-repository)
@@ -68,7 +68,7 @@ cmdline() {
                           args="${args}${delim}${arg}${delim} ";;
         esac
     done
-     
+
     #Reset the positional parameters to the short options
     eval set -- $args
 
@@ -280,7 +280,7 @@ generate_repo_indexs() {
     do
         binary_dir_exist $arch $repo_dir \
             || return
-        
+
         generate_repo_index $(binary_dir $arch $repo_dir)
     done
 }
@@ -309,7 +309,7 @@ main() {
     old_deb_files $tmp_repo_dir
     generate_repo_indexs $tmp_repo_dir
     copy_tmp_repo_to_original_repo $tmp_repo_dir
-    
+
     [[ -z $NO_DELTE ]] \
         && safe_delete_directory_from_tmp $tmpdir
 

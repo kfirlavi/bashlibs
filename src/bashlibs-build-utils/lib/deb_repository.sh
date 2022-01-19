@@ -156,7 +156,7 @@ create_repository() {
 
 repository_index_file_name() {
     local index_type=$1 # binary, source
-    
+
     case $index_type in
         binary) echo Packages ;;
         source) echo Sources  ;;

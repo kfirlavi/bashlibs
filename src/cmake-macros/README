@@ -1,5 +1,5 @@
 This is a generic package that adds some modules support to make
-CMakeLists.txt file more readable. 
+CMakeLists.txt file more readable.
 
 You must write the app version to the file 'version' like so: 1.4.2
 

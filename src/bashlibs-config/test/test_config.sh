@@ -96,7 +96,7 @@ test_var_to_false_function() {
 test_var_to_function() {
     function_not_defined return_one
     function_not_defined return_string
-    
+
     var_to_function return_one 1
     var_to_function return_string "just a sting 1234"
 
@@ -135,7 +135,7 @@ test_verify_config_varialbes_defined() {
     eexit() { echo Error: $@; false; }
 
     returns "Error: VAR_NOT_DEFINED should be defined in $(conf_file)" \
-        "verify_config_varialbes_defined $(conf_file) VAR_NOT_DEFINED"    
+        "verify_config_varialbes_defined $(conf_file) VAR_NOT_DEFINED"
 
     return_false "verify_config_varialbes_defined $(conf_file) VAR_NOT_DEFINED"
 

@@ -68,6 +68,6 @@ apt_locked() {
 
 apt_package_installed() {
     local package=$1
-    
+
     eval $(apt_cmd_package_installed $package)
 }

@@ -3,7 +3,7 @@ $(bashlibs --load-base)
 include shunit2_enhancements.sh
 include cmdline.sh
 
-args() { 
+args() {
     echo '--before --test-one -n -p -- this is extra args --one --two-three -a -b -c'
 }
 

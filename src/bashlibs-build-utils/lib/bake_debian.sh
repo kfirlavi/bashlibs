@@ -69,7 +69,7 @@ should_install_pre_compiled_depend() {
 
 apt_search_package() {
     local package=$1
-    
+
     run_remote apt-cache search "^$package$"
 }
 
@@ -107,7 +107,7 @@ install_pre_compile_dependencies() {
 update_apt() {
     [[ -z $UPDATE_APT ]] \
         && return
-        
+
     run_remote $(apt_get_cmd) update
 }
 

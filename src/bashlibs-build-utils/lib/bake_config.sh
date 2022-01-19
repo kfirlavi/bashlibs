@@ -35,7 +35,7 @@ load_configuration_files() {
     local path=${1:-$(pwd)}
     TOP_RC=
 
-    while [[ -z $TOP_RC && $path != '/' ]] 
+    while [[ -z $TOP_RC && $path != '/' ]]
     do
         load_config_file $path
         path=$(realpath $path/..)

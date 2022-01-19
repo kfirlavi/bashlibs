@@ -79,11 +79,11 @@ safe_delete_directory_from_tmp() {
             rm -Rf $dir
             true
         else
-            vdebug "$FUNCNAME: dir '$dir' does not exist. No need to delete it." 
+            vdebug "$FUNCNAME: dir '$dir' does not exist. No need to delete it."
             false
         fi
     else
-        verror "$FUNCNAME: can't delete '$dir', because it is not in /tmp" 
+        verror "$FUNCNAME: can't delete '$dir', because it is not in /tmp"
         false
     fi
 }
@@ -94,7 +94,7 @@ create_progname_tmp_dir() {
 
 create_workdir() {
     local d=$(create_progname_tmp_dir)
-    
+
     var_to_function workdir $d
 }
 

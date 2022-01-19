@@ -46,15 +46,15 @@ tearDown() {
 }
 
 test_create_new_git() {
-    return_true "check_if_current_dir_is_in_git_tree" 
+    return_true "check_if_current_dir_is_in_git_tree"
 }
 
 test_git_top_dir() {
-    returns "$(git_for_testing)" "git_top_dir" 
+    returns "$(git_for_testing)" "git_top_dir"
 
     mkdir tmp_dir
     cd tmp_dir
-    returns "$(git_for_testing)" "git_top_dir" 
+    returns "$(git_for_testing)" "git_top_dir"
 }
 
 test_check_if_current_dir_is_in_git_tree() {
@@ -62,7 +62,7 @@ test_check_if_current_dir_is_in_git_tree() {
     return_false "check_if_current_dir_is_in_git_tree"
 
     cd $(git_for_testing)
-    return_true "check_if_current_dir_is_in_git_tree" 
+    return_true "check_if_current_dir_is_in_git_tree"
 }
 
 test_git_current_branch() {

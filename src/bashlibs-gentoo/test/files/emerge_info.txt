@@ -30,7 +30,7 @@ gentoo
     sync-uri: rsync://rsync.gentoo.org/gentoo-portage
     priority: -1000
     sync-rsync-verify-metamanifest: yes
-    sync-rsync-extra-opts: 
+    sync-rsync-extra-opts:
     sync-rsync-verify-jobs: 1
     sync-rsync-verify-max-age: 24
 

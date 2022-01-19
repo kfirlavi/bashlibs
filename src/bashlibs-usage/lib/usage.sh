@@ -92,18 +92,18 @@ item_test() {
 
 example_test() {
     local progname=$1
-    
+
 	cat <<- EOF
 	$(example_description 'Run all unit tests')
 	$(example $progname -t all)
 	$(example $progname --test all)
-	    
+
 	$(example_description 'run tests in test_apt.sh')
 	$(example $progname --test test_apt.sh)
-	    
+
 	$(example_description 'run tests using pattern - will test test_apt.sh and test_apt_cmd.sh')
 	$(example $progname --test apt)
-	    
+
 	$(example_description 'run tests of the package bashlibs-apt - will test test_apt.sh and test_apt_cmd.sh')
 	$(example $progname --test bashlibs-apt)
 	EOF
@@ -131,7 +131,7 @@ item_debug() {
 
 items_test_help_verbose_debug() {
     local progname=$1
-    
+
 	cat <<- EOF
 	$(item_test)
 	$(item_help)

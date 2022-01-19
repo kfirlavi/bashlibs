@@ -33,7 +33,7 @@ test_create_md5_for_all_files_in_directory() {
     create_md5_for_all_files_in_directory $(workdir)
     file_should_exist $(workdir)/a.md5
     file_should_exist $(workdir)/b.md5
-    
+
     returns \
         "b026324c6904b2a9cb4b88d6d61c81d1  a" \
         "cat $(workdir)/a.md5"

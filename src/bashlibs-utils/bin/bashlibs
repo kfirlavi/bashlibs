@@ -15,10 +15,10 @@ usage() {
     set_column_indentation_gap 13
 	cat <<- EOF
 	$(section_usage) $(progname) options
-	
+
 	    $(progname) can provide the path to bash libraries installed.
 	    $(progname) can issue tests on all libraries.
-	    It allows specifing certain file to test, or to run tests 
+	    It allows specifing certain file to test, or to run tests
 	    of all libraries.
 
 	$(section_options)
@@ -28,7 +28,7 @@ usage() {
 	$(item r run 'execute command/function from one of the bashlibs')
 	$(items_test_help_verbose_debug)
 
-	
+
 	$(section_examples)
 	$(example_description 'get library path')
 	$(example $(progname) --library-path)
@@ -69,7 +69,7 @@ cmdline() {
                           args="${args}${delim}${arg}${delim} ";;
 		esac
 	done
-	 
+
 	#Reset the positional parameters to the short options
 	eval set -- $args
 

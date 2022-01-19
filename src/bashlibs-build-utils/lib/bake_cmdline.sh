@@ -5,9 +5,9 @@ usage() {
 	set_column_indentation_gap 18
 	cat <<- EOF
 	$(section_usage) $(progname) options
-	
+
 	    $(progname) - a package builder utility
-	    It can create a deb package for debian or ubuntu systems, and 
+	    It can create a deb package for debian or ubuntu systems, and
 	    can create a gentoo source tbz package
 	    A repositories dir will be created in the user home i.e /home/user/repositories or for root /root/repositories.
 	    Inside the repositories you will find debian and gentoo files.
@@ -23,11 +23,11 @@ usage() {
 	$(item u apt-update 'update apt on ubuntu/debian like os after compilation')
 	$(item c cmake-options 'cmake extra options')
 	$(item r repository "repository name. Default is 'archive'. Will be created in $(repositories_dir). This option can be specified multiple times.")
-	$(item m portage-tree-name "uniqeue name for the remote portage tree. It will be coppied to $(gentoo_local_portage_path)<name> on the server") 
+	$(item m portage-tree-name "uniqeue name for the remote portage tree. It will be coppied to $(gentoo_local_portage_path)<name> on the server")
 	$(item e portage-tree "local portage tree. Will be copied to the server to $(gentoo_local_portage_path)<name>. Name is provided with -n")
 	$(item none manifest "generate manifest, but do not install (gentoo only)")
 	$(items_test_help_verbose_debug)
-	
+
 	$(section_examples)
 	$(example_description 'Build package bashlibs-verbose for host 192.168.1.2')
 	$(example $(progname) --server 192.168.1.2 --project src/bashlibs-verbose)
@@ -102,7 +102,7 @@ cmdline() {
                           args="${args}${delim}${arg}${delim} ";;
         esac
     done
-     
+
     #Reset the positional parameters to the short options
     eval set -- $args
 

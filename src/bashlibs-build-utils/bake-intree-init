@@ -1,7 +1,7 @@
 #!/bin/bash
 ARGS=$@
 
-# This variable is exported to sub shell, so we need to clear it for 
+# This variable is exported to sub shell, so we need to clear it for
 # sub shell to work properly
 export _LIBRARIES_INCLUDED=
 

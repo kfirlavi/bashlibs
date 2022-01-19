@@ -30,7 +30,7 @@ usage() {
 	set_column_indentation_gap 10
 	cat <<- EOF
 	$(section_usage) $(progname)
-	
+
 	    Will delete users repositories dir depend on which user is running this program.
 	    Program will ask for confirmation before deleting.
 
@@ -59,7 +59,7 @@ cmdline() {
                           args="${args}${delim}${arg}${delim} ";;
         esac
     done
-     
+
     #Reset the positional parameters to the short options
     eval set -- $args
 

@@ -20,7 +20,7 @@ exit_if_library_does_not_exists() {
     local library_name=$1
 
     if library_does_no_exist $library_name; then
-        echo "can't find library '$library_name' in $(libraries_path)" 
+        echo "can't find library '$library_name' in $(libraries_path)"
         exit 1
     fi
 }

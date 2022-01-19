@@ -26,7 +26,7 @@ check_if_current_dir_is_in_git_tree() {
 git_current_branch() {
     git symbolic-ref --short HEAD
 }
- 
+
 git_create_new_branch() {
     local branch_name=$1
 
