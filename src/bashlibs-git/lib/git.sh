@@ -110,3 +110,36 @@ is_git() {
     is_bare_git $git_dir \
         || is_regular_git $git_dir
 }
+
+git_clean_untracked() {
+    local git_dir=$1
+    local cmd="git clean -fd"
+
+    vinfo "cleaning untracked files"
+    vdebug "running: $cmd"
+
+    cd $git_dir
+    $cmd
+}
+
+git_delete_uncommited_work() {
+    local git_dir=$1
+    local cmd="git reset --hard"
+
+    vinfo "deleting uncommited work (hard reset)"
+    vdebug "running: $cmd"
+
+    cd $git_dir
+    $cmd
+}
+
+git_reset_to_origin() {
+    local git_dir=$1
+    local cmd="git reset --hard origin/$(git_current_branch)"
+
+    vinfo "resetting to origin/$(git_current_branch)"
+    vdebug "running: $cmd"
+
+    cd $git_dir
+    $cmd
+}

@@ -139,5 +139,36 @@ test_is_git() {
     return_false "is_git $(none_git_directory)"
 }
 
+test_git_clean_untracked() {
+    local f=untracked_file
+
+    touch $f
+    return_true "file_exist $f"
+    git_clean_untracked $(git_for_testing) > /dev/null 2>&1
+    return_false "file_exist $f"
+}
+
+test_git_delete_uncommited_work() {
+    local f=uncommited_file
+
+    touch $f
+    git add $f
+    return_true "file_exist $f"
+    git_delete_uncommited_work $(git_for_testing) > /dev/null 2>&1
+    return_false "file_exist $f"
+}
+
+test_git_reset_to_origin() {
+    local f=uncommited_file
+
+    touch $f
+    git add $f
+    git commit -av -m "added $f" > /dev/null 2>&1
+    return_true "file_exist $f"
+    git_reset_to_origin $(git_for_testing) > /dev/null 2>&1
+    return_false "file_exist $f"
+}
+
+
 # load shunit2
 source /usr/share/shunit2/shunit2
