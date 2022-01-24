@@ -328,5 +328,11 @@ test_del_vlan_filter_from_bridge() {
     del_tap $(tmp_tap)
 }
 
+test_mtu() {
+    local mtu=$(mtu $(tmp_bridge))
+    increase_mtu $(tmp_bridge) 4
+    return_true "(( $(mtu $(tmp_bridge)) == $mtu + 4 ))"
+}
+
 # load shunit2
 source /usr/share/shunit2/shunit2

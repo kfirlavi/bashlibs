@@ -9,6 +9,7 @@ iface_color() {
           vlan) echo purple ;;
            mac) echo red ;;
             ip) echo white ;;
+         iface) echo blue ;;
              *) echo yellow ;;
     esac
 }
@@ -319,4 +320,29 @@ del_vlan_filter_from_bridge() {
 
     net_debug vlan $vlan "removing bridge vlan filter for iface $(colorize_iface none $iface)"
     bridge vlan del vid $vlan dev $iface
+}
+
+mtu() {
+    local iface=$1
+
+    ip link show dev $iface \
+        | grep mtu \
+        | sed 's/.* mtu //' \
+        | cut -d ' ' -f 1
+}
+
+set_mtu() {
+    local iface=$1
+    local mtu=$2
+
+    net_debug iface $iface "stting mtu to $mtu"
+    ip link set dev $iface mtu $mtu
+}
+
+increase_mtu() {
+    local iface=$1
+    local increase_by=$2
+    local mtu=$(( $(mtu $iface) + $increase_by ))
+
+    set_mtu $iface $mtu
 }
