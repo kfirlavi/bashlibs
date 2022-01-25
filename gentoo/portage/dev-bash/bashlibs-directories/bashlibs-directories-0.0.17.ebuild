@@ -14,6 +14,7 @@ KEYWORDS="amd64 x86"
 IUSE=""
 
 RDEPEND="
+	dev-bash/bashlibs-string
 	dev-bash/bashlibs-config
 	>=dev-bash/bashlibs-utils-0.0.6
 	>=dev-bash/bashlibs-shunit2-enhancements-0.0.2

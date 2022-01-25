@@ -3,37 +3,42 @@ $(bashlibs --load-base)
 include shunit2_enhancements.sh
 include directories.sh
 
+setUp() {
+    create_workdir
+}
+
+tearDown() {
+    remove_workdir
+}
+
 test_dir_exist() {
-    local dir=$(mktemp -d)
+    local dir=$(workdir)
 
     return_true "dir_exist $dir"
     rmdir $dir
     return_false "dir_exist $dir"
+
+    return_false "dir_exist"
 }
 
 test_dir_is_empty() {
-    local dir=$(mktemp -d)
+    local dir=$(workdir)
 
     touch $dir/a
     return_false "dir_is_empty $dir"
 
     rm -f $dir/a
     return_true "dir_is_empty $dir"
-
-    rmdir $dir
 }
 
 test_create_dir_if_needed() {
-    local dir=$(mktemp -d)
-    rmdir $dir
+    local dir=$(workdir)/abc
 
     return_false "dir_exist $dir"
     create_dir_if_needed $dir > /dev/null 2>&1
     return_true "dir_exist $dir"
     create_dir_if_needed $dir > /dev/null 2>&1
     return_true "dir_exist $dir"
-
-    rmdir $dir
 }
 
 test_clean_path() {
@@ -108,6 +113,43 @@ test_safe_delete_directory_from_tmp() {
 
     rmdir $dir
     cd $saved_dir > /dev/null 2>&1
+}
+
+test_dir_size() {
+    dd \
+        if=/dev/zero \
+        of=$(workdir)/a \
+        bs=1K \
+        count=1500 \
+            > /dev/null 2>&1
+
+    returns "1.5M" "dir_size $(workdir)"
+}
+
+test_empty_dir() {
+    mkdir -p $(workdir)/a/b/c
+    mkdir -p $(workdir)/.a/.b/.c
+    touch $(workdir)/d
+    touch $(workdir)/a/b/c/e
+    touch $(workdir)/.a/.b/.c/f
+
+    empty_dir $(workdir)
+
+    return_true "dir_is_empty $(workdir)"
+}
+
+test_empty_dirs() {
+    mkdir -p $(workdir)/a/b/c
+    mkdir -p $(workdir)/.a/.b/.c
+    touch $(workdir)/a/b/c/e
+    touch $(workdir)/.a/.b/.c/f
+
+    empty_dirs \
+        $(workdir)/a \
+        $(workdir)/.a
+
+    return_true "dir_is_empty $(workdir)/a"
+    return_true "dir_is_empty $(workdir)/.a"
 }
 
 test_create_progname_tmp_dir() {

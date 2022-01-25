@@ -1,4 +1,5 @@
 include config.sh
+include string.sh
 
 dir_exist() {
     local dir=$1
@@ -86,6 +87,36 @@ safe_delete_directory_from_tmp() {
         verror "$FUNCNAME: can't delete '$dir', because it is not in /tmp"
         false
     fi
+}
+
+dir_size() {
+    local dir=$1
+
+    du --summarize --human-readable $dir \
+        | column 1
+}
+
+empty_dir() {
+    local dir=$1
+
+    dir_exist $dir \
+        || return
+
+    vinfo "Empthying $dir ($(dir_size $dir))"
+    find $dir -mindepth 1 -delete
+
+    dir_is_empty $dir \
+        || eexit "$dir is not empty"
+}
+
+empty_dirs() {
+    local dirs=$@
+    local i
+
+    for i in $dirs
+    do
+        empty_dir $i
+    done
 }
 
 create_progname_tmp_dir() {
