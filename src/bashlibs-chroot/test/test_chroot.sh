@@ -38,7 +38,7 @@ oneTimeSetUp() {
 oneTimeTearDown() {
     local no_delete=
 
-    for i in proc sys dev
+    for i in proc sys run dev
     do
         is_mounted $(chroot_${i}_mount_point $(chroot_dir)) \
             && no_delete=1
@@ -91,6 +91,15 @@ test_mount_sys_on_chroot() {
     mount_test_on_chroot sys
 }
 
+test_chroot_run_mount_point() {
+    returns /tmp/test_chroot/run \
+        "chroot_run_mount_point $(chroot_dir)"
+}
+
+test_mount_run_on_chroot() {
+    mount_test_on_chroot run
+}
+
 test_chroot_dev_mount_point() {
     returns /tmp/test_chroot/dev \
         "chroot_dev_mount_point $(chroot_dir)"
@@ -114,7 +123,7 @@ test_chroot_to() {
         "chroot_to $(chroot_dir) /bin/ls /test_file"
 
     local i
-    for i in proc dev var_run sys
+    for i in proc dev var_run sys run
     do
         return_false "is_mounted $(chroot_${i}_mount_point $(chroot_dir))"
     done

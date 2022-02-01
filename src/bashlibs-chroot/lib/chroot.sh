@@ -79,6 +79,30 @@ umount_sys_on_chroot() {
     umount -R $(chroot_sys_mount_point $chroot_dir)
 }
 
+chroot_run_mount_point() {
+    local chroot_dir=$1
+
+    create_dir_if_needed \
+        $chroot_dir/run
+}
+
+mount_run_on_chroot() {
+    local chroot_dir=$1
+    local mount_point=$(chroot_run_mount_point $chroot_dir)
+
+    is_mounted $mount_point \
+        && return
+
+    mount --rbind /run $mount_point
+    mount --make-rslave $mount_point
+}
+
+umount_run_on_chroot() {
+    local chroot_dir=$1
+
+    umount -R $(chroot_run_mount_point $chroot_dir)
+}
+
 chroot_dev_mount_point() {
     local chroot_dir=$1
 
@@ -134,6 +158,7 @@ chroot_prepare() {
 
     mount_proc_on_chroot     $chroot_dir
     mount_sys_on_chroot      $chroot_dir
+    mount_run_on_chroot      $chroot_dir
     mount_dev_on_chroot      $chroot_dir
     mount_var_run_on_chroot  $chroot_dir
 
@@ -145,6 +170,7 @@ chroot_finish() {
 
     umount_var_run_on_chroot $chroot_dir
     umount_sys_on_chroot     $chroot_dir
+    umount_run_on_chroot     $chroot_dir
     umount_proc_on_chroot    $chroot_dir
     umount_dev_on_chroot     $chroot_dir
 }
