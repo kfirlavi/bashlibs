@@ -121,6 +121,12 @@ vm_already_defined() {
         | grep -q $vm_name
 }
 
+start_vm() {
+    local vm_name=$1
+
+    virsh start $vm_name
+}
+
 shutdown_vm() {
     local vm_name=$1
 
