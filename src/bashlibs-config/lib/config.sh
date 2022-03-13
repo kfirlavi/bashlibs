@@ -1,3 +1,4 @@
+include verbose.sh
 include string.sh
 include checks.sh
 
