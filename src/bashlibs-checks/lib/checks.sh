@@ -80,6 +80,13 @@ function_returns_non_empty_string() {
     [[ -n $($func_name) ]]
 }
 
+function_defined_and_non_empty() {
+    local func_name=$1
+
+    function_defined $func_name \
+        && function_returns_non_empty_string $func_name
+}
+
 function_returns_true() {
     local func_name=$1
 

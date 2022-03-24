@@ -134,6 +134,20 @@ test_function_returns_non_empty_string() {
     return_true "function_returns_non_empty_string f3"
 }
 
+test_function_defined_and_non_empty() {
+    f1() { echo -n; }
+    f2() { echo; }
+    f3() { echo abc; }
+    f4() { true; }
+    f5() { false; }
+
+    return_false "function_defined_and_non_empty f1"
+    return_false "function_defined_and_non_empty f2"
+    return_true "function_defined_and_non_empty f3"
+    return_false "function_defined_and_non_empty f4"
+    return_false "function_defined_and_non_empty f5"
+}
+
 test_function_returns_true() {
     f1() { true; }
     f2() { false; }
