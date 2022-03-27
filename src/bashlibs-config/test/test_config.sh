@@ -149,5 +149,19 @@ test_true_false_variables() {
     return_false false_var
 }
 
+test_load_config_variable() {
+    load_config_variable TEST_VAR 123 abc
+    returns "123 abc" "echo $TEST_VAR"
+    returns "123 abc" "test_var"
+
+    load_config_variable TEST_TRUE_VAR true
+    return_true "$TEST_TRUE_VAR"
+    return_true "test_true_var"
+
+    load_config_variable TEST_FALSE_VAR false
+    return_false "$TEST_FALSE_VAR"
+    return_false "test_false_var"
+}
+
 # load shunit2
 source /usr/share/shunit2/shunit2

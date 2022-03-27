@@ -90,3 +90,14 @@ verify_config_varialbes_defined() {
             || eexit "$i should be defined in $conf_file"
     done
 }
+
+load_config_variable() {
+    local var_name=$1; shift
+    local value=$@
+
+    eval "$var_name=\"$value\""
+
+    var_to_function \
+            $(echo $var_name | downcase_str) \
+            $value
+}
