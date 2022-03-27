@@ -163,5 +163,20 @@ test_load_config_variable() {
     return_false "test_false_var"
 }
 
+test_unload_config_variable() {
+    unload_config_variable TEST_VAR
+    returns_empty "echo $TEST_VAR"
+    return_false "function_exist test_var"
+
+    unload_config_variable TEST_TRUE_VAR
+    returns_empty "echo $TEST_TRUE_VAR"
+    return_false "function_exist test_true_var"
+
+    unload_config_variable TEST_FALSE_VAR
+    returns_empty "echo $TEST_FALSE_VAR"
+    return_false "function_exist test_false_var"
+}
+
+
 # load shunit2
 source /usr/share/shunit2/shunit2

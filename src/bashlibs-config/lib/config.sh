@@ -101,3 +101,11 @@ load_config_variable() {
             $(echo $var_name | downcase_str) \
             $value
 }
+
+unload_config_variable() {
+    local var_name=$1
+
+    unset $var_name
+
+    unset -f $(echo $var_name | downcase_str)
+}
