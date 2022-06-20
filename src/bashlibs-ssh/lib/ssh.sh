@@ -40,26 +40,31 @@ is_ssh_connection_with_keys_working() {
 copy_ssh_keys() {
     local user=$1
     local host=$2
+    local password=$3
 
-    ssh-copy-id $user@$host
+    [[ -n $password ]] \
+        && sshpass -p $password ssh-copy-id $user@$host \
+        || ssh-copy-id $user@$host
 }
 
 set_ssh_connection_with_keys() {
     local user=$1
     local host=$2
+    local password=$3
 
     create_ssh_key_if_not_exist
 
     is_ssh_connection_with_keys_working $user $host \
-        || copy_ssh_keys $user $host
+        || copy_ssh_keys $user $host $password
 }
 
 set_and_test_ssh_connection_with_keys() {
     local user=$1
     local host=$2
+    local password=$3
 
     vinfo "setting ssh passwordless connection to $user@$host"
-    set_ssh_connection_with_keys $user $host
+    set_ssh_connection_with_keys $user $host $password
 
     set_ssh_connection_with_socket $user $host
 

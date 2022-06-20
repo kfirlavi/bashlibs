@@ -9,6 +9,7 @@ list(APPEND CMAKE_MODULE_PATH
 include(BashLibs)
 set(CPACK_DEBIAN_PACKAGE_DEPENDS
     "nmap,
+    sshpass,
 	bashlibs-verbose (>= 0.0.32),
 	bashlibs-utils")
 include(PackageCreator)
