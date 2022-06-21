@@ -132,3 +132,7 @@ create_workdir() {
 remove_workdir() {
     safe_delete_directory_from_tmp $(workdir)
 }
+
+user_home_dir() {
+    echo ~
+}
