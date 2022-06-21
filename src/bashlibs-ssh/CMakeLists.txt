@@ -11,6 +11,7 @@ set(CPACK_DEBIAN_PACKAGE_DEPENDS
     "nmap,
     sshpass,
 	bashlibs-verbose (>= 0.0.32),
+	bashlibs-directories (>= 0.0.18),
 	bashlibs-utils")
 include(PackageCreator)
 

@@ -4,11 +4,6 @@ ssh_cmd() {
     echo ssh
 }
 
-user_home_dir() {
-    cd ~
-    pwd
-}
-
 rsa_ssh_key() {
     echo "$(user_home_dir)/.ssh/id_rsa"
 }

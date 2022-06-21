@@ -17,6 +17,7 @@ RDEPEND="
 	>=dev-bash/bashlibs-utils-0.0.6
 	>=dev-bash/bashlibs-verbose-0.0.32
 	>=dev-bash/bashlibs-shunit2-enhancements-0.0.2
+	>=dev-bash/bashlibs-directories-0.0.18
 	net-analyzer/nmap
 	net-misc/sshpass
 "
