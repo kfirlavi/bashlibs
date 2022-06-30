@@ -1,4 +1,5 @@
 include verbose.sh
+include directories.sh
 
 ssh_cmd() {
     echo ssh
