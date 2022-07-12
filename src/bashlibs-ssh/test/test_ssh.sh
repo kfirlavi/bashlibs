@@ -95,6 +95,17 @@ test_socket_name() {
     returns /tmp/root@gu64.sock "socket_name root gu64"
 }
 
+test_remove_ssh_socket() {
+    local socket=$(socket_name root gu64)
+
+    return_false "file_exist $socket"
+    return_true "remove_ssh_socket root gu64"
+    touch $socket
+    return_true "file_exist $socket"
+    return_true "remove_ssh_socket root gu64"
+    return_false "file_exist $socket"
+}
+
 test_set_rsync_ssh_connection_with_socket() {
     set_rsync_ssh_connection_with_socket root gu64
     returns "ssh -S /tmp/root@gu64.sock" \

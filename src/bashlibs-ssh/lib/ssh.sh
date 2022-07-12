@@ -50,6 +50,8 @@ set_ssh_connection_with_keys() {
 
     create_ssh_key_if_not_exist
 
+    remove_ssh_socket $user $host
+
     is_ssh_connection_with_keys_working $user $host \
         || copy_ssh_keys $user $host $password
 }
@@ -121,6 +123,13 @@ ssh_socket_exist() {
     local host=$2
 
     [[ -S $(socket_name $user $host) ]]
+}
+
+remove_ssh_socket() {
+    local user=$1
+    local host=$2
+
+    rm -f $(socket_name $user $host)
 }
 
 set_ssh_connection_with_socket() {
