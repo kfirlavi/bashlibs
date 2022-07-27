@@ -60,6 +60,7 @@ main() {
                 $(project_path)
 
             check_gentoo_commands
+            set_gentoo_ebuild_eapi_if_needed
 
             show_build_info \
                 $(project_name) \

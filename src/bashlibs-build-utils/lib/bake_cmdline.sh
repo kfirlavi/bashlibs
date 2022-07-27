@@ -25,6 +25,8 @@ usage() {
 	$(item r repository "repository name. Default is 'archive'. Will be created in $(repositories_dir). This option can be specified multiple times.")
 	$(item m portage-tree-name "uniqeue name for the remote portage tree. It will be coppied to $(gentoo_local_portage_path)<name> on the server")
 	$(item e portage-tree "local portage tree. Will be copied to the server to $(gentoo_local_portage_path)<name>. Name is provided with -n")
+	$(item none eapi-up "increase eapi in ebuild. For example: EAPI=6 to EAPI=7")
+	$(item none eapi-down "lower eapi in ebuild. For example: EAPI=5 to EAPI=4")
 	$(item none manifest "generate manifest, but do not install (gentoo only)")
 	$(items_test_help_verbose_debug)
 
@@ -63,6 +65,9 @@ usage() {
 	$(example_description "generate only the manifest of bashlibs-verbose")
 	$(example $(progname) --server 192.168.1.2 --project bashlibs-verbose --manifest)
 
+	$(example_description "increase eapi and create manifest")
+	$(example $(progname) --server 192.168.1.2 --project bashlibs-verbose --eapi-up --manifest)
+
 	$(example_test $(progname))
 	EOF
 }
@@ -71,6 +76,8 @@ cmdline() {
     exit_if_args_are_empty $@
     SOURCES_TREE_PATH=$(pwd)
     var_to_true_function do_install_gentoo_package
+    var_to_false_function eapi_up
+    var_to_false_function eapi_down
 
     # got this idea from here:
     # http://kirk.webfinish.com/2009/10/bash-shell-script-to-use-getopts-with-gnu-style-long-positional-parameters/
@@ -92,6 +99,8 @@ cmdline() {
     --portage-tree-name) args="${args}-m ";;
          --portage-tree) args="${args}-e ";;
              --manifest) var_to_false_function do_install_gentoo_package ;;
+              --eapi-up) var_to_true_function eapi_up ;;
+            --eapi-down) var_to_true_function eapi_down ;;
                  --test) args="${args}-t ";;
                  --help) args="${args}-h ";;
               --verbose) args="${args}-v ";;

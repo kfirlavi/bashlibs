@@ -315,3 +315,55 @@ gentoo_projects() {
         <(gentoo_ebuilds_project_names | sort | uniq) \
         <(all_cmake_project_names $(top_level_path) | sort | uniq)
 }
+
+eapi_exist() {
+    local ebuild=$1
+
+    grep -q '^EAPI=' $ebuild
+}
+
+show_warning_if_no_eapi_defined() {
+    local ebuild=$1
+
+    eapi_exist $ebuild \
+        || vwarning "eapi is not defined in ebuild: $ebuild"
+}
+
+current_eapi() {
+    local ebuild=$1
+
+    eval $(grep '^EAPI=' $ebuild)
+
+    echo $EAPI
+}
+
+set_eapi() {
+    local ebuild=$1
+    local eapi=$2
+
+    sed -i \
+        "s/^EAPI=.*/EAPI=$eapi/" \
+        $ebuild
+}
+
+set_gentoo_ebuild_eapi_if_needed() {
+    ebuild_exist \
+        || return
+
+    eapi_up || eapi_down \
+        || return
+
+    local ebuild=$(find_ebuild_for_package $(cmake_project_name) $(app_version) $(portage_tree))
+
+    show_warning_if_no_eapi_defined $ebuild
+    local eapi=$(current_eapi $ebuild)
+
+    eapi_up \
+        && (( eapi++ ))
+
+    eapi_down \
+        && (( eapi-- ))
+
+    vinfo "set ebuild $ebuild to $(color white)EAPI=$eapi$(no_color)"
+    set_eapi $ebuild $eapi
+}
