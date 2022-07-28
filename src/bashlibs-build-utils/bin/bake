@@ -41,7 +41,10 @@ main() {
     cd $SOURCES_TREE_PATH
     list_projects_if_needed
     add_current_directory_project_if_no_projects_supplied
-    verify_project_provided
+
+    copy_portage \
+        || verify_project_provided
+
     work_from_source_tree_root
     show_on_which_hosts_we_build
     verify_all_hosts
@@ -51,29 +54,36 @@ main() {
         TARGET_BUILD_HOST=$host
         set_rsync_ssh_connection_with_socket root $host
 
-        for project in $PROJECTS
-        do
-            set_project_name_and_project_path \
-                $project
+        if copy_portage && target_os_is_gentoo
+        then
+            load_configuration_files .
+            copy_portage_tree_to_host $host \
+            break
+        else
+            for project in $PROJECTS
+            do
+                set_project_name_and_project_path \
+                    $project
 
-            load_configuration_files \
-                $(project_path)
+                load_configuration_files \
+                    $(project_path)
 
-            check_gentoo_commands
-            set_gentoo_ebuild_eapi_if_needed
+                check_gentoo_commands
+                set_gentoo_ebuild_eapi_if_needed
 
-            show_build_info \
-                $(project_name) \
-                $(project_path)
+                show_build_info \
+                    $(project_name) \
+                    $(project_path)
 
-            create_$(package_type)_package $host
+                create_$(package_type)_package $host
 
-            projects="$projects =$(package_full_name_with_version)"
-        done
+                projects="$projects =$(package_full_name_with_version)"
+            done
 
-        target_os_is_gentoo \
-            && do_install_gentoo_package \
-                && install_package_on_gentoo $host $projects
+            target_os_is_gentoo \
+                && do_install_gentoo_package \
+                    && install_package_on_gentoo $host $projects
+        fi
     done
 }
 main

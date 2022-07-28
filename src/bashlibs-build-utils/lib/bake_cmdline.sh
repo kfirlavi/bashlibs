@@ -28,6 +28,7 @@ usage() {
 	$(item none eapi-up "increase eapi in ebuild. For example: EAPI=6 to EAPI=7")
 	$(item none eapi-down "lower eapi in ebuild. For example: EAPI=5 to EAPI=4")
 	$(item none manifest "generate manifest, but do not install (gentoo only)")
+	$(item none copy-portage "only copy portage tree to host. Good when only change is in one of the ebuilds.")
 	$(items_test_help_verbose_debug)
 
 	$(section_examples)
@@ -68,6 +69,9 @@ usage() {
 	$(example_description "increase eapi and create manifest")
 	$(example $(progname) --server 192.168.1.2 --project bashlibs-verbose --eapi-up --manifest)
 
+	$(example_description "when added ebuild to portage tree without project, then you can upload to host just the tree")
+	$(example $(progname) --server 192.168.1.2 --copy-portage)
+
 	$(example_test $(progname))
 	EOF
 }
@@ -78,6 +82,7 @@ cmdline() {
     var_to_true_function do_install_gentoo_package
     var_to_false_function eapi_up
     var_to_false_function eapi_down
+    var_to_false_function copy_portage
 
     # got this idea from here:
     # http://kirk.webfinish.com/2009/10/bash-shell-script-to-use-getopts-with-gnu-style-long-positional-parameters/
@@ -101,6 +106,7 @@ cmdline() {
              --manifest) var_to_false_function do_install_gentoo_package ;;
               --eapi-up) var_to_true_function eapi_up ;;
             --eapi-down) var_to_true_function eapi_down ;;
+         --copy-portage) var_to_true_function copy_portage ;;
                  --test) args="${args}-t ";;
                  --help) args="${args}-h ";;
               --verbose) args="${args}-v ";;
