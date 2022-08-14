@@ -6,7 +6,7 @@
 # @DESCRIPTION:
 # library routins for simple ebuilds
 
-inherit cmake-utils flag-o-matic 
+inherit cmake
 
 MY_P="${P}-Source"
 SRC_URI="${MY_P}.tar.bz2"
@@ -14,11 +14,11 @@ S="${WORKDIR}/${MY_P}"
 
 src_configure() {
 	local mycmakeargs=(-DCMAKE_INSTALL_PREFIX=/)
-	cmake-utils_src_configure
+	cmake_src_configure
 }
 
 src_install() {
-	cmake-utils_src_install
+	cmake_src_install
 }
 
 bashlibs_binary_exist() {
