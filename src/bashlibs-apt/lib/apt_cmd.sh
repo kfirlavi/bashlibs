@@ -32,6 +32,10 @@ apt_cmd_dist_upgrade() {
     echo $(apt_force) dist-upgrade
 }
 
+apt_cmd_force_dist_upgrade() {
+    echo $(apt_force) dist-upgrade --fix-missing
+}
+
 apt_cmd_autoremove() {
     echo $(apt_force) autoremove
 }

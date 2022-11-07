@@ -52,6 +52,11 @@ apt_dist_upgrade() {
     eval $(apt_cmd_dist_upgrade)
 }
 
+apt_force_dist_upgrade() {
+    vinfo_apt "forcing dist-upgrade packages"
+    eval $(apt_cmd_force_dist_upgrade)
+}
+
 apt_autoremove() {
     vinfo_apt "autoremove unneeded packages"
     eval $(apt_cmd_autoremove)
