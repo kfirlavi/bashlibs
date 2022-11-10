@@ -121,7 +121,10 @@ create_deb_package() {
         || eexit "Compilation error"
     update_apt
     copy_deb_to_apt_archives
-    install_deb
+
+    should_install_deb \
+        && install_deb
+
     save_deb_to_each_repository
     generate_repository_index_for_each_repository
     clean_remote_dirs

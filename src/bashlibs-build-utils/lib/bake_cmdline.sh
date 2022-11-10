@@ -23,6 +23,7 @@ usage() {
 	$(item u apt-update 'update apt on ubuntu/debian like os after compilation')
 	$(item c cmake-options 'cmake extra options')
 	$(item r repository "repository name. Default is 'archive'. Will be created in $(repositories_dir). This option can be specified multiple times.")
+	$(item none no-deb-install "generate deb file, but do not install")
 	$(item m portage-tree-name "uniqeue name for the remote portage tree. It will be coppied to $(gentoo_local_portage_path)<name> on the server")
 	$(item e portage-tree "local portage tree. Will be copied to the server to $(gentoo_local_portage_path)<name>. Name is provided with -n")
 	$(item none eapi-up "increase eapi in ebuild. For example: EAPI=6 to EAPI=7")
@@ -48,6 +49,9 @@ usage() {
 	$(example_description 'Running outside of the source tree')
 	$(example_description 'Lets say we are running bake from /tmp/ and the source tree is in /home/user/code:')
 	$(example $(progname) --server 192.168.1.2 --project src/bashlibs-verbose --root /home/user/code)
+
+	$(example_description "generate only deb file for bashlibs-verbose, and do not install it")
+	$(example $(progname) --server 192.168.1.2 --project bashlibs-verbose --no-deb-install)
 
 	$(example_description 'Build a gentoo tbz package')
 	$(example $(progname) --server 192.168.1.2 --project bashlibs-verbose --portage-tree portage --portage-tree-name aaa)
@@ -79,6 +83,7 @@ usage() {
 cmdline() {
     exit_if_args_are_empty $@
     SOURCES_TREE_PATH=$(pwd)
+    var_to_true_function should_install_deb
     var_to_true_function do_install_gentoo_package
     var_to_false_function eapi_up
     var_to_false_function eapi_down
@@ -101,6 +106,7 @@ cmdline() {
                --server) args="${args}-s ";;
         --cmake-options) args="${args}-c ";;
            --repository) args="${args}-r ";;
+       --no-deb-install) var_to_false_function should_install_deb ;;
     --portage-tree-name) args="${args}-m ";;
          --portage-tree) args="${args}-e ";;
              --manifest) var_to_false_function do_install_gentoo_package ;;
