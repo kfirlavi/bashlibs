@@ -91,6 +91,9 @@ is_interface_down() {
 bridge_exist() {
     local bridge=$1
 
+    [[ -n $bridge ]] \
+        || return
+
     ip link \
         | grep -q ${bridge}:
 }

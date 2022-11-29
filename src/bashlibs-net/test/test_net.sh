@@ -39,6 +39,7 @@ setUp() {
 
 tearDown() {
     del_bridge $(tmp_bridge)
+    true
 }
 
 test_iface_exist() {
@@ -87,6 +88,7 @@ test_is_interface_down() {
 }
 
 test_bridge_exist() {
+    return_false "bridge_exist ''"
     return_true "bridge_exist $(tmp_bridge)"
     del_bridge $(tmp_bridge)
     return_false "bridge_exist $(tmp_bridge)"
