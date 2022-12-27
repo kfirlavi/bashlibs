@@ -1,5 +1,7 @@
-ii        21.10
-hh        21.04
+kinetic   22.10
+jammy     22.04
+impish    21.10
+hirsute   21.04
 groovy    20.10
 focal     20.04
 eoan      19.10
