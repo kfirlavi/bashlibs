@@ -76,9 +76,12 @@ load_config_if_exist() {
     local function_name_prefix=$2
 
     config_exist $conf_file \
-        && source $conf_file \
-        && config_variables_as_functions $conf_file $function_name_prefix \
-        && vdebug "configuration file loaded: $conf_file"
+        || return
+
+    vdebug "loading config file: $conf_file"
+    source $conf_file
+    config_variables_as_functions $conf_file $function_name_prefix
+    true
 }
 
 load_config() {
