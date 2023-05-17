@@ -2,6 +2,10 @@ include verbose.sh
 include string.sh
 include checks.sh
 
+allow_override_config_variables() {
+    true
+}
+
 config_exist() {
     local conf_file=$1
 
@@ -28,6 +32,12 @@ config_value() {
 var_to_function() {
     local func_name=$1; shift
     local return_value=$@
+
+    if function_defined $func_name
+    then
+        allow_override_config_variables \
+            || return
+    fi
 
     case $return_value in
         true) var_to_true_function $func_name ;;

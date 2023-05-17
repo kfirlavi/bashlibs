@@ -177,6 +177,19 @@ test_unload_config_variable() {
     return_false "function_exist test_false_var"
 }
 
+test_variable_override() {
+    load_config_variable OVERRIDE 123
+    returns "123" "override"
+
+    load_config_variable OVERRIDE 456
+    returns "456" "override"
+
+    var_to_false_function \
+        allow_override_config_variables
+
+    load_config_variable OVERRIDE 789
+    returns "456" "override"
+}
 
 # load shunit2
 source /usr/share/shunit2/shunit2
