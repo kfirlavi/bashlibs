@@ -221,20 +221,31 @@ del_ip_from_interface() {
 }
 
 add_bridge_with_tap_iface() {
-    local bridge=$1
-    local iface=$2
+    local bridge=$1; shift
+    local ifaces=$@
+    local iface
 
     add_bridge $bridge
-    add_tap $iface
-    add_iface_to_bridge $iface $bridge
+    add_tap $ifaces
+
+    for iface in $ifaces
+    do
+        add_iface_to_bridge $iface $bridge
+    done
 }
 
 del_bridge_with_tap_iface() {
-    local bridge=$1
-    local iface=$2
+    local bridge=$1; shift
+    local ifaces=$@
+    local iface
 
-    del_iface_from_bridge $iface $bridge
-    del_tap $iface
+    for iface in $ifaces
+    do
+        del_iface_from_bridge $iface $bridge
+    done
+
+    del_tap $ifaces
+    del_bridge $bridge
 }
 
 dissable_igmp_snooping_on_bridge() {
