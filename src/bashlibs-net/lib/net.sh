@@ -29,6 +29,13 @@ net_debug() {
     vdebug "$message: $(colorize_iface $if_type $iface)"
 }
 
+net_debug_cmd() {
+    local cmd=$@
+
+    vdebug "running command: $(color purple)$cmd$(no_color)"
+    $cmd
+}
+
 allow_tap_networking() {
     [[ -e /dev/net/tun ]] \
         || load_kernel_module tun
@@ -57,7 +64,7 @@ set_interface_state() {
     local iface=$1
     local state=$2
 
-    ip link set dev $iface $state
+    net_debug_cmd ip link set dev $iface $state
 }
 
 interface_up() {
@@ -76,16 +83,17 @@ is_interface_up() {
     local iface=$1
 
     ip link show $iface \
-        | grep state \
-        | grep -qv 'state DOWN'
+        | head -1 \
+        | cut -d '<' -f 2 \
+        | cut -d '>' -f 1 \
+        | sed 's/^/,/;s/$/,/' \
+        | grep ',UP,'
 }
 
 is_interface_down() {
     local iface=$1
 
-    ip link show $iface \
-        | grep state \
-        | grep -q 'state DOWN'
+    [[ ! $(is_interface_up $iface) ]]
 }
 
 bridge_exist() {
@@ -107,7 +115,7 @@ add_bridge() {
         && return
 
     net_debug bridge $bridge "creating bridge"
-    ip link add $bridge type bridge
+    net_debug_cmd ip link add $bridge type bridge
     interface_up $bridge
 
     for iface in $ifaces
@@ -130,7 +138,7 @@ del_bridge() {
     done
 
     interface_down $bridge
-    ip link del $bridge type bridge
+    net_debug_cmd ip link del $bridge type bridge
     net_debug bridge $bridge "delete bridge"
 }
 
@@ -140,7 +148,7 @@ add_vlan() {
 
     net_debug vlan $iface.$vlan "creating vlan"
     interface_up $iface
-    ip link add link $iface name $iface.$vlan type vlan id $vlan
+    net_debug_cmd ip link add link $iface name $iface.$vlan type vlan id $vlan
     interface_up $iface.$vlan
 }
 
@@ -150,7 +158,7 @@ del_vlan() {
 
     net_debug vlan $iface.$vlan "removing vlan"
     interface_down $iface.$vlan
-    ip link del $iface.$vlan type vlan
+    net_debug_cmd ip link del $iface.$vlan type vlan
 }
 
 add_tap() {
@@ -160,7 +168,7 @@ add_tap() {
     for iface in $ifaces
     do
         net_debug tap $iface "creating tap interface"
-        ip tuntap add $iface mode tap
+        net_debug_cmd ip tuntap add $iface mode tap
         interface_up $iface
     done
 }
@@ -173,7 +181,7 @@ del_tap() {
     do
         net_debug tap $iface "removing tap interface"
         interface_down $iface
-        ip tuntap del $iface mode tap
+        net_debug_cmd ip tuntap del $iface mode tap
         sleep 0.5
     done
 }
@@ -183,7 +191,7 @@ add_iface_to_bridge() {
     local bridge=$2
 
     vdebug "adding $(colorize_iface none $iface) to bridge: $(colorize_iface bridge $bridge)"
-    ip link set $iface master $bridge
+    net_debug_cmd ip link set $iface master $bridge
     interface_up $iface
 }
 
@@ -192,7 +200,7 @@ del_iface_from_bridge() {
     local bridge=$2
 
     vdebug "removing $(colorize_iface none $iface) from bridge: $(colorize_iface bridge $bridge)"
-    ip link set $iface nomaster
+    net_debug_cmd ip link set $iface nomaster
 }
 
 iface_have_ip() {
@@ -208,7 +216,7 @@ set_ip_to_interface() {
     local ip=$2 # should be ip/mask 3.3.3.3/24
 
     vdebug "setting ip $(colorize_iface ip $ip) to interface $(colorize_iface none $iface)"
-    ip addr add $ip dev $iface
+    net_debug_cmd ip addr add $ip dev $iface
     interface_up $iface
 }
 
@@ -217,7 +225,7 @@ del_ip_from_interface() {
     local ip=$2 # should be ip/mask 3.3.3.3/24
 
     vdebug "removing ip $ip from interface $(colorize_iface none $iface)"
-    ip addr del $ip dev $iface
+    net_debug_cmd ip addr del $ip dev $iface
 }
 
 add_bridge_with_tap_iface() {
@@ -225,13 +233,8 @@ add_bridge_with_tap_iface() {
     local ifaces=$@
     local iface
 
-    add_bridge $bridge
     add_tap $ifaces
-
-    for iface in $ifaces
-    do
-        add_iface_to_bridge $iface $bridge
-    done
+    add_bridge $bridge $ifaces
 }
 
 del_bridge_with_tap_iface() {
@@ -293,7 +296,7 @@ set_iface_mac() {
     local mac=$2
 
     vdebug "setting mac address $(colorize_iface mac $mac) to interface $(colorize_iface none $iface)"
-    ip link set dev $iface address $mac
+    net_debug_cmd ip link set dev $iface address $mac
 }
 
 iface_mac() {
@@ -316,7 +319,7 @@ enable_vlan_filtering_on_bridge() {
     local bridge=$1
 
     net_debug bridge $bridge "enable vlan filtering on bridge"
-    ip link set dev $bridge type bridge vlan_filtering 1
+    net_debug_cmd ip link set dev $bridge type bridge vlan_filtering 1
 }
 
 add_vlan_filter_to_bridge() {
@@ -325,7 +328,7 @@ add_vlan_filter_to_bridge() {
     local extra_params=$@
 
     net_debug vlan $vlan "adding bridge vlan filter for iface $(colorize_iface none $iface)"
-    bridge vlan add vid $vlan dev $iface $extra_params
+    net_debug_cmd bridge vlan add vid $vlan dev $iface $extra_params
 }
 
 del_vlan_filter_from_bridge() {
@@ -333,7 +336,7 @@ del_vlan_filter_from_bridge() {
     local vlan=$2
 
     net_debug vlan $vlan "removing bridge vlan filter for iface $(colorize_iface none $iface)"
-    bridge vlan del vid $vlan dev $iface
+    net_debug_cmd bridge vlan del vid $vlan dev $iface
 }
 
 mtu() {
@@ -350,7 +353,7 @@ set_mtu() {
     local mtu=$2
 
     net_debug iface $iface "stting mtu to $mtu"
-    ip link set dev $iface mtu $mtu
+    net_debug_cmd ip link set dev $iface mtu $mtu
 }
 
 increase_mtu() {

@@ -207,25 +207,33 @@ test_del_ip_from_interface() {
 }
 
 test_add_bridge_with_tap_iface() {
-    add_bridge_with_tap_iface $(tmp_bridge) bt1 bt2 bt3
-    return_true "bridge_exist $(tmp_bridge)"
-    return_true "is_interface_up bt1"
-    return_true "is_interface_up bt2"
-    return_true "is_interface_up bt3"
-    return_true "iface_is_part_of_bridge bt1 $(tmp_bridge)"
-    return_true "iface_is_part_of_bridge bt2 $(tmp_bridge)"
-    return_true "iface_is_part_of_bridge bt3 $(tmp_bridge)"
+    add_bridge_with_tap_iface bt-br0 bt1 bt2 bt3
+
+    return_true "bridge_exist bt-br0"
+
+    local i
+    for i in 1 2 3
+    do
+        return_true "iface_exist bt$i"
+        return_true "is_interface_up bt$i"
+        return_true "iface_is_part_of_bridge bt$i bt-br0"
+    done
 }
 
 test_del_bridge_with_tap_iface() {
-    del_bridge_with_tap_iface $(tmp_bridge) bt1 bt2 bt3
-    return_false "iface_is_part_of_bridge bt1 $(tmp_bridge)"
-    return_false "iface_is_part_of_bridge bt2 $(tmp_bridge)"
-    return_false "iface_is_part_of_bridge bt3 $(tmp_bridge)"
-    return_false "iface_exist bt1"
-    return_false "iface_exist bt2"
-    return_false "iface_exist bt3"
-    return_false "bridge_exist $(tmp_bridge)"
+    del_bridge_with_tap_iface bt-br0 bt1 bt2 bt3
+
+    return_false "bridge_exist bt-br0"
+
+    local i
+    for i in 1 2 3
+    do
+        return_false "iface_exist bt$i"
+        return_false "is_interface_up bt$i"
+        return_false "iface_is_part_of_bridge bt$i bt-br0"
+    done
+
+    return_false "bridge_exist bt-br0"
 }
 
 test_dissable_igmp_snooping_on_bridge() {
