@@ -109,23 +109,34 @@ test_add_bridge_with_multi_ifaces() {
     add_tap my_tap1
     add_tap my_tap2
     add_tap my_tap3
-    add_bridge $(tmp_bridge) my_tap1 my_tap2 my_tap3
+    add_tap my_tap4
+
+    add_bridge $(tmp_bridge) my_tap1 my_tap2
+    return_true "iface_is_part_of_bridge my_tap1 $(tmp_bridge)"
+    return_true "iface_is_part_of_bridge my_tap2 $(tmp_bridge)"
+    return_false "iface_is_part_of_bridge my_tap3 $(tmp_bridge)"
+    return_false "iface_is_part_of_bridge my_tap4 $(tmp_bridge)"
+
+    add_bridge $(tmp_bridge) my_tap3 my_tap4
     return_true "iface_is_part_of_bridge my_tap1 $(tmp_bridge)"
     return_true "iface_is_part_of_bridge my_tap2 $(tmp_bridge)"
     return_true "iface_is_part_of_bridge my_tap3 $(tmp_bridge)"
+    return_true "iface_is_part_of_bridge my_tap4 $(tmp_bridge)"
 }
 
 test_del_bridge_with_multi_ifaces() {
     del_bridge $(tmp_bridge)
-    add_bridge $(tmp_bridge) my_tap1 my_tap2 my_tap3
+    add_bridge $(tmp_bridge) my_tap1 my_tap2 my_tap3 my_tap4
     del_bridge $(tmp_bridge)
     return_false "iface_is_part_of_bridge my_tap1 $(tmp_bridge)"
     return_false "iface_is_part_of_bridge my_tap2 $(tmp_bridge)"
     return_false "iface_is_part_of_bridge my_tap3 $(tmp_bridge)"
+    return_false "iface_is_part_of_bridge my_tap4 $(tmp_bridge)"
     return_false "iface_exist $(tmp_bridge)"
     del_tap my_tap1
     del_tap my_tap2
     del_tap my_tap3
+    del_tap my_tap4
 }
 
 test_add_vlan() {

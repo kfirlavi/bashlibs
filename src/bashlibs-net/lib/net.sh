@@ -111,12 +111,12 @@ add_bridge() {
     local ifaces="$@"
     local iface=
 
-    bridge_exist $bridge \
-        && return
-
-    net_debug bridge $bridge "creating bridge"
-    net_debug_cmd ip link add $bridge type bridge
-    interface_up $bridge
+    if ! bridge_exist $bridge
+    then
+        net_debug bridge $bridge "creating bridge"
+        net_debug_cmd ip link add $bridge type bridge
+        interface_up $bridge
+    fi
 
     for iface in $ifaces
     do
