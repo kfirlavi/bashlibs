@@ -10,7 +10,7 @@ include(BashLibs)
 set(CPACK_DEBIAN_PACKAGE_DEPENDS
     "bashlibs-utils,
     bashlibs-directories (>=0.0.14),
-    bashlibs-disks,
+    bashlibs-disks (>= 0.0.24),
     bashlibs-kernel-modules,
     bashlibs-shunit2-enhancements (>=0.0.12),
     qemu-utils")

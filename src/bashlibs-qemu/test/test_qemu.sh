@@ -29,6 +29,7 @@ oneTimeSetUp() {
 
 oneTimeTearDown() {
     remove_workdir
+    true
 }
 
 setUp() {

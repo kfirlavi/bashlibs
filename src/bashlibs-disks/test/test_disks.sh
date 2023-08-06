@@ -36,7 +36,7 @@ loop_first_partition() {
 }
 
 test_create_one_big_partition() {
-    create_one_big_partition $(loop_device) > /dev/null 2>&1
+    create_one_big_partition $(loop_device)
 
     returns "$(loop_bios_boot_partition)   2048    6143    4096    2M BIOS boot" \
         "fdisk -l $(loop_device) | grep $(loop_bios_boot_partition)"

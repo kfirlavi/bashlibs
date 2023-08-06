@@ -16,7 +16,7 @@ IUSE=""
 RDEPEND="
 	>=dev-bash/bashlibs-utils-0.0.6
 	>=dev-bash/bashlibs-directories-0.0.14
-	dev-bash/bashlibs-disks
+	>=dev-bash/bashlibs-disks-0.0.24
 	dev-bash/bashlibs-kernel-modules
 	>=dev-bash/bashlibs-shunit2-enhancements-0.0.12
 	app-emulation/qemu

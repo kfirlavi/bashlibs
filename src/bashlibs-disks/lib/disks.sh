@@ -28,24 +28,71 @@ device_first_partition() {
         | grep 3
 }
 
+last_partition() {
+    local hd_device=$1
+
+    fdisk -l \
+        | grep $(basename $hd_device) \
+        | tail -1 \
+        | cut -d ' ' -f 1
+}
+
 last_partition_uuid() {
     local hd_device=$1
 
-    partx --show $hd_device \
-        | tail -1 \
-        | rev \
-        | cut -d ' ' -f 1 \
-        | rev
+    ls -l /dev/disk/by-partuuid/ \
+        | grep  $(basename $(last_partition $hd_device)) \
+        | awk '{print $9}'
+}
+
+sync_wait() {
+    local path=$1
+    local count=30
+    
+    while true
+    do
+        sync $path > /dev/null 2>&1 \
+            && return
+
+        (( count-- == 0 )) \
+            && eexit "sync $path exit with errors"
+
+        sleep 1
+    done
+}
+
+partprobe_wait() {
+    local hd_device=$1
+    local count=30
+    
+    while true
+    do
+        partprobe $hd_device > /dev/null 2>&1
+        
+        (( $(fdisk -l $hd_device 2> /dev/null | wc -l) > 0 )) \
+            && return
+
+        (( count-- == 0 )) \
+            && eexit "partprobe $hd_device exit with errors"
+
+        sleep 1
+    done
 }
 
 refresh_partition_table() {
+    local hd_device=$1
+
+    sync_wait $hd_device
+    partprobe_wait $hd_device
+}
+
+wait_for_kernel_to_load_partition() {
     local hd_device=$1
     local i=0
     local timeout=1
     local exit_after=60
 
-    partx --update $hd_device \
-        > /dev/null 2>&1
+    refresh_partition_table $hd_device
 
     until [[ -b /dev/disk/by-partuuid/$(last_partition_uuid $hd_device) ]]
     do
@@ -71,7 +118,8 @@ create_one_big_partition() {
         mkpart primary 131 100% \
         name 3 rootfs
 
-    refresh_partition_table $hd_device
+    sync_wait $hd_device
+    wait_for_kernel_to_load_partition $hd_device
 }
 
 create_efi_filesystem() {

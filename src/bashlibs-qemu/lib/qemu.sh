@@ -20,6 +20,8 @@ create_qcow2_image() {
         -f qcow2 \
         $image_file \
         $size
+
+    sync_wait $image_file
 }
 
 image_file_format() {
@@ -74,7 +76,7 @@ nbd_disconnect() {
 process_is_running() {
     local ps_fax_process_identifier_str=$@
 
-    ps fax \
+    ps faxww \
         | grep "$ps_fax_process_identifier_str" \
         | grep -v grep \
         | grep -q "$ps_fax_process_identifier_str"
@@ -87,15 +89,44 @@ nbd_connected() {
         "qemu-nbd --connect=$(nbd_first_device) $image_file"
 }
 
+mount_wait() {
+    local hd_device=$1
+    local mount_point=$2
+    local count=30
+
+    mount $nbd_device $mount_point > /dev/null 2>&1
+
+    while true
+    do
+        dir_is_empty $mount_point \
+            || return
+
+        (( count-- == 0 )) \
+            && eexit "mount $nbd_device $mount_point don't work"
+
+        sleep 1
+    done
+}
+
 mount_qcow2_image() {
     local image_file=$1
     local partition_number=$2
     local mount_point=$3
     local readonly_flag=$4
+    local nbd_device=$(nbd_first_device)p$partition_number
 
     create_mount_point $mount_point
     nbd_connect $image_file $readonly_flag
-    mount $(nbd_first_device)p$partition_number $mount_point
+
+    while [[ -z $(mount | grep "$nbd_device") ]]
+    do
+        [[ -b $nbd_device ]] \
+            && mount_wait \
+                $nbd_device \
+                $mount_point
+
+        sleep 1
+    done
 }
 
 mount_qcow2_image_readonly() {
@@ -110,10 +141,37 @@ mount_qcow2_image_readonly() {
         readonly
 }
 
+is_mounted() {
+    local mount_point=$1
+ 
+    mount \
+        | grep -q $mount_point
+}
+
+umount_wait() {
+    local mount_point=$1
+    local count=30
+ 
+    while true
+    do
+        umount $mount_point > /dev/null 2>&1
+
+        is_mounted $mount_point \
+            || return
+
+        sleep 1
+
+        (( count-- == 0 )) \
+            && eexit "can not unmount $mount_point"
+    done
+}
+
 umount_qcow2_image() {
     local mount_point=$1
+    local count=60
 
-    umount $mount_point
+    sync_wait $mount_point
+    umount_wait $mount_point
     nbd_disconnect
 }
 
