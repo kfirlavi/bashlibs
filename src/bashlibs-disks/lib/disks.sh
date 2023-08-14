@@ -1,31 +1,33 @@
+partitiion_name() {
+    local hd_device=$1
+    local partition_number=$2
+    local name=$(basename $hd_device)
+    local dir=$(dirname $hd_device)
+
+    echo -n $dir/
+
+    lsblk --list $hd_device \
+        | awk '{print $1}' \
+        | grep $name \
+        | egrep "$name.*$partition_number"
+}
+
 device_bios_boot_partition() {
     local hd_device=$1
 
-    echo -n $(dirname $hd_device)/
-
-    lsblk --list $hd_device \
-        | cut -d ' ' -f 1 \
-        | grep 1
+    partitiion_name $hd_device 1
 }
 
 device_efi_partition() {
     local hd_device=$1
 
-    echo -n $(dirname $hd_device)/
-
-    lsblk --list $hd_device \
-        | cut -d ' ' -f 1 \
-        | grep 2
+    partitiion_name $hd_device 2
 }
 
 device_first_partition() {
     local hd_device=$1
 
-    echo -n $(dirname $hd_device)/
-
-    lsblk --list $hd_device \
-        | cut -d ' ' -f 1 \
-        | grep 3
+    partitiion_name $hd_device 3
 }
 
 last_partition() {
