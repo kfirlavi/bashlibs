@@ -1,0 +1,35 @@
+this is the upgrade to your program you need to do in order to
+add test support
+
+
+-	while getopts "vhxci" OPTION
++	while getopts "vhtxci" OPTION
+ 	do
+ 	     case $OPTION in
+ 		 v)
+@@ -74,8 +74,8 @@ cmdline() {
+ 		     set -x
+ 		     ;;
++          t)
++             var_to_true_function should_run_tests
++             var_to_function tests_dir path_to_test_directory
+              ;;
+ 		 c)
+              var_to_true_function should_archive_classified
+@@ -93,6 +93,7 @@ func() {
+ 
+ main() {
+     cmdline $(args)
++    run_tests_if_needed
+
+
+
+
+some pre test and post test functions can be overriden 
+to allow executing code between running each test file
+look at __PROJECT_LIB_DIR__/test.sh
+this are the functions that can be overriden:
+pre_run_tests
+post_run_tests
+pre_run_test
+post_run_test
