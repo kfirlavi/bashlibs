@@ -5,7 +5,7 @@ include kernel_cmdline.sh
 
 oneTimeSetUp() {
     kernel_cmdline() {
-        echo "flag1 ip=1.2.3.4 var1=value1 flag_2 var2=value2 hd=/dev/sda flag3"
+        echo "flag1 ip=1.2.3.4 var1=value1 flag_2 var2=value2 net=eno1:dhcp:dhcpcd_eno1=--hostname: hd=/dev/sda flag3"
     }
 }
 
@@ -18,6 +18,9 @@ test_kernel_cmdline_value() {
 
     returns "value2" \
         "kernel_cmdline_value var2"
+
+    returns "eno1:dhcp:dhcpcd_eno1=--hostname:" \
+        "kernel_cmdline_value net"
 
     returns "/dev/sda" \
         "kernel_cmdline_value hd"
@@ -32,6 +35,9 @@ test_kernel_cmdline_var_provided() {
 
     return_true \
         "kernel_cmdline_var_provided var2"
+
+    return_true \
+        "kernel_cmdline_var_provided net"
 
     return_true \
         "kernel_cmdline_var_provided hd"

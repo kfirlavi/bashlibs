@@ -10,7 +10,7 @@ kernel_cmdline_value() {
     kernel_cmdline \
         | sed 's/ /\n/g' \
         | grep "${var}=" \
-        | cut -d '=' -f 2
+        | cut -d '=' -f 2-
 }
 
 kernel_cmdline_var_provided() {
