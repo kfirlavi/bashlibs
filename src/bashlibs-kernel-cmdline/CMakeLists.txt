@@ -8,7 +8,7 @@ list(APPEND CMAKE_MODULE_PATH
 
 include(BashLibs)
 set(CPACK_DEBIAN_PACKAGE_DEPENDS
-    "bashlibs-utils
+    "bashlibs-utils,
      bashlibs-string")
 include(PackageCreator)
 
