@@ -1,3 +1,5 @@
+include string.sh
+
 kernel_cmdline() {
     cat /proc/cmdline
 }
@@ -35,7 +37,8 @@ kernel_cmdline_missing_params() {
     do
         kernel_cmdline_var_provided $i \
             || echo $i
-    done
+    done \
+        | multiline_to_single_line
 }
 
 kernel_cmdline_exit_if_param_is_missing() {
@@ -60,5 +63,6 @@ kernel_cmdline_values_starting_with() {
     kernel_cmdline \
         | sed 's/ /\n/g' \
         | grep "${var_prefix}.*=" \
-        | cut -d '=' -f 1
+        | cut -d '=' -f 1 \
+        | multiline_to_single_line
 }
