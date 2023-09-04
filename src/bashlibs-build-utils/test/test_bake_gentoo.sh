@@ -2,6 +2,7 @@
 $(bashlibs --load-base)
 include shunit2_enhancements.sh
 include bake_gentoo.sh
+include string.sh
 
 oneTimeSetUp() {
     reponame() { echo my_repo ; }
@@ -21,7 +22,7 @@ test_package_names_with_portage_repository() {
     local packages="dev-libs/abc sys-apps/pack2"
 
     returns "dev-libs/abc::bake-local-my_repo sys-apps/pack2::bake-local-my_repo" \
-        "package_names_with_portage_repository $packages"
+        "package_names_with_portage_repository $packages | multiline_to_single_line"
 }
 
 test_find_ebuild_for_package() {

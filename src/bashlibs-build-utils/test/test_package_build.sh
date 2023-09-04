@@ -34,6 +34,8 @@ oneTimeTearDown() {
 
     unset -f \
         local_distfiles_directory
+
+    true
 }
 
 progname() {

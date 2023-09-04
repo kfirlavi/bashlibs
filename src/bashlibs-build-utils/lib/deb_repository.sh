@@ -104,7 +104,8 @@ sort_versions() {
 
     echo $versions \
         | tr ' ' '\n' \
-        | sort -k1,1n -k2,2n -k3,3n -t.
+        | sort -k1,1n -k2,2n -k3,3n -t. \
+        | multiline_to_single_line
 }
 
 max_version() {

@@ -3,6 +3,7 @@ $(bashlibs --load-base)
 include shunit2_enhancements.sh
 include deb_repository.sh
 include directories.sh
+include string.sh
 
 tmp_project_path() {
     echo /tmp/test_project
@@ -30,6 +31,8 @@ oneTimeSetUp() {
 oneTimeTearDown() {
     safe_delete_directory_from_tmp \
         $(tmp_project_path)
+
+    true
 }
 
 progdir() {
@@ -131,7 +134,7 @@ test_package_postfix() {
 
 test_packages_versions() {
     returns "0.0.2 0.0.1" \
-        "packages_versions bashlibs-base-0.0.2-Linux.deb bashlibs-base-0.0.1-Linux.deb"
+        "packages_versions bashlibs-base-0.0.2-Linux.deb bashlibs-base-0.0.1-Linux.deb | multiline_to_single_line"
 }
 
 test_sort_versions() {

@@ -26,6 +26,8 @@ setUp() {
 tearDown() {
     safe_delete_directory_from_tmp \
         $TEST_DIR
+
+    true
 }
 
 test_all_cmake_files() {

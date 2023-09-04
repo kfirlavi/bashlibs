@@ -19,6 +19,12 @@ oneTimeSetUp() {
 oneTimeTearDown() {
     safe_delete_directory_from_tmp \
         $TEST_DIR
+
+    true
+}
+
+tearDown() {
+    cd
 }
 
 test_config_file_name() {
