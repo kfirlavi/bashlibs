@@ -14,17 +14,26 @@ release_file_dir() {
     echo $_ROOT_PATH/etc
 }
 
+debian_release_file() {
+    echo $(release_file_dir)/os-release
+}
+
 ubuntu_release_file() {
-    echo $(release_file_dir)/lsb-release
+    echo $(release_file_dir)/os-release
 }
 
 gentoo_release_file() {
     echo $(release_file_dir)/gentoo-release
 }
 
+is_debian() {
+    [[ -f $(debian_release_file) ]] \
+        && grep -q 'ID=debian' $(debian_release_file)
+}
+
 is_ubuntu() {
     [[ -f $(ubuntu_release_file) ]] \
-        && grep -q Ubuntu $(ubuntu_release_file)
+        && grep -q 'ID=ubuntu' $(ubuntu_release_file)
 }
 
 is_gentoo() {
@@ -34,8 +43,8 @@ is_gentoo() {
 
 ubuntu_version() {
     is_ubuntu \
-        && grep DISTRIB_RELEASE $(ubuntu_release_file) \
-            | cut -d '=' -f 2
+        && grep VERSION_ID $(ubuntu_release_file) \
+            | cut -d '"' -f 2
 }
 
 ubuntu_version_msb() {
@@ -90,6 +99,8 @@ is_ubuntu_newer_or_equal_to() {
 }
 
 distro_name() {
+    is_debian \
+        && echo debian
     is_ubuntu \
         && echo ubuntu
     is_gentoo \
