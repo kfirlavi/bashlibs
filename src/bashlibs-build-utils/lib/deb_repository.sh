@@ -27,13 +27,14 @@ repository_binary_dir() {
 }
 
 target_architecture() {
-    run_remote "uname -i"
+    run_remote "uname --machine"
 }
 
 repository_architecture() {
     local arch=$(target_architecture)
 
     case $arch in
+       aarch64) echo arm64 ;;
         armv7l) echo armhf ;;
           i686) echo i386  ;;
           i386) echo i386  ;;
