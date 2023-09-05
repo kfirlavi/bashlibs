@@ -10,6 +10,7 @@ include(BashLibs)
 set(CPACK_DEBIAN_PACKAGE_DEPENDS
     "bashlibs-utils (>= 0.0.6),
     bashlibs-directories,
+    bashlibs-ssh,
     bashlibs-code-clarity")
 include(PackageCreator)
 

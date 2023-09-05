@@ -3,6 +3,7 @@ include nice_header.sh
 include ssh.sh
 include checks.sh
 include bake_gentoo.sh
+include os_detection.sh
 
 run_remote() {
     local cmd=$@
@@ -82,34 +83,31 @@ target_build_host() {
 }
 
 target_os_is_gentoo() {
-    run_remote [[ -f /etc/gentoo-release ]]
-}
-
-target_os_is_ubuntu() {
-    run_remote [[ -f /etc/lsb-release ]]
+    [[ $(target_os) == gentoo ]]
 }
 
 target_os() {
-    target_os_is_gentoo \
-        && echo gentoo
-
-    target_os_is_ubuntu \
-        && echo ubuntu
+    os_detection_remote root $(host) distro_name
 }
 
 target_os_with_color() {
-    target_os_is_gentoo \
-        && echo $(color purple)gentoo$(no_color)
+    case $(target_os) in
+        gentoo) color purple ;;
+        debian) color green ;;
+        ubuntu) color yellow ;;
+    esac
 
-    target_os_is_ubuntu \
-        && echo $(color yellow)ubuntu$(no_color)
+    echo -n $(target_os)
+
+    no_color
 }
 
 package_type() {
-    target_os_is_gentoo \
-        && echo tbz
-    target_os_is_ubuntu \
-        && echo deb
+    case $(target_os) in
+        gentoo) echo tbz ;;
+        debian) echo deb ;;
+        ubuntu) echo deb ;;
+    esac
 }
 
 cmake_options() {

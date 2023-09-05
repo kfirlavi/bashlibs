@@ -1,4 +1,5 @@
 include code_clarity.sh
+include ssh.sh
 
 set_root_path() {
     local dir=$1
@@ -119,4 +120,18 @@ ubuntu_distro_name() {
 
     grep " $distro_number" $(libraries_path)/ubuntu_naming.sh \
         | awk '{print $1}'
+}
+
+os_detection_remote() {
+    local user=$1; shift
+    local host=$1; shift
+    local os_detection_command=$@
+    local f=os_detection.sh
+
+    rsync \
+        __BASHLIBS_LIB_DIR__/$f \
+        $user@$host:/tmp/
+
+    run_on_host $user $host \
+        "source /tmp/$f > /dev/null 2>&1; $os_detection_command" 
 }

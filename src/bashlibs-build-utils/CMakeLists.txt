@@ -18,7 +18,7 @@ set(CPACK_DEBIAN_PACKAGE_DEPENDS
     bashlibs-directories (>= 0.0.4),
     bashlibs-verbose (>= 0.0.25),
     bashlibs-ssh (>= 0.0.13),
-    bashlibs-os-detection,
+    bashlibs-os-detection (>= 0.0.20),
     bashlibs-checks (>= 0.0.11),
     bashlibs-utils (>= 0.0.11)")
 include(PackageCreator)
