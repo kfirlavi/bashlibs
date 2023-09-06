@@ -17,6 +17,7 @@ setUp() {
 
 tearDown() {
     remove_workdir
+    true
 }
 
 test_create_md5() {

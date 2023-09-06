@@ -32,6 +32,7 @@ oneTimeSetUp() {
 
 oneTimeTearDown() {
     safe_delete_directory_from_tmp $(mock_kernel_tree_dir)
+    true
 }
 
 test_kernel_makefile_variable_value() {

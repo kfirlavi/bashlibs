@@ -14,6 +14,7 @@ setUp() {
 
 tearDown() {
     remove_workdir
+    true
 }
 
 test_sysfs_root_path() {

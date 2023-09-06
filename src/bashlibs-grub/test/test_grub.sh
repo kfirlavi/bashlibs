@@ -19,6 +19,8 @@ setUp() {
 tearDown() {
     [[ -f $FILE ]] \
         && rm -f $FILE
+
+    true
 }
 
 test_grub_exe() {

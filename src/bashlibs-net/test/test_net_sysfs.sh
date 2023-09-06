@@ -18,6 +18,7 @@ oneTimeSetUp() {
 
 oneTimeTearDown() {
     remove_workdir
+    true
 }
 
 test_sysfs_net_root_path() {

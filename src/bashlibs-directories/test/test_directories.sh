@@ -9,6 +9,7 @@ setUp() {
 
 tearDown() {
     remove_workdir
+    true
 }
 
 test_dir_exist() {

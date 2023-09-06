@@ -43,6 +43,7 @@ tearDown() {
     safe_delete_directory_from_tmp $(git_for_testing)
     safe_delete_directory_from_tmp $(remote_git_for_testing)
     safe_delete_directory_from_tmp $(none_git_directory)
+    true
 }
 
 test_create_new_git() {
