@@ -17,6 +17,10 @@ package_test_files_ubuntu() {
            | grep test_
 }
 
+package_test_files_debian() {
+    package_test_files_ubuntu
+}
+
 package_test_files() {
     target_os_is_gentoo \
         && package_test_files_$(target_os)
