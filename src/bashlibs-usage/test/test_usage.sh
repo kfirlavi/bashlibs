@@ -4,11 +4,11 @@ include shunit2_enhancements.sh
 include usage.sh
 
 test_indentation() {
-    returns 's e' "echo s$(indentation 1)e"
-    returns 's  e' "echo s$(indentation 2)e"
-    returns 's    e' "echo s$(indentation 4)e"
-    returns 's          e' "echo s$(indentation 10)e"
-    returns 's          e' "echo s$(indentation -10)e"
+    returns 's e' "echo 's$(indentation 1)e'"
+    returns 's  e' "echo 's$(indentation 2)e'"
+    returns 's    e' "echo 's$(indentation 4)e'"
+    returns 's          e' "echo 's$(indentation 10)e'"
+    returns 's          e' "echo 's$(indentation -10)e'"
 }
 
 test_item_gap() {

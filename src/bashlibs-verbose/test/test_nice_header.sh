@@ -13,17 +13,27 @@ test_print_ruler() {
 
 test_print_gap() {
     returns "start_gap stop_gap" \
-        "echo start_gap$(print_gap 1)stop_gap"
+        "echo 'start_gap$(print_gap 1)stop_gap'"
 
     returns "start_gap          stop_gap" \
-        "echo start_gap$(print_gap 10)stop_gap"
+        "echo 'start_gap$(print_gap 10)stop_gap'"
 }
 
 test_print_header_midline() {
     returns "*    123456789     *" \
         "strip_colors \"$(print_header_midline 123456789 yellow '*' blue 20)\""
-    returns "*     1234567890    *" \
-        "strip_colors \"$(print_header_midline 1234567890 yellow '*' blue 20)\""
+
+    returns "* 1234567890 *" \
+        "strip_colors \"$(print_header_midline 1234567890 yellow '*' blue 14)\""
+
+    returns "* 1234567890  *" \
+        "strip_colors \"$(print_header_midline 1234567890 yellow '*' blue 15)\""
+
+    returns "*  1234567890  *" \
+        "strip_colors \"$(print_header_midline 1234567890 yellow '*' blue 16)\""
+
+    returns "*  1234567890   *" \
+        "strip_colors \"$(print_header_midline 1234567890 yellow '*' blue 17)\""
 }
 
 # load shunit2

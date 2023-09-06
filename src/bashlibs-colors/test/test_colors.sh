@@ -15,9 +15,11 @@ test_spaces_to_underscors() {
 }
 
 test_strip_colors() {
-
     returns "*12345*" \
         "strip_colors \"$(color blue)*$(color yellow)12345$(color green)*$(no_color)\""
+
+    returns "   *12345*     " \
+        "strip_colors \"$(color blue)   *$(color yellow)12345$(color green)*     $(no_color)\""
 }
 
 #test_color() {
