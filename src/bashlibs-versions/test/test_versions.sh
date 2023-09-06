@@ -1,6 +1,7 @@
 #!/bin/bash
 $(bashlibs --load-base)
 include shunit2_enhancements.sh
+include string.sh
 include versions.sh
 
 test_replace_version() {
@@ -13,11 +14,11 @@ test_replace_version() {
 
 test_versions_sorted() {
     returns "1.6 1.9 2.3 4.5 7.3 8.9" \
-        "versions_sorted 1.9 2.3 4.5 7.3 1.6 8.9"
+        "versions_sorted 1.9 2.3 4.5 7.3 1.6 8.9 | multiline_to_single_line"
     returns "3.4.14 3.18.5" \
-        "versions_sorted 3.4.14 3.18.5"
+        "versions_sorted 3.4.14 3.18.5 | multiline_to_single_line"
     returns "4.4.25 4.4.38 5.18.5" \
-        "versions_sorted 4.4.25 5.18.5 4.4.38"
+        "versions_sorted 4.4.25 5.18.5 4.4.38 | multiline_to_single_line"
 }
 
 test_oldest_version() {

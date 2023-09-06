@@ -1,3 +1,5 @@
+include string.sh
+
 version_regex() {
     echo '[[:digit:]]+.[[:digit:]]+.[[:digit:]]+'
 }
