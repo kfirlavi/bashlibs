@@ -10,6 +10,7 @@ oneTimeSetUp() {
 
 oneTimeTearDown() {
     remove_workdir
+    true
 }
 
 tearDown() {
