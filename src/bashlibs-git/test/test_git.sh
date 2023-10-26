@@ -73,6 +73,13 @@ test_git_current_branch() {
     returns "new_branch" "git_current_branch"
 }
 
+test_current_branch_is_master() {
+    return_true "current_branch_is_master"
+
+    git_create_new_branch new_branch
+    return_false "current_branch_is_master"
+}
+
 test_git_create_new_branch() {
     git_create_new_branch new_branch
     returns "new_branch" "git_current_branch"

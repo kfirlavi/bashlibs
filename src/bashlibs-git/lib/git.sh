@@ -27,6 +27,10 @@ git_current_branch() {
     git symbolic-ref --short HEAD
 }
 
+current_branch_is_master() {
+    [[ $(git_current_branch) == master ]]
+}
+
 git_create_new_branch() {
     local branch_name=$1
 
