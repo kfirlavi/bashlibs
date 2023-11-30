@@ -24,6 +24,8 @@ include verbose.sh
 include bake.sh
 include usage.sh
 include checks.sh
+include config.sh
+include directories.sh
 set_verbose_level_to_info
 
 usage() {
@@ -35,12 +37,27 @@ usage() {
 	    Program will ask for confirmation before deleting.
 
 	$(section_options)
+	$(item f force 'clean files without asking')
+	$(item l list  'show files but do not delete')
 	$(items_test_help_verbose_debug)
+
+	$(section_examples)
+	$(example_description 'show files, then ask for confirmation before deleting')
+	$(example $(progname))
+
+	$(example_description 'just list and do not clean files')
+	$(example $(progname) --list)
+
+	$(example_description 'do not ask for confirmation before cleaning files')
+	$(example $(progname) --force)
 
 	EOF
 }
 
 cmdline() {
+    var_to_false_function force_clean
+    var_to_false_function just_list
+
     # got this idea from here:
     # http://kirk.webfinish.com/2009/10/bash-shell-script-to-use-getopts-with-gnu-style-long-positional-parameters/
     local arg=
@@ -49,6 +66,8 @@ cmdline() {
         local delim=""
         case "$arg" in
             #translate --gnu-long-options to -g (short options)
+                --force) args="${args}-f ";;
+                 --list) args="${args}-l ";;
                  --test) args="${args}-t ";;
                  --help) args="${args}-h ";;
               --verbose) args="${args}-v ";;
@@ -63,7 +82,7 @@ cmdline() {
     #Reset the positional parameters to the short options
     eval set -- $args
 
-    while getopts "qvhx" OPTION
+    while getopts "qvhxfl" OPTION
     do
         case $OPTION in
         q)
@@ -82,20 +101,14 @@ cmdline() {
         t)
             RUN_TESTS=1
             ;;
+        f)
+            var_to_true_function force_clean
+            ;;
+        l)
+            var_to_true_function just_list
+            ;;
         esac
     done
-}
-
-dir_exsit() {
-    local dir=$1
-
-    [[ -d $dir ]]
-}
-
-dir_not_empty() {
-    local dir=$1
-
-    [[ -n $(ls $dir) ]]
 }
 
 show_local_repository_content() {
@@ -104,23 +117,51 @@ show_local_repository_content() {
     tree -C $dir
 }
 
+warn_user_before_deleting() {
+    local dir=$1
+
+    vwarning "deleting directory: $dir"
+    vwarning "press Ctrl-C to stop before deleting, or press any key to continue..."
+    read
+}
+
+remove_directory() {
+    local dir=$1
+
+    just_list \
+        && return
+
+    force_clean \
+        || warn_user_before_deleting $dir
+
+    rm -Rf $dir
+}
+
 delete_directory_if_exsits() {
     local dir=$1
 
-    dir_exsit $dir && dir_not_empty $dir \
-        && show_local_repository_content $dir \
-        && vwarning "deleting directory: $dir" \
-        && vwarning "press Ctrl-C to stop before deleting, or press any key to continue..." \
-        && read \
-        && rm -Rf $dir
+    dir_exist $dir \
+        || return
+
+    dir_is_empty $dir \
+        && return
+ 
+    show_local_repository_content $dir
+    remove_directory $dir
+}
+
+exit_if_force_used_with_list() {
+    just_list && force_clean \
+        && eexit "--force and --list can not be used together"
 }
 
 main() {
     cmdline $(args)
+
+    exit_if_force_used_with_list
 
     im_root \
         && delete_directory_if_exsits $(root_repositories_dir) \
         || delete_directory_if_exsits $(user_repositories_dir)
 }
 main
-
