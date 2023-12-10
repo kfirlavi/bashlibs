@@ -144,6 +144,16 @@ file_shouldnt_exist() {
         "[[ -f $f ]]"
 }
 
+file_access_rights_should_be() {
+    local access_rights_in_octal=$1
+    local f=$2
+    local file_access_rights=$(stat --format '%a' $f)
+
+    assertTrue \
+        "file $f access rights are $file_access_rights, and they should be $access_rights_in_octal" \
+        "[[ $access_rights_in_octal == $file_access_rights ]]"
+}
+
 directory_should_exist() {
     local d=$1
 
