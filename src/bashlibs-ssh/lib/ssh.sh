@@ -5,8 +5,16 @@ ssh_cmd() {
     echo ssh
 }
 
+user_ssh_dir() {
+    echo "$(user_home_dir)/.ssh"
+}
+
+user_authorized_keys_file() {
+    echo "$(user_ssh_dir)/authorized_keys"
+}
+
 rsa_ssh_key() {
-    echo "$(user_home_dir)/.ssh/id_rsa"
+    echo "$(user_ssh_dir)/id_rsa"
 }
 
 rsa_ssh_public_key() {

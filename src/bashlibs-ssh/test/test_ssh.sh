@@ -14,6 +14,18 @@ tearDown() {
     rm -f $(rsa_ssh_public_key)
 }
 
+test_ssh_cmd() {
+    returns "ssh" "ssh_cmd"
+}
+
+test_user_ssh_dir() {
+    returns "$(realpath ~)/.ssh" "user_ssh_dir"
+}
+
+test_user_authorized_keys_file() {
+    returns "$(realpath ~)/.ssh/authorized_keys" "user_authorized_keys_file"
+}
+
 test_rsa_ssh_key() {
     returns "/tmp/rsa_key" \
         "rsa_ssh_key"
