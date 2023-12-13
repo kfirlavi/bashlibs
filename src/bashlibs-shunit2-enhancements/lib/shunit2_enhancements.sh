@@ -144,6 +144,22 @@ file_shouldnt_exist() {
         "[[ -f $f ]]"
 }
 
+file_should_be_empty() {
+    local f=$1
+
+    assertFalse \
+        "file should be empty $f" \
+        "[[ -s $f ]]"
+}
+
+file_shouldnt_be_empty() {
+    local f=$1
+
+    assertTrue \
+        "file should not be empty $f" \
+        "[[ -s $f ]]"
+}
+
 file_access_rights_should_be() {
     local access_rights_in_octal=$1
     local f=$2
