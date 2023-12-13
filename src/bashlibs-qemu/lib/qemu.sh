@@ -46,7 +46,7 @@ enable_nbd() {
 create_mount_point() {
     local mount_point=$1
 
-    create_dir_if_needed $mount_point
+    create_dir_if_needed $mount_point quiet
 }
 
 nbd_connect() {
@@ -194,7 +194,7 @@ create_qcow2_backing_file() {
     local target_image=$(realpath -m $2)
     local target_dir=$(dirname $target_image)
 
-    create_dir_if_needed $target_dir > /dev/null 2>&1
+    create_dir_if_needed $target_dir quiet
     cd $target_dir
 
     qemu-img create \
