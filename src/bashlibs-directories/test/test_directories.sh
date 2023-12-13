@@ -36,9 +36,17 @@ test_create_dir_if_needed() {
     local dir=$(workdir)/abc
 
     return_false "dir_exist $dir"
-    create_dir_if_needed $dir > /dev/null 2>&1
+    returns "$dir" "create_dir_if_needed $dir"
     return_true "dir_exist $dir"
-    create_dir_if_needed $dir > /dev/null 2>&1
+    returns "$dir" "create_dir_if_needed $dir"
+    return_true "dir_exist $dir"
+}
+
+test_create_dir_if_needed_quiet() {
+    local dir=$(workdir)/abc
+
+    return_false "dir_exist $dir"
+    returns_empty "create_dir_if_needed $dir quiet"
     return_true "dir_exist $dir"
 }
 

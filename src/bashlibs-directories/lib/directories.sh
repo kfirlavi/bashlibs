@@ -15,11 +15,13 @@ dir_is_empty() {
 
 create_dir_if_needed() {
     local dir=$1
+    local quiet_flag=$2
 
     [[ -d $dir ]] \
         || mkdir -p $dir
 
-    readlink -m $dir
+    [[ $quiet_flag == quiet ]] \
+        || readlink -m $dir
 }
 
 clean_path() {
