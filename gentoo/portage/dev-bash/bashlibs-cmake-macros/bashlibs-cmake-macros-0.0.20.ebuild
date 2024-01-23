@@ -14,7 +14,7 @@ KEYWORDS="amd64 x86"
 IUSE=""
 
 DEPEND="
-	dev-util/cmake
+	|| ( dev-util/cmake dev-build/cmake )
 	>=dev-util/cmake-macros-0.0.12
 "
 RDEPEND=""
