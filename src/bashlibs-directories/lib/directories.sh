@@ -66,12 +66,6 @@ is_dir_under_base_dir() {
         | grep -q "^$base_dir"
 }
 
-directory_can_be_deleted() {
-    local dir=$1
-
-    is_dir_subpath_of_allowd_directories $dir
-}
-
 safe_delete_directory_from_tmp() {
     local dir=$1
 
