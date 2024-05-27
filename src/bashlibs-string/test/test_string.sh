@@ -104,6 +104,11 @@ test_spaces_to_underscore() {
     return_equals "__" "echo '  ' | spaces_to_underscore"
 }
 
+test_spaces_to_newlines() {
+    return_equals "abc" "echo 'abc efg' | spaces_to_newlines | head -1"
+    return_equals "efg" "echo 'abc efg' | spaces_to_newlines | tail -1"
+}
+
 test_tabs_to_spaces() {
     return_equals " " "echo -e '\t' | tabs_to_spaces"
     return_equals "    " "echo -e ' \t\t ' | tabs_to_spaces"

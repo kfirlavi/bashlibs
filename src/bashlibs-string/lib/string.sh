@@ -88,6 +88,11 @@ spaces_to_underscore() {
         | sed 's/ /_/g'
 }
 
+spaces_to_newlines() {
+    cat /dev/stdin \
+        | sed 's/ /\n/g'
+}
+
 tabs_to_spaces() {
     cat /dev/stdin \
         | sed 's/[\t]/ /g'
