@@ -167,6 +167,20 @@ run_on_host() {
         $cmd
 }
 
+run_on_host_with_tty() {
+    local user=$1; shift
+    local host=$1; shift
+    local cmd=$@
+
+    $(ssh_cmd) \
+        -t \
+        -S $(socket_name $user $host) \
+        -o BatchMode=yes \
+        "$user@$host" \
+        -- \
+        $cmd
+}
+
 set_rsync_ssh_connection_with_socket() {
     local user=$1
     local host=$2
