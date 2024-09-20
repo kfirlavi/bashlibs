@@ -235,11 +235,11 @@ install_package_on_gentoo() {
 
     vinfo "building packages on $(print_host $host)"
     print_packages_names $packages
-    run_on_host root $host $(emerge_build_package) $packages
+    run_on_host_with_tty root $host $(emerge_build_package) $packages
     run_tests_of_package
     portage_configurations_have_changed $host \
         && update_portage_configurations $host \
-        && run_on_host root $host $(emerge_build_package) $packages
+        && run_on_host_with_tty root $host $(emerge_build_package) $packages
     copy_bin_pkg_from_server $host
     quick_install_on_other_gentoo_hosts $packages
     safe_delete_directory_from_tmp $(tmp_dir)
